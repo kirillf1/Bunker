@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.5.0.109200" />
+    <PackageVersion Include="SonarAnalyzer.CSharp.Styling" Version="10.5.0.109200" />
+  </ItemGroup>
+</Project>
