@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BunkerGameAPI", "src\BunkerGameAPI\BunkerGameAPI.csproj", "{9CA6B674-6A84-4745-98CB-413C8161ED19}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{760DE308-11F0-46EF-BAFF-92D31554A202}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunker.Domain.Shared", "src\Bunker.Domain.Shared\Bunker.Domain.Shared.csproj", "{05EE4BA4-C13C-406A-BD0C-4F31631ED938}"
@@ -19,16 +17,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunker.Application.Shared", "src\Bunker.Application.Shared\Bunker.Application.Shared.csproj", "{55545976-E606-4F51-B34E-4EE970DDF327}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunker.Game.Domain", "src\Bunker.Game.Domain\Bunker.Game.Domain.csproj", "{B592E565-BC94-4440-B045-ACC75758557D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunker.Game.API", "src\Bunker.Game.API\Bunker.Game.API.csproj", "{C6749D39-DD06-4C88-AC9B-01F5EF464005}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9CA6B674-6A84-4745-98CB-413C8161ED19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9CA6B674-6A84-4745-98CB-413C8161ED19}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9CA6B674-6A84-4745-98CB-413C8161ED19}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9CA6B674-6A84-4745-98CB-413C8161ED19}.Release|Any CPU.Build.0 = Release|Any CPU
 		{05EE4BA4-C13C-406A-BD0C-4F31631ED938}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{05EE4BA4-C13C-406A-BD0C-4F31631ED938}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05EE4BA4-C13C-406A-BD0C-4F31631ED938}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -37,13 +35,22 @@ Global
 		{55545976-E606-4F51-B34E-4EE970DDF327}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55545976-E606-4F51-B34E-4EE970DDF327}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55545976-E606-4F51-B34E-4EE970DDF327}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B592E565-BC94-4440-B045-ACC75758557D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B592E565-BC94-4440-B045-ACC75758557D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B592E565-BC94-4440-B045-ACC75758557D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B592E565-BC94-4440-B045-ACC75758557D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6749D39-DD06-4C88-AC9B-01F5EF464005}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6749D39-DD06-4C88-AC9B-01F5EF464005}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6749D39-DD06-4C88-AC9B-01F5EF464005}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6749D39-DD06-4C88-AC9B-01F5EF464005}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{9CA6B674-6A84-4745-98CB-413C8161ED19} = {760DE308-11F0-46EF-BAFF-92D31554A202}
 		{05EE4BA4-C13C-406A-BD0C-4F31631ED938} = {760DE308-11F0-46EF-BAFF-92D31554A202}
 		{55545976-E606-4F51-B34E-4EE970DDF327} = {760DE308-11F0-46EF-BAFF-92D31554A202}
+		{B592E565-BC94-4440-B045-ACC75758557D} = {760DE308-11F0-46EF-BAFF-92D31554A202}
+		{C6749D39-DD06-4C88-AC9B-01F5EF464005} = {760DE308-11F0-46EF-BAFF-92D31554A202}
 	EndGlobalSection
 EndGlobal
