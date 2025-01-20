@@ -5,6 +5,7 @@ namespace Bunker.Domain.Shared.DomainModels;
 public abstract class Entity<T>
 {
     int? _requestedHashCode;
+
     private T _baseId;
 
     private List<IDomainEvent>? _domainEvents;
@@ -16,6 +17,11 @@ public abstract class Entity<T>
     }
 
     public IReadOnlyCollection<IDomainEvent>? DomainEvents => _domainEvents?.AsReadOnly();
+
+    protected Entity(T id)
+    {
+        _baseId = id;
+    }
 
     public void AddDomainEvent(IDomainEvent eventItem)
     {
@@ -48,6 +54,7 @@ public abstract class Entity<T>
 
         return item.Id!.Equals(Id);
     }
+
 
 #pragma warning disable S2328
     public override int GetHashCode()
