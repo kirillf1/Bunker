@@ -8,8 +8,6 @@
 
   <ItemGroup>
     <Folder Include="AggregateModels\GameResultCreators\" />
-    <Folder Include="AggregateModels\GameSessions\Characters\" />
-    <Folder Include="AggregateModels\GameSessions\Bunkers\" />
   </ItemGroup>
 
   <ItemGroup>
