@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunker.Game.Domain", "src\B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunker.Game.API", "src\Bunker.Game.API\Bunker.Game.API.csproj", "{C6749D39-DD06-4C88-AC9B-01F5EF464005}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunker.GameComponents.API", "src\Bunker.GameComponents.API\Bunker.GameComponents.API.csproj", "{E1A1CC12-9D15-453D-88E6-93A23B38CAEF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{C6749D39-DD06-4C88-AC9B-01F5EF464005}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6749D39-DD06-4C88-AC9B-01F5EF464005}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6749D39-DD06-4C88-AC9B-01F5EF464005}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1A1CC12-9D15-453D-88E6-93A23B38CAEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1A1CC12-9D15-453D-88E6-93A23B38CAEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1A1CC12-9D15-453D-88E6-93A23B38CAEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1A1CC12-9D15-453D-88E6-93A23B38CAEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,5 +58,6 @@ Global
 		{55545976-E606-4F51-B34E-4EE970DDF327} = {760DE308-11F0-46EF-BAFF-92D31554A202}
 		{B592E565-BC94-4440-B045-ACC75758557D} = {760DE308-11F0-46EF-BAFF-92D31554A202}
 		{C6749D39-DD06-4C88-AC9B-01F5EF464005} = {760DE308-11F0-46EF-BAFF-92D31554A202}
+		{E1A1CC12-9D15-453D-88E6-93A23B38CAEF} = {760DE308-11F0-46EF-BAFF-92D31554A202}
 	EndGlobalSection
 EndGlobal
