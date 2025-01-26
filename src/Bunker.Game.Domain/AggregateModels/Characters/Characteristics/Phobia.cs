@@ -1,13 +1,15 @@
-﻿namespace Bunker.Game.Domain.AggregateModels.GameSessions;
+﻿namespace Bunker.Game.Domain.AggregateModels.Characters.Characteristics;
 
-public class Catastrophe : ValueObject
+public class Phobia : ValueObject
 {
     public string Description { get; }
 
-    public Catastrophe(string description)
+    public Phobia(string description)
     {
         Description = description;
     }
+
+    private Phobia() { }
 
     protected override IEnumerable<object> GetEqualityComponents()
     {

@@ -55,7 +55,6 @@ public abstract class Entity<T>
         return item.Id!.Equals(Id);
     }
 
-
 #pragma warning disable S2328
     public override int GetHashCode()
 #pragma warning restore S2328
