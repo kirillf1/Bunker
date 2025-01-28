@@ -1,4 +1,5 @@
-﻿using Bunker.Game.Domain.AggregateModels.GameSessions.Events;
+﻿using Bunker.Domain.Shared.Exceptions;
+using Bunker.Game.Domain.AggregateModels.GameSessions.Events;
 
 namespace Bunker.Game.Domain.AggregateModels.GameSessions;
 
@@ -36,7 +37,9 @@ public class GameSession : Entity<Guid>, IAggregateRoot
         var charactersCount = characters.Count();
         if (charactersCount > MaxCharactersInGame || charactersCount < MinCharactersInGame)
         {
-            throw new ArgumentException($"Characters must be more than {MinCharactersInGame - 1} and less {MaxCharactersInGame + 1}");
+            throw new ArgumentException(
+                $"Characters must be more than {MinCharactersInGame - 1} and less {MaxCharactersInGame + 1}"
+            );
         }
         _characters = new List<Character>(characters);
 
@@ -88,7 +91,8 @@ public class GameSession : Entity<Guid>, IAggregateRoot
         }
 
         var characterForKick =
-            _characters.FirstOrDefault(x => x.Id == characterId) ?? throw new ArgumentException("Unknown character for kick");
+            _characters.FirstOrDefault(x => x.Id == characterId)
+            ?? throw new ArgumentException("Unknown character for kick");
 
         characterForKick.MarkKicked();
 
