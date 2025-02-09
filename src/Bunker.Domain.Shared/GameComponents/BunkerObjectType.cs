@@ -1,9 +1,9 @@
 ﻿namespace Bunker.Domain.Shared.GameComponents;
 
 [Flags]
-public enum BunkerObjectTypes
+public enum BunkerObjectType
 {
     BunkerRoom = 1,
-    BunkerEnviroment = 2,
+    BunkerEnvironment = 2,
     BunkerItem = 4,
 }

@@ -1,7 +1,7 @@
 ﻿namespace Bunker.Domain.Shared.GameComponents;
 
 [Flags]
-public enum GameObjectTypes
+public enum GameObjectType
 {
     Character = 1,
     Catastrophe = 2,

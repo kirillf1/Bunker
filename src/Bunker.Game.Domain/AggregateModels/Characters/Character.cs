@@ -1,5 +1,4 @@
-﻿using Bunker.Domain.Shared.Exceptions;
-using Bunker.Game.Domain.AggregateModels.Characters.Characteristics;
+﻿using Bunker.Game.Domain.AggregateModels.Characters.Characteristics;
 
 namespace Bunker.Game.Domain.AggregateModels.Characters;
 
@@ -9,6 +8,7 @@ public class Character : Entity<Guid>, IAggregateRoot
 
     private readonly List<Trait> _traits;
 
+    public Guid GameSessionId { get; private set; }
     public AdditionalInformation AdditionalInformation { get; private set; }
 
     public Age Age { get; private set; }
@@ -33,6 +33,7 @@ public class Character : Entity<Guid>, IAggregateRoot
 
     public Character(
         Guid id,
+        Guid gameSessionId,
         AdditionalInformation additionalInformation,
         Age age,
         Childbearing childbearing,
@@ -46,6 +47,7 @@ public class Character : Entity<Guid>, IAggregateRoot
     )
         : base(id)
     {
+        GameSessionId = gameSessionId;
         AdditionalInformation = additionalInformation;
         Age = age;
         Childbearing = childbearing;
@@ -164,8 +166,8 @@ public class Character : Entity<Guid>, IAggregateRoot
         _traits[index] = newTrait;
     }
 
-#pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Рассмотрите возможность добавления модификатора "required" или объявления значения, допускающего значение NULL.
+#pragma warning disable CS8618
     private Character(Guid id)
         : base(id) { }
-#pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Рассмотрите возможность добавления модификатора "required" или объявления значения, допускающего значение NULL.
+#pragma warning disable CS8618
 }

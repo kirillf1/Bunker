@@ -1,10 +1,13 @@
-﻿using Bunker.Domain.Shared.Exceptions;
-using Bunker.Game.Domain.AggregateModels.GameSessions.Events;
+﻿using Bunker.Game.Domain.AggregateModels.GameSessions.Events;
 
 namespace Bunker.Game.Domain.AggregateModels.GameSessions;
 
 public class GameSession : Entity<Guid>, IAggregateRoot
 {
+    public const byte MinSeatsCount = 3;
+
+    public const byte MaxSeatsCount = 4;
+
     public const byte MaxCharactersInGame = 12;
 
     public const byte MinCharactersInGame = 5;
@@ -17,7 +20,7 @@ public class GameSession : Entity<Guid>, IAggregateRoot
 
     public string Name { get; private set; }
 
-    public byte FreeSeatsCount { get; private set; }
+    public int FreeSeatsCount { get; private set; }
 
     public string? GameResultDescription { get; private set; }
 
@@ -43,7 +46,7 @@ public class GameSession : Entity<Guid>, IAggregateRoot
         }
         _characters = new List<Character>(characters);
 
-        FreeSeatsCount = CalculateFreeSeets(characters);
+        FreeSeatsCount = CalculateFreeSeats(characters);
 
         AddDomainEvent(new GameSessionCreatedDomainEvent(id));
     }
@@ -140,13 +143,13 @@ public class GameSession : Entity<Guid>, IAggregateRoot
         }
     }
 
-    private static byte CalculateFreeSeets(IEnumerable<Character> characters)
+    private static byte CalculateFreeSeats(IEnumerable<Character> characters)
     {
         if (characters.Count() > 9)
         {
-            return 4;
+            return MaxSeatsCount;
         }
 
-        return 3;
+        return MinSeatsCount;
     }
 }

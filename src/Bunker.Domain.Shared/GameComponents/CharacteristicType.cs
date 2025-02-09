@@ -1,7 +1,7 @@
 ﻿namespace Bunker.Domain.Shared.GameComponents;
 
 [Flags]
-public enum CharacteristicTypes
+public enum CharacteristicType
 {
     Phobia = 1,
     Hobby = 2,
