@@ -15,6 +15,11 @@ public class SpyBunkerEnvironment : CardAction
         return new SpyBunkerEnvironmentActionCommand(BunkerObjectType);
     }
 
+    public override CardActionRequirements GetCurrentCardActionRequirements()
+    {
+        return new CardActionRequirements(ActivateCardTargetType.None, 0);
+    }
+
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return BunkerObjectType;

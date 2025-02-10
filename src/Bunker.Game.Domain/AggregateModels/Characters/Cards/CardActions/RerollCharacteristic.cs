@@ -22,6 +22,11 @@ public class RerollCharacteristic : CardAction
         TargetCharactersCount = targetCharactersCount;
     }
 
+    public override CardActionRequirements GetCurrentCardActionRequirements()
+    {
+        return new CardActionRequirements(ActivateCardTargetType.None, 0);
+    }
+
     public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams)
     {
         if (!IsSelfTarget && activateCardParams.TargetCharacterIds.Count() != TargetCharactersCount)

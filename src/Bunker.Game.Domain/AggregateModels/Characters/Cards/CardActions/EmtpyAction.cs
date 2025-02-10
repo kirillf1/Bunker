@@ -14,6 +14,11 @@ public class EmptyAction : CardAction
         return new EmptyActionCommand();
     }
 
+    public override CardActionRequirements GetCurrentCardActionRequirements()
+    {
+        return new CardActionRequirements(ActivateCardTargetType.None, 0);
+    }
+
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return Array.Empty<object>();

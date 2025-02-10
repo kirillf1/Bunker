@@ -12,7 +12,16 @@ public class ExchangeCharacteristic : CardAction
 
     public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams)
     {
+        if (activateCardParams.TargetCharacterIds.Count() != 2)
+        {
+            throw new ArgumentException("For exchange characters must be 2");
+        }
         return new ExchangeCharacteristicActionCommand(CharacteristicType);
+    }
+
+    public override CardActionRequirements GetCurrentCardActionRequirements()
+    {
+        return new CardActionRequirements(ActivateCardTargetType.Character, 2);
     }
 
     protected override IEnumerable<object> GetEqualityComponents()

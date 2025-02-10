@@ -28,6 +28,11 @@ public class RemoveCharacteristic : CardAction
         return new SpyCharacteristicActionCommand(CharacteristicType, activateCardParams.TargetCharacterIds);
     }
 
+    public override CardActionRequirements GetCurrentCardActionRequirements()
+    {
+        return new CardActionRequirements(ActivateCardTargetType.Character, TargetCharactersCount);
+    }
+
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return CharacteristicType;

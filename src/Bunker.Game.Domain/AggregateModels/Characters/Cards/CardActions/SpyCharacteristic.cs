@@ -26,6 +26,11 @@ public class SpyCharacteristic : CardAction
         return new SpyCharacteristicActionCommand(CharacteristicType, activateCardParams.TargetCharacterIds);
     }
 
+    public override CardActionRequirements GetCurrentCardActionRequirements()
+    {
+        return new CardActionRequirements(ActivateCardTargetType.None, 0);
+    }
+
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return CharacteristicType;
