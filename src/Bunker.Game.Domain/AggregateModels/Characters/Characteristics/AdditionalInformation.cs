@@ -1,6 +1,6 @@
 ﻿namespace Bunker.Game.Domain.AggregateModels.Characters.Characteristics;
 
-public class AdditionalInformation : ValueObject
+public class AdditionalInformation : ValueObject, ICharacteristic
 {
     public string Description { get; }
 
@@ -12,6 +12,11 @@ public class AdditionalInformation : ValueObject
     public override string ToString()
     {
         return "Дополнительная информация: " + Description;
+    }
+
+    public string GetDescription()
+    {
+        return Description;
     }
 
     protected override IEnumerable<object> GetEqualityComponents()

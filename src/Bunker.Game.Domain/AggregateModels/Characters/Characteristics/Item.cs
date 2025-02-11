@@ -1,6 +1,6 @@
 ﻿namespace Bunker.Game.Domain.AggregateModels.Characters.Characteristics;
 
-public class Item : ValueObject
+public class Item : ValueObject, ICharacteristic
 {
     public string Description { get; }
 
@@ -14,6 +14,11 @@ public class Item : ValueObject
 #pragma warning restore CS8618
 
     public override string ToString()
+    {
+        return Description;
+    }
+
+    public string GetDescription()
     {
         return Description;
     }

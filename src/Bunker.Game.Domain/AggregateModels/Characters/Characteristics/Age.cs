@@ -1,6 +1,6 @@
 ﻿namespace Bunker.Game.Domain.AggregateModels.Characters.Characteristics;
 
-public class Age : ValueObject
+public class Age : ValueObject, ICharacteristic
 {
     public int Years { get; }
 
@@ -15,6 +15,11 @@ public class Age : ValueObject
     public Age()
     {
         Years = 18;
+    }
+
+    public string GetDescription()
+    {
+        return Years.ToString();
     }
 
     protected override IEnumerable<object> GetEqualityComponents()

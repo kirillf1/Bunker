@@ -1,34 +1,34 @@
 ﻿namespace Bunker.Game.Domain.AggregateModels.Characters.Characteristics;
 
-public class Size : ValueObject
+public class Size : ValueObject, ICharacteristic
 {
-    private double height;
+    private double _height;
 
-    private double weight;
+    private double _weight;
 
     public double Height
     {
-        get => height;
+        get => _height;
         private set
         {
-            height = value;
-            if (height > 210)
-                height = 210;
-            else if (height < 130)
-                height = 130;
+            _height = value;
+            if (_height > 210)
+                _height = 210;
+            else if (_height < 130)
+                _height = 130;
         }
     }
 
     public double Weight
     {
-        get => weight;
+        get => _weight;
         private set
         {
-            weight = value;
-            if (weight > 230)
-                weight = 230;
-            else if (weight < 35)
-                weight = 35;
+            _weight = value;
+            if (_weight > 230)
+                _weight = 230;
+            else if (_weight < 35)
+                _weight = 35;
         }
     }
 
@@ -52,6 +52,11 @@ public class Size : ValueObject
             >= 40 => "Ожирение III степени",
             _ => "Недостаток массы тела",
         };
+    }
+
+    public string GetDescription()
+    {
+        return $"Телосложение: вес: {Weight} кг., рост: {Height} см. - {GetAverageIndexBodyDescription()}";
     }
 
     public override string ToString()

@@ -1,6 +1,6 @@
 ﻿namespace Bunker.Game.Domain.AggregateModels.Characters.Characteristics;
 
-public class Childbearing : ValueObject
+public class Childbearing : ValueObject, ICharacteristic
 {
     public bool CanGiveBirth { get; }
 
@@ -10,6 +10,11 @@ public class Childbearing : ValueObject
     }
 
     private Childbearing() { }
+
+    public string GetDescription()
+    {
+        return CanGiveBirth ? "no childfree" : "childfree";
+    }
 
     public override string ToString()
     {

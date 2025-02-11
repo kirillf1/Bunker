@@ -1,6 +1,6 @@
 ﻿namespace Bunker.Game.Domain.AggregateModels.Characters.Characteristics;
 
-public class Hobby : ValueObject
+public class Hobby : ValueObject, ICharacteristic
 {
     public string Description { get; }
     public byte Experience { get; }
@@ -17,6 +17,11 @@ public class Hobby : ValueObject
 #pragma warning disable CS8618
     private Hobby() { }
 #pragma warning restore CS8618
+
+    public string GetDescription()
+    {
+        return Description;
+    }
 
     protected override IEnumerable<object> GetEqualityComponents()
     {

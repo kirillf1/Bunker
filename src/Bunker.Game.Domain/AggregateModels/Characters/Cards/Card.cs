@@ -2,7 +2,7 @@
 
 namespace Bunker.Game.Domain.AggregateModels.Characters.Cards;
 
-public class Card : Entity<Guid>
+public class Card : Entity<Guid>, ICharacteristic
 {
     public bool IsActivated { get; private set; }
 
@@ -30,5 +30,10 @@ public class Card : Entity<Guid>
         IsActivated = true;
 
         return cardActionCommand;
+    }
+
+    public string GetDescription()
+    {
+        return Description;
     }
 }

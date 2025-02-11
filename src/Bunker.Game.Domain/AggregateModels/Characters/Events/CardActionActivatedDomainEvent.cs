@@ -2,14 +2,14 @@
 
 namespace Bunker.Game.Domain.AggregateModels.Characters.Events;
 
-public class CardActionActivatedEvent : IDomainEvent
+public class CardActionActivatedDomainEvent : IDomainEvent
 {
     public Guid GameSessionId { get; }
     public Guid CharacterIdWhoActivatedCard { get; }
     public string CardDescription { get; }
     public CardActionCommand CardActionCommand { get; }
 
-    protected CardActionActivatedEvent(
+    public CardActionActivatedDomainEvent(
         Guid gameSessionId,
         Guid characterIdWhoActivatedCard,
         string cardDescription,

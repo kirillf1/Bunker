@@ -1,4 +1,6 @@
-﻿using Bunker.Game.Domain.AggregateModels.Characters.Characteristics;
+﻿using Bunker.Game.Domain.AggregateModels.Characters.Cards;
+using Bunker.Game.Domain.AggregateModels.Characters.Characteristics;
+using Bunker.Game.Domain.AggregateModels.Characters.Events;
 
 namespace Bunker.Game.Domain.AggregateModels.Characters;
 
@@ -7,6 +9,8 @@ public class Character : Entity<Guid>, IAggregateRoot
     private readonly List<Item> _items;
 
     private readonly List<Trait> _traits;
+
+    private readonly List<Card> _cards;
 
     public Guid GameSessionId { get; private set; }
     public AdditionalInformation AdditionalInformation { get; private set; }
@@ -31,6 +35,8 @@ public class Character : Entity<Guid>, IAggregateRoot
 
     public IReadOnlyCollection<Item> Items => _items;
 
+    public IReadOnlyCollection<Card> Cards => _cards;
+
     public Character(
         Guid id,
         Guid gameSessionId,
@@ -43,7 +49,8 @@ public class Character : Entity<Guid>, IAggregateRoot
         Profession profession,
         Sex sex,
         IEnumerable<Item> items,
-        IEnumerable<Trait> traits
+        IEnumerable<Trait> traits,
+        IEnumerable<Card> cards
     )
         : base(id)
     {
@@ -60,13 +67,15 @@ public class Character : Entity<Guid>, IAggregateRoot
 
         if (!items.Any())
             throw new ArgumentException("Character must have one or more items");
-
         _items = new List<Item>(items);
 
         if (!traits.Any())
             throw new ArgumentException("Character must have one or more traits");
-
         _traits = new List<Trait>(traits);
+
+        if (cards.Count() != 2)
+            throw new ArgumentException("Character must have two cards");
+        _cards = new List<Card>(cards);
     }
 
     public void MarkKicked()
@@ -77,41 +86,57 @@ public class Character : Entity<Guid>, IAggregateRoot
     public void UpdateAdditionalInformation(AdditionalInformation additionalInformation)
     {
         AdditionalInformation = additionalInformation ?? throw new ArgumentNullException(nameof(additionalInformation));
+
+        AddDomainEvent(new CharacteristicUpdatedDomainEvent(Id, AdditionalInformation));
     }
 
     public void UpdateAge(Age age)
     {
         Age = age ?? throw new ArgumentNullException(nameof(age));
+
+        AddDomainEvent(new CharacteristicUpdatedDomainEvent(Id, Age));
     }
 
     public void UpdateChildbearing(Childbearing childbearing)
     {
         Childbearing = childbearing ?? throw new ArgumentNullException(nameof(childbearing));
+
+        AddDomainEvent(new CharacteristicUpdatedDomainEvent(Id, Childbearing));
     }
 
     public void UpdateHealth(Health health)
     {
         Health = health ?? throw new ArgumentNullException(nameof(health));
+
+        AddDomainEvent(new CharacteristicUpdatedDomainEvent(Id, Health));
     }
 
     public void UpdateHobby(Hobby hobby)
     {
         Hobby = hobby ?? throw new ArgumentNullException(nameof(hobby));
+
+        AddDomainEvent(new CharacteristicUpdatedDomainEvent(Id, Hobby));
     }
 
     public void UpdatePhobia(Phobia phobia)
     {
         Phobia = phobia ?? throw new ArgumentNullException(nameof(phobia));
+
+        AddDomainEvent(new CharacteristicUpdatedDomainEvent(Id, Phobia));
     }
 
     public void UpdateProfession(Profession profession)
     {
         Profession = profession ?? throw new ArgumentNullException(nameof(profession));
+
+        AddDomainEvent(new CharacteristicUpdatedDomainEvent(Id, Profession));
     }
 
     public void UpdateSex(Sex sex)
     {
         Sex = sex ?? throw new ArgumentNullException(nameof(sex));
+
+        AddDomainEvent(new CharacteristicUpdatedDomainEvent(Id, Sex));
     }
 
     public void AddItem(Item item)
@@ -119,6 +144,8 @@ public class Character : Entity<Guid>, IAggregateRoot
         ArgumentNullException.ThrowIfNull(item);
 
         _items.Add(item);
+
+        AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _items));
     }
 
     public void RemoveItem(Item item)
@@ -126,6 +153,8 @@ public class Character : Entity<Guid>, IAggregateRoot
         ArgumentNullException.ThrowIfNull(item);
 
         _items.Remove(item);
+
+        AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _items));
     }
 
     public void ReplaceItem(Item oldItem, Item newItem)
@@ -138,6 +167,47 @@ public class Character : Entity<Guid>, IAggregateRoot
             throw new InvalidGameOperationException("Item to replace not found");
 
         _items[index] = newItem;
+
+        AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _items));
+    }
+
+    public void AddCard(Card card)
+    {
+        ArgumentNullException.ThrowIfNull(card);
+
+        _cards.Add(card);
+
+        AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _cards));
+    }
+
+    public void RemoveCard(Card card)
+    {
+        ArgumentNullException.ThrowIfNull(card);
+
+        _cards.Remove(card);
+
+        AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _cards));
+    }
+
+    public CardActionRequirements GetRequirements(Guid cardId)
+    {
+        var card = _cards.FirstOrDefault(x => x.Id == cardId) ?? throw new ArgumentException("Unknown card");
+
+        return card.CardAction.CardActionRequirements;
+    }
+
+    public void UseCard(Guid cardId, ActivateCardParams activateCardParams)
+    {
+        if (IsKicked)
+        {
+            throw new InvalidGameOperationException("Character was kicked");
+        }
+
+        var card = _cards.FirstOrDefault(x => x.Id == cardId) ?? throw new ArgumentException("Unknown card");
+
+        var command = card.ActivateCard(activateCardParams);
+
+        AddDomainEvent(new CardActionActivatedDomainEvent(GameSessionId, Id, card.Description, command));
     }
 
     public void AddTrait(Trait trait)
@@ -145,6 +215,8 @@ public class Character : Entity<Guid>, IAggregateRoot
         ArgumentNullException.ThrowIfNull(trait);
 
         _traits.Add(trait);
+
+        AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _traits));
     }
 
     public void RemoveTrait(Trait trait)
@@ -152,6 +224,8 @@ public class Character : Entity<Guid>, IAggregateRoot
         ArgumentNullException.ThrowIfNull(trait);
 
         _traits.Remove(trait);
+
+        AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _traits));
     }
 
     public void ReplaceTrait(Trait oldTrait, Trait newTrait)
@@ -164,6 +238,8 @@ public class Character : Entity<Guid>, IAggregateRoot
             throw new InvalidGameOperationException("Trait to replace not found");
 
         _traits[index] = newTrait;
+
+        AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _traits));
     }
 
 #pragma warning disable CS8618

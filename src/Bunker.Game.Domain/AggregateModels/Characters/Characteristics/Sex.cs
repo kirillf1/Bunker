@@ -1,6 +1,6 @@
 ﻿namespace Bunker.Game.Domain.AggregateModels.Characters.Characteristics;
 
-public class Sex : ValueObject
+public class Sex : ValueObject, ICharacteristic
 {
     public string Description { get; }
 
@@ -12,6 +12,11 @@ public class Sex : ValueObject
     public override string ToString()
     {
         return $"Пол: {Description}";
+    }
+
+    public string GetDescription()
+    {
+        return Description;
     }
 
     protected override IEnumerable<object> GetEqualityComponents()
