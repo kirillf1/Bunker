@@ -6,13 +6,14 @@ namespace Bunker.Game.Domain.AggregateModels.Characters;
 
 public class Character : Entity<Guid>, IAggregateRoot
 {
-    private readonly List<Item> _items;
+    private List<Item> _items;
 
-    private readonly List<Trait> _traits;
+    private List<Trait> _traits;
 
-    private readonly List<Card> _cards;
+    private List<Card> _cards;
 
     public Guid GameSessionId { get; private set; }
+
     public AdditionalInformation AdditionalInformation { get; private set; }
 
     public Age Age { get; private set; }
@@ -76,6 +77,51 @@ public class Character : Entity<Guid>, IAggregateRoot
         if (cards.Count() != 2)
             throw new ArgumentException("Character must have two cards");
         _cards = new List<Card>(cards);
+    }
+
+    public void RecreateCharacter(
+        AdditionalInformation additionalInformation,
+        Age age,
+        Childbearing childbearing,
+        Health health,
+        Hobby hobby,
+        Phobia phobia,
+        Profession profession,
+        Sex sex,
+        IEnumerable<Item> items,
+        IEnumerable<Trait> traits,
+        IEnumerable<Card> cards
+    )
+    {
+        AdditionalInformation = additionalInformation;
+        Age = age;
+        Childbearing = childbearing;
+        Health = health;
+        Hobby = hobby;
+        Phobia = phobia;
+        Profession = profession;
+        Sex = sex;
+        _items = new List<Item>(items);
+        _cards = new List<Card>(cards);
+        _traits = new List<Trait>(traits);
+
+        AddDomainEvent(
+            new CharacterRecreatedDomainEvent(
+                Id,
+                GameSessionId,
+                additionalInformation,
+                age,
+                childbearing,
+                health,
+                hobby,
+                phobia,
+                profession,
+                sex,
+                items,
+                traits,
+                cards
+            )
+        );
     }
 
     public void MarkKicked()
@@ -243,7 +289,9 @@ public class Character : Entity<Guid>, IAggregateRoot
     }
 
 #pragma warning disable CS8618
+#pragma warning disable T0008 // Internal Styling Rule T0008
     private Character(Guid id)
+#pragma warning restore T0008 // Internal Styling Rule T0008
         : base(id) { }
 #pragma warning disable CS8618
 }

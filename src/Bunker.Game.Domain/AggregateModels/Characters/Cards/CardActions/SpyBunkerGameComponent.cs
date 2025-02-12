@@ -1,10 +1,10 @@
 ﻿namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
-public class SpyBunkerEnvironment : CardAction
+public class SpyBunkerGameComponent : CardAction
 {
     public BunkerObjectType BunkerObjectType { get; }
 
-    public SpyBunkerEnvironment(CardActionRequirements cardActionRequirements, BunkerObjectType bunkerObjectType)
+    public SpyBunkerGameComponent(CardActionRequirements cardActionRequirements, BunkerObjectType bunkerObjectType)
         : base(cardActionRequirements)
     {
         BunkerObjectType = bunkerObjectType;
