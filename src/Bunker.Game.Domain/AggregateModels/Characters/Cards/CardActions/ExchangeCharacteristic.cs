@@ -1,4 +1,6 @@
-﻿namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
+﻿using Bunker.Domain.Shared.CardActionCommands;
+
+namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
 public class ExchangeCharacteristic : CardAction
 {
@@ -28,15 +30,5 @@ public class ExchangeCharacteristic : CardAction
     {
         yield return CardActionRequirements;
         yield return CharacteristicType;
-    }
-
-    public class ExchangeCharacteristicActionCommand : CardActionCommand
-    {
-        public CharacteristicType CharacteristicType { get; }
-
-        public ExchangeCharacteristicActionCommand(CharacteristicType characteristicType)
-        {
-            CharacteristicType = characteristicType;
-        }
     }
 }

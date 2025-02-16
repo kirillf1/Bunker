@@ -2,18 +2,19 @@
 
 namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
-/// <summary>
-// For cards that cannot be implemented through code.
-// That is, what the players must do, for example, not say anything next circle
-/// </summary>
-public partial class EmptyAction : CardAction
+public class RevealBunkerGameComponent : CardAction
 {
-    public EmptyAction(CardActionRequirements cardActionRequirements)
-        : base(cardActionRequirements) { }
+    public BunkerObjectType BunkerObjectType { get; }
+
+    public RevealBunkerGameComponent(CardActionRequirements cardActionRequirements, BunkerObjectType bunkerObjectType)
+        : base(cardActionRequirements)
+    {
+        BunkerObjectType = bunkerObjectType;
+    }
 
     public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams)
     {
-        return new EmptyActionCommand();
+        return new RevealBunkerEnvironmentActionCommand(BunkerObjectType);
     }
 
     public override CardActionRequirements GetCurrentCardActionRequirements()
@@ -23,6 +24,6 @@ public partial class EmptyAction : CardAction
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
-        yield return Array.Empty<object>();
+        yield return BunkerObjectType;
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
+﻿using Bunker.Domain.Shared.CardActionCommands;
 
-public class AddCharacteristic : CardAction
+namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
+
+public partial class AddCharacteristic : CardAction
 {
     public CharacteristicType CharacteristicType { get; }
     public Guid? CharacteristicId { get; }
@@ -42,23 +44,5 @@ public class AddCharacteristic : CardAction
     {
         yield return CharacteristicType;
         yield return CharacteristicId ?? Guid.Empty;
-    }
-
-    public class AddCharacteristicActionCommand : CardActionCommand
-    {
-        public CharacteristicType CharacteristicType { get; }
-        public IEnumerable<Guid> TargetCharactersIds { get; }
-        public Guid? CharacteristicId { get; }
-
-        public AddCharacteristicActionCommand(
-            CharacteristicType characteristicType,
-            IEnumerable<Guid> targetCharactersIds,
-            Guid? characteristicId
-        )
-        {
-            CharacteristicType = characteristicType;
-            TargetCharactersIds = targetCharactersIds;
-            CharacteristicId = characteristicId;
-        }
     }
 }

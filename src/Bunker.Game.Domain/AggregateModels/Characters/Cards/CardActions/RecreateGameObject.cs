@@ -1,4 +1,6 @@
-﻿namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
+﻿using Bunker.Domain.Shared.CardActionCommands;
+
+namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
 /// <summary>
 /// If you need more fine-tuning (for example, 2 players at once) of the map, you can split the class.
@@ -42,18 +44,5 @@ public class RecreateGameObject : CardAction
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return GameObjectType;
-    }
-
-    public class RecreateGameObjectActionCommand : CardActionCommand
-    {
-        public GameObjectType GameObjectType { get; }
-
-        public Guid? TargetId { get; }
-
-        public RecreateGameObjectActionCommand(GameObjectType gameObjectType, Guid? targetId = null)
-        {
-            GameObjectType = gameObjectType;
-            TargetId = targetId;
-        }
     }
 }

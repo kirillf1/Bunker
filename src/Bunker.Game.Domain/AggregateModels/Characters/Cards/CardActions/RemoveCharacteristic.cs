@@ -1,4 +1,5 @@
-﻿using static Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions.SpyCharacteristic;
+﻿using Bunker.Domain.Shared.CardActionCommands;
+using static Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions.SpyCharacteristic;
 
 namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
@@ -25,7 +26,7 @@ public class RemoveCharacteristic : CardAction
             throw new ArgumentException("Invalid character count");
         }
 
-        return new SpyCharacteristicActionCommand(CharacteristicType, activateCardParams.TargetCharacterIds);
+        return new RemoveCharacteristicActionCommand(CharacteristicType, activateCardParams.TargetCharacterIds);
     }
 
     public override CardActionRequirements GetCurrentCardActionRequirements()
@@ -37,17 +38,5 @@ public class RemoveCharacteristic : CardAction
     {
         yield return CharacteristicType;
         yield return TargetCharactersCount;
-    }
-
-    public class RemoveCharacteristicCommand : CardActionCommand
-    {
-        public CharacteristicType CharacteristicType { get; }
-        public IEnumerable<Guid> TargetCharactersIds { get; }
-
-        public RemoveCharacteristicCommand(CharacteristicType characteristicType, IEnumerable<Guid> targetCharactersIds)
-        {
-            CharacteristicType = characteristicType;
-            TargetCharactersIds = targetCharactersIds;
-        }
     }
 }

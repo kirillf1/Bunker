@@ -1,4 +1,5 @@
 ﻿using Bunker.Game.Domain.AggregateModels.Characters.Cards;
+using Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 using Bunker.Game.Domain.AggregateModels.Characters.Characteristics;
 using Bunker.Game.Domain.AggregateModels.Characters.Events;
 
@@ -242,7 +243,7 @@ public class Character : Entity<Guid>, IAggregateRoot
         return card.CardAction.CardActionRequirements;
     }
 
-    public void UseCard(Guid cardId, ActivateCardParams activateCardParams)
+    public CardActionCommand UseCard(Guid cardId, ActivateCardParams activateCardParams)
     {
         if (IsKicked)
         {
@@ -253,7 +254,9 @@ public class Character : Entity<Guid>, IAggregateRoot
 
         var command = card.ActivateCard(activateCardParams);
 
-        AddDomainEvent(new CardActionActivatedDomainEvent(GameSessionId, Id, card.Description, command));
+        AddDomainEvent(new CardActivatedDomainEvent(GameSessionId, Id, card.Description));
+
+        return command;
     }
 
     public void AddTrait(Trait trait)

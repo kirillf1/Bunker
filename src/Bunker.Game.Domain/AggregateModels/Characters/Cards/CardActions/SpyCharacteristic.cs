@@ -1,4 +1,6 @@
-﻿namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
+﻿using Bunker.Domain.Shared.CardActionCommands;
+
+namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
 public class SpyCharacteristic : CardAction
 {
@@ -35,20 +37,5 @@ public class SpyCharacteristic : CardAction
     {
         yield return CharacteristicType;
         yield return TargetCharactersCount;
-    }
-
-    public class SpyCharacteristicActionCommand : CardActionCommand
-    {
-        public CharacteristicType CharacteristicType { get; }
-        public IEnumerable<Guid> TargetCharactersIds { get; }
-
-        public SpyCharacteristicActionCommand(
-            CharacteristicType characteristicType,
-            IEnumerable<Guid> targetCharactersIds
-        )
-        {
-            CharacteristicType = characteristicType;
-            TargetCharactersIds = targetCharactersIds;
-        }
     }
 }
