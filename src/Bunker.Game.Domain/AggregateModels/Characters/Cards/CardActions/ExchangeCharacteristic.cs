@@ -18,7 +18,7 @@ public class ExchangeCharacteristic : CardAction
         {
             throw new ArgumentException("For exchange characters must be 2");
         }
-        return new ExchangeCharacteristicActionCommand(CharacteristicType);
+        return new ExchangeCharacteristicActionCommand(CharacteristicType, activateCardParams.TargetCharacterIds);
     }
 
     public override CardActionRequirements GetCurrentCardActionRequirements()

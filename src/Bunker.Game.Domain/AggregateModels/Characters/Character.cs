@@ -204,6 +204,21 @@ public class Character : Entity<Guid>, IAggregateRoot
         AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _items));
     }
 
+    public void ReplaceItems(IEnumerable<Item> items)
+    {
+        ArgumentNullException.ThrowIfNull(items);
+
+        if (!items.Any())
+        {
+            throw new ArgumentException("Items must be more then 0");
+        }
+
+        _items.Clear();
+        _items.AddRange(items);
+
+        AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _items));
+    }
+
     public void ReplaceItem(Item oldItem, Item newItem)
     {
         ArgumentNullException.ThrowIfNull(oldItem);
@@ -232,6 +247,30 @@ public class Character : Entity<Guid>, IAggregateRoot
         ArgumentNullException.ThrowIfNull(card);
 
         _cards.Remove(card);
+
+        AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _cards));
+    }
+
+    public void ReplaceCards(IEnumerable<Card> cards)
+    {
+        ArgumentNullException.ThrowIfNull(cards);
+
+        _cards.Clear();
+        _cards.AddRange(cards);
+
+        AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _cards));
+    }
+
+    public void ReplaceCard(Card oldCard, Card newCard)
+    {
+        ArgumentNullException.ThrowIfNull(oldCard);
+        ArgumentNullException.ThrowIfNull(newCard);
+
+        var index = _cards.IndexOf(oldCard);
+        if (index == -1)
+            throw new InvalidGameOperationException("Trait to replace not found");
+
+        _cards[index] = newCard;
 
         AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _cards));
     }
@@ -273,6 +312,22 @@ public class Character : Entity<Guid>, IAggregateRoot
         ArgumentNullException.ThrowIfNull(trait);
 
         _traits.Remove(trait);
+
+        AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _traits));
+    }
+
+    public void ReplaceTraits(IEnumerable<Trait> traits)
+    {
+        ArgumentNullException.ThrowIfNull(traits);
+
+        if (!traits.Any())
+        {
+            throw new ArgumentException("Traits must be more then 0");
+        }
+
+        _traits.Clear();
+
+        _traits.AddRange(traits);
 
         AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _traits));
     }

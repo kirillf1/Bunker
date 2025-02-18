@@ -5,12 +5,12 @@ using Bunker.Game.Domain.AggregateModels.Characters.Extensions;
 
 namespace Bunker.Game.Domain.AggregateModels.Characters.CharacterCardCommandHandlers;
 
-public class RerollCharacteristicActionCommandHandler : ICardActionCommandHandler<RerollCharacteristicActionCommand>
+public class AddCharacteristicActionCommandHandler : ICardActionCommandHandler<AddCharacteristicActionCommand>
 {
     private readonly ICharacteristicGenerator _characteristicGenerator;
     private readonly ICharacterRepository _characterRepository;
 
-    public RerollCharacteristicActionCommandHandler(
+    public AddCharacteristicActionCommandHandler(
         ICharacteristicGenerator characteristicGenerator,
         ICharacterRepository characterRepository
     )
@@ -19,15 +19,8 @@ public class RerollCharacteristicActionCommandHandler : ICardActionCommandHandle
         _characterRepository = characterRepository;
     }
 
-    public async Task Handle(RerollCharacteristicActionCommand command)
+    public async Task Handle(AddCharacteristicActionCommand command)
     {
-        if (command.IsSelfTarget && command.TargetCharactersIds.Count() != 1)
-        {
-            throw new ArgumentException(
-                $"Invalid characters count for use card. Expected: 1, Added: {command.TargetCharactersIds.Count()}"
-            );
-        }
-
         var charactersForReroll = new List<Character>();
 
         foreach (var characterId in command.TargetCharactersIds)
@@ -47,7 +40,7 @@ public class RerollCharacteristicActionCommandHandler : ICardActionCommandHandle
 
         if (command.CharacteristicId is not null)
         {
-            await RerollCharacteristicByRequiredCharacteristic(
+            await AddCharacteristicByRequiredCharacteristic(
                 command.CharacteristicType,
                 command.CharacteristicId.Value,
                 charactersForReroll
@@ -55,11 +48,11 @@ public class RerollCharacteristicActionCommandHandler : ICardActionCommandHandle
         }
         else
         {
-            await RerollCharacteristicOnRandomCharacteristic(command.CharacteristicType, charactersForReroll);
+            await AddCharacteristicOnRandomCharacteristic(command.CharacteristicType, charactersForReroll);
         }
     }
 
-    private async Task RerollCharacteristicOnRandomCharacteristic(
+    private async Task AddCharacteristicOnRandomCharacteristic(
         CharacteristicType characteristicType,
         IEnumerable<Character> characters
     )
@@ -70,11 +63,11 @@ public class RerollCharacteristicActionCommandHandler : ICardActionCommandHandle
         {
             var characteristic = await _characteristicGenerator.GenerateCharacteristic(type);
 
-            ChangeCharacteristic(character, characteristic);
+            AddCharacteristic(character, characteristic);
         }
     }
 
-    private async Task RerollCharacteristicByRequiredCharacteristic(
+    private async Task AddCharacteristicByRequiredCharacteristic(
         CharacteristicType characteristicType,
         Guid requiredCharacteristicId,
         IEnumerable<Character> characters
@@ -88,40 +81,25 @@ public class RerollCharacteristicActionCommandHandler : ICardActionCommandHandle
 
         foreach (var character in characters)
         {
-            ChangeCharacteristic(character, characteristic);
+            AddCharacteristic(character, characteristic);
         }
     }
 
-    private static void ChangeCharacteristic(Character character, ICharacteristic characteristic)
+    private static void AddCharacteristic(Character character, ICharacteristic characteristic)
     {
         switch (characteristic)
         {
-            case Type t when t == typeof(AdditionalInformation):
-                character.UpdateAdditionalInformation((AdditionalInformation)characteristic);
-                break;
-            case Type t when t == typeof(Health):
-                character.UpdateHealth((Health)characteristic);
-                break;
-            case Type t when t == typeof(Hobby):
-                character.UpdateHobby((Hobby)characteristic);
-                break;
-            case Type t when t == typeof(Phobia):
-                character.UpdatePhobia((Phobia)characteristic);
-                break;
-            case Type t when t == typeof(Profession):
-                character.UpdateProfession((Profession)characteristic);
-                break;
             case Type t when t == typeof(Item):
-                character.ReplaceItem(character.Items.First(), (Item)characteristic);
+                character.AddItem((Item)characteristic);
                 break;
             case Type t when t == typeof(Trait):
-                character.ReplaceTrait(character.Traits.First(), (Trait)characteristic);
+                character.AddTrait((Trait)characteristic);
                 break;
             case Type t when t == typeof(Card):
-                character.ReplaceCard(character.Cards.First(), (Card)characteristic);
+                character.AddCard((Card)characteristic);
                 break;
             default:
-                throw new ArgumentException($"Unknown characteristic type: {characteristic.GetType().Name}");
+                throw new ArgumentException($"Can't add not Enumerable characteristic");
         }
     }
 }
