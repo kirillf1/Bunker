@@ -2,19 +2,13 @@
 
 namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
-public class SpyCharacteristic : CardAction
+public class RecreateCharacterAction : CardAction
 {
-    public CharacteristicType CharacteristicType { get; }
     public int TargetCharactersCount { get; }
 
-    public SpyCharacteristic(
-        CardActionRequirements cardActionRequirements,
-        CharacteristicType characteristicType,
-        int targetCharactersCount
-    )
+    public RecreateCharacterAction(CardActionRequirements cardActionRequirements, int targetCharactersCount)
         : base(cardActionRequirements)
     {
-        CharacteristicType = characteristicType;
         TargetCharactersCount = targetCharactersCount;
     }
 
@@ -25,17 +19,17 @@ public class SpyCharacteristic : CardAction
             throw new ArgumentException("Invalid character count");
         }
 
-        return new SpyCharacteristicActionCommand(CharacteristicType, activateCardParams.TargetCharacterIds);
+        return new RecreateCharacterActionCommand(activateCardParams.TargetCharacterIds);
     }
 
     public override CardActionRequirements GetCurrentCardActionRequirements()
     {
-        return new CardActionRequirements(ActivateCardTargetType.None, 0);
+        return new CardActionRequirements(ActivateCardTargetType.Character, TargetCharactersCount);
     }
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
-        yield return CharacteristicType;
+        yield return CardActionRequirements;
         yield return TargetCharactersCount;
     }
 }

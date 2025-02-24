@@ -2,11 +2,11 @@
 
 namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
-public class ExchangeCharacteristic : CardAction
+public class ExchangeCharacteristicAction : CardAction
 {
     public CharacteristicType CharacteristicType { get; }
 
-    public ExchangeCharacteristic(CardActionRequirements cardActionRequirements, CharacteristicType characteristicType)
+    public ExchangeCharacteristicAction(CardActionRequirements cardActionRequirements, CharacteristicType characteristicType)
         : base(cardActionRequirements)
     {
         CharacteristicType = characteristicType;

@@ -1,14 +1,13 @@
 ﻿using Bunker.Domain.Shared.CardActionCommands;
-using static Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions.SpyCharacteristic;
 
 namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
-public class RemoveCharacteristic : CardAction
+public class RemoveCharacteristicCardAction : CardAction
 {
     public CharacteristicType CharacteristicType { get; }
     public int TargetCharactersCount { get; }
 
-    public RemoveCharacteristic(
+    public RemoveCharacteristicCardAction(
         CardActionRequirements cardActionRequirements,
         CharacteristicType characteristicType,
         int targetCharactersCount
@@ -36,6 +35,7 @@ public class RemoveCharacteristic : CardAction
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
+        yield return CardActionRequirements;
         yield return CharacteristicType;
         yield return TargetCharactersCount;
     }

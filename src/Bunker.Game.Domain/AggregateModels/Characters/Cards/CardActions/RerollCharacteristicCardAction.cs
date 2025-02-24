@@ -2,14 +2,14 @@
 
 namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
-public class RerollCharacteristic : CardAction
+public class RerollCharacteristicCardAction : CardAction
 {
     public CharacteristicType CharacteristicType { get; }
     public bool IsSelfTarget { get; }
     public Guid? CharacteristicId { get; }
     public int TargetCharactersCount { get; }
 
-    public RerollCharacteristic(
+    public RerollCharacteristicCardAction(
         CardActionRequirements cardActionRequirements,
         CharacteristicType characteristicType,
         bool isSelfTarget,
@@ -46,6 +46,7 @@ public class RerollCharacteristic : CardAction
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
+        yield return CardActionRequirements;
         yield return CharacteristicType;
         yield return CharacteristicId ?? Guid.Empty;
     }

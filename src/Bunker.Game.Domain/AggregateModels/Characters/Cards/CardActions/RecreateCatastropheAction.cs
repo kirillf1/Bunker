@@ -2,19 +2,14 @@
 
 namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
-public class RevealBunkerGameComponent : CardAction
+public class RecreateCatastropheAction : CardAction
 {
-    public BunkerObjectType BunkerObjectType { get; }
-
-    public RevealBunkerGameComponent(CardActionRequirements cardActionRequirements, BunkerObjectType bunkerObjectType)
-        : base(cardActionRequirements)
-    {
-        BunkerObjectType = bunkerObjectType;
-    }
+    public RecreateCatastropheAction(CardActionRequirements cardActionRequirements)
+        : base(cardActionRequirements) { }
 
     public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams)
     {
-        return new RevealBunkerEnvironmentActionCommand(BunkerObjectType);
+        return new RecreateCatastropheActionCommand();
     }
 
     public override CardActionRequirements GetCurrentCardActionRequirements()
@@ -24,6 +19,6 @@ public class RevealBunkerGameComponent : CardAction
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
-        yield return BunkerObjectType;
+        yield return CardActionRequirements;
     }
 }
