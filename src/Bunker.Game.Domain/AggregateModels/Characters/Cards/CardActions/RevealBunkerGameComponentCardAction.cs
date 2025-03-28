@@ -15,9 +15,9 @@ public class RevealBunkerGameComponentCardAction : CardAction
         BunkerObjectType = bunkerObjectType;
     }
 
-    public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams)
+    public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams, Guid gameSessionId)
     {
-        return new RevealBunkerEnvironmentActionCommand(BunkerObjectType);
+        return new RevealBunkerComponentActionCommand(BunkerObjectType, gameSessionId);
     }
 
     public override CardActionRequirements GetCurrentCardActionRequirements()

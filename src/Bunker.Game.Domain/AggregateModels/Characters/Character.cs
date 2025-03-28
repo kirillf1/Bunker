@@ -291,7 +291,7 @@ public class Character : Entity<Guid>, IAggregateRoot
 
         var card = _cards.FirstOrDefault(x => x.Id == cardId) ?? throw new ArgumentException("Unknown card");
 
-        var command = card.ActivateCard(activateCardParams);
+        var command = card.ActivateCard(activateCardParams, GameSessionId);
 
         AddDomainEvent(new CardActivatedDomainEvent(GameSessionId, Id, card.Description));
 
@@ -346,10 +346,31 @@ public class Character : Entity<Guid>, IAggregateRoot
         AddDomainEvent(new CharacteristicsUpdatedDomainEvent(Id, _traits));
     }
 
+    // Можно улучшить! Путем реализации отметок в характеристика что было раскрыто уже
+    public IEnumerable<ICharacteristic> RevealCharacteristics(CharacteristicType characteristicType)
+    {
+        IEnumerable<ICharacteristic> characteristicsToReveal = characteristicType switch
+        {
+            CharacteristicType.Phobia => [Phobia],
+            CharacteristicType.Hobby => [Hobby],
+            CharacteristicType.AdditionalInformation => [AdditionalInformation],
+            CharacteristicType.Health => [Health],
+            CharacteristicType.CharacterItem => Items,
+            CharacteristicType.Profession => [Profession],
+            CharacteristicType.Trait => Traits,
+            CharacteristicType.Card => Cards,
+            _ => throw new NotImplementedException("Unknown characteristic"),
+        };
+
+        AddDomainEvent(new CharacteristicRevealedDomainEvent(Id, GameSessionId, characteristicsToReveal));
+
+        return characteristicsToReveal;
+    }
+
 #pragma warning disable CS8618
-#pragma warning disable T0008 // Internal Styling Rule T0008
+#pragma warning disable T0008
     private Character(Guid id)
-#pragma warning restore T0008 // Internal Styling Rule T0008
+#pragma warning restore T0008
         : base(id) { }
 #pragma warning disable CS8618
 }

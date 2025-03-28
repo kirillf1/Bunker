@@ -18,7 +18,7 @@ public class RemoveCharacteristicCardAction : CardAction
         TargetCharactersCount = targetCharactersCount;
     }
 
-    public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams)
+    public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams, Guid gameSessionId)
     {
         if (activateCardParams.TargetCharacterIds.Count() != TargetCharactersCount)
         {

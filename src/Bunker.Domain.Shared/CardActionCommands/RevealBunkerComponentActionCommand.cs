@@ -3,12 +3,15 @@ using Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
 namespace Bunker.Domain.Shared.CardActionCommands;
 
-public class RevealBunkerEnvironmentActionCommand : CardActionCommand
+public class RevealBunkerComponentActionCommand : CardActionCommand
 {
     public BunkerObjectType BunkerObjectType { get; }
 
-    public RevealBunkerEnvironmentActionCommand(BunkerObjectType bunkerObjectType)
+    public Guid GameSessionId { get; }
+
+    public RevealBunkerComponentActionCommand(BunkerObjectType bunkerObjectType, Guid gameSessionId)
     {
         BunkerObjectType = bunkerObjectType;
+        GameSessionId = gameSessionId;
     }
 }

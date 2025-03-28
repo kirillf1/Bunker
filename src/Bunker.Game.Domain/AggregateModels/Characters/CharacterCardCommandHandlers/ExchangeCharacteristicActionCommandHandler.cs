@@ -79,5 +79,8 @@ public class ExchangeCharacteristicActionCommandHandler : ICardActionCommandHand
             default:
                 throw new ArgumentException($"Unknown characteristic type: {characteristicType.Name}");
         }
+
+        await _characterRepository.Update(firstCharacter);
+        await _characterRepository.Update(secondCharacter);
     }
 }

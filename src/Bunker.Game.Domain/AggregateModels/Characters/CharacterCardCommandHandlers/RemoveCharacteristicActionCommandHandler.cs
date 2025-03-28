@@ -51,6 +51,8 @@ public class RemoveCharacteristicActionCommandHandler : ICardActionCommandHandle
                 default:
                     throw new ArgumentException($"Unknown characteristic type: {characteristicType.Name}");
             }
+
+            await _characterRepository.Update(character);
         }
     }
 }

@@ -18,14 +18,14 @@ public class Card : Entity<Guid>, ICharacteristic
         IsActivated = false;
     }
 
-    public CardActionCommand ActivateCard(ActivateCardParams activateCardParams)
+    public CardActionCommand ActivateCard(ActivateCardParams activateCardParams, Guid gameSessionId)
     {
         if (IsActivated)
         {
             throw new InvalidGameOperationException($"Card {Id} already activated");
         }
 
-        var cardActionCommand = CardAction.CreateActionCommand(activateCardParams);
+        var cardActionCommand = CardAction.CreateActionCommand(activateCardParams, gameSessionId);
 
         IsActivated = true;
 

@@ -7,9 +7,9 @@ public class RecreateCatastropheAction : CardAction
     public RecreateCatastropheAction(CardActionRequirements cardActionRequirements)
         : base(cardActionRequirements) { }
 
-    public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams)
+    public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams, Guid gameSessionId)
     {
-        return new RecreateCatastropheActionCommand();
+        return new RecreateCatastropheActionCommand(gameSessionId);
     }
 
     public override CardActionRequirements GetCurrentCardActionRequirements()

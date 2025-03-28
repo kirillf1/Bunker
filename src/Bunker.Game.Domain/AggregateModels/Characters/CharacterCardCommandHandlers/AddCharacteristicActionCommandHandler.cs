@@ -82,6 +82,8 @@ public class AddCharacteristicActionCommandHandler : ICardActionCommandHandler<A
         foreach (var character in characters)
         {
             AddCharacteristic(character, characteristic);
+
+            await _characterRepository.Update(character);
         }
     }
 
@@ -99,7 +101,7 @@ public class AddCharacteristicActionCommandHandler : ICardActionCommandHandler<A
                 character.AddCard((Card)characteristic);
                 break;
             default:
-                throw new ArgumentException($"Can't add not Enumerable characteristic");
+                throw new InvalidGameOperationException($"Selected invalid characteristic for add");
         }
     }
 }

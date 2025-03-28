@@ -11,7 +11,7 @@ public partial class EmptyAction : CardAction
     public EmptyAction(CardActionRequirements cardActionRequirements)
         : base(cardActionRequirements) { }
 
-    public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams)
+    public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams, Guid gameSessionId)
     {
         return new EmptyActionCommand();
     }

@@ -21,11 +21,7 @@ internal static class CharacteristicTypeExtensions
         };
     }
 
-    public static void UpdateCharacteristic(
-        this Character character,
-        ICharacteristic characteristic,
-        ICharacteristic? charact
-    )
+    public static void UpdateCharacteristic(this Character character, ICharacteristic characteristic)
     {
         var characteristicType = characteristic.GetType();
 

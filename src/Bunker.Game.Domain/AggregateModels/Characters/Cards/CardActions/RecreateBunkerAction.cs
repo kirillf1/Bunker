@@ -7,9 +7,9 @@ public class RecreateBunkerAction : CardAction
     public RecreateBunkerAction(CardActionRequirements cardActionRequirements)
         : base(cardActionRequirements) { }
 
-    public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams)
+    public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams, Guid gameSessionId)
     {
-        return new RecreateBunkerActionCommand();
+        return new RecreateBunkerActionCommand(gameSessionId);
     }
 
     public override CardActionRequirements GetCurrentCardActionRequirements()

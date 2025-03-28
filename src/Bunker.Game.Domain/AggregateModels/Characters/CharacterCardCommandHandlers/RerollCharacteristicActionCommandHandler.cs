@@ -71,6 +71,8 @@ public class RerollCharacteristicActionCommandHandler : ICardActionCommandHandle
             var characteristic = await _characteristicGenerator.GenerateCharacteristic(type);
 
             ChangeCharacteristic(character, characteristic);
+
+            await _characterRepository.Update(character);
         }
     }
 

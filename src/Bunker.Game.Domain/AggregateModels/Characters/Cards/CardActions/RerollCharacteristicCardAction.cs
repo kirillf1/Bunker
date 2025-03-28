@@ -29,7 +29,7 @@ public class RerollCharacteristicCardAction : CardAction
         return new CardActionRequirements(ActivateCardTargetType.None, 0);
     }
 
-    public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams)
+    public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams, Guid gameSessionId)
     {
         if (!IsSelfTarget && activateCardParams.TargetCharacterIds.Count() != TargetCharactersCount)
         {

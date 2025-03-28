@@ -2,7 +2,7 @@
 
 public abstract class CardAction : ValueObject
 {
-    public abstract CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams);
+    public abstract CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams, Guid gameSessionId);
 
     public abstract CardActionRequirements GetCurrentCardActionRequirements();
 

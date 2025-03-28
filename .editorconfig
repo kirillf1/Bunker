@@ -42,9 +42,12 @@ indent_size = 2
 max_line_length = 120
 trim_trailing_whitespace = true
 
+[*.cs]
+dotnet_diagnostic.BUNKER100.severity = warning
+
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true
-dotnet_separate_import_directive_groups = true
+dotnet_separate_import_directive_groups = false
 # Avoid "this." and "Me." if not necessary
 dotnet_style_qualification_for_field = false:silent
 dotnet_style_qualification_for_property = false:silent
@@ -332,6 +335,9 @@ csharp_style_deconstructed_variable_declaration = true:suggestion
 csharp_style_unused_value_assignment_preference = discard_variable:suggestion
 csharp_style_unused_value_expression_statement_preference = discard_variable:silent
 csharp_style_prefer_switch_expression = true:suggestion
+
+# BunkerSharedAnalyzers: Type name contains lowercase letters
+dotnet_diagnostic.BunkerSharedAnalyzers.severity = none
 
 [src/{Compilers,ExpressionEvaluator,Scripting}/**Test**/*.{cs,vb}]
 

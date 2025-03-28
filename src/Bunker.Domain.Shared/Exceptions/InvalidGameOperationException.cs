@@ -1,8 +1,7 @@
-﻿namespace Bunker.Domain.Shared.Exceptions
+﻿namespace Bunker.Domain.Shared.Exceptions;
+
+public class InvalidGameOperationException : Exception
 {
-    public class InvalidGameOperationException : Exception
-    {
-        public InvalidGameOperationException(string message)
-            : base(message) { }
-    }
+    public InvalidGameOperationException(string message)
+        : base(message) { }
 }

@@ -6,13 +6,16 @@ public class ExchangeCharacteristicAction : CardAction
 {
     public CharacteristicType CharacteristicType { get; }
 
-    public ExchangeCharacteristicAction(CardActionRequirements cardActionRequirements, CharacteristicType characteristicType)
+    public ExchangeCharacteristicAction(
+        CardActionRequirements cardActionRequirements,
+        CharacteristicType characteristicType
+    )
         : base(cardActionRequirements)
     {
         CharacteristicType = characteristicType;
     }
 
-    public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams)
+    public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams, Guid gameSessionId)
     {
         if (activateCardParams.TargetCharacterIds.Count() != 2)
         {
