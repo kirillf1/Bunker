@@ -1,7 +1,6 @@
 ﻿using Bunker.Domain.Shared.GameComponents;
-using Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
-namespace Bunker.Domain.Shared.CardActionCommands;
+namespace Bunker.Domain.Shared.Cards.CardActionCommands;
 
 public class ExchangeCharacteristicActionCommand : CardActionCommand
 {
@@ -16,9 +15,7 @@ public class ExchangeCharacteristicActionCommand : CardActionCommand
         CharacteristicType = characteristicType;
 
         if (charactersIds.Count() != 2)
-        {
             throw new ArgumentException("Character count must be 2");
-        }
 
         CharacterFirst = charactersIds.First();
         CharacterSecond = charactersIds.Last();

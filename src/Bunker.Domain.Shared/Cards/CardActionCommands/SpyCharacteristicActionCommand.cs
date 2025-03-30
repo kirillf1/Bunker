@@ -1,7 +1,6 @@
 ﻿using Bunker.Domain.Shared.GameComponents;
-using Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
-namespace Bunker.Domain.Shared.CardActionCommands;
+namespace Bunker.Domain.Shared.Cards.CardActionCommands;
 
 public class SpyCharacteristicActionCommand : CardActionCommand
 {

@@ -1,4 +1,4 @@
-﻿using Bunker.Domain.Shared.CardActionCommands;
+﻿using Bunker.Domain.Shared.Cards.CardActionCommands;
 
 namespace Bunker.Game.Domain.AggregateModels.Bunkers.BunkerActionCommandHandlers;
 

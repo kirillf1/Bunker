@@ -1,4 +1,5 @@
-﻿using Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
+﻿using Bunker.Domain.Shared.Cards.CardActionCommands;
+using Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
 namespace Bunker.Game.Domain.AggregateModels.Characters.Cards;
 

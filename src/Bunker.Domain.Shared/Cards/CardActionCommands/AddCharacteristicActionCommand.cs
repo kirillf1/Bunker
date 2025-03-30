@@ -1,25 +1,21 @@
 ﻿using Bunker.Domain.Shared.GameComponents;
-using Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
-namespace Bunker.Domain.Shared.CardActionCommands;
+namespace Bunker.Domain.Shared.Cards.CardActionCommands;
 
-public class RerollCharacteristicActionCommand : CardActionCommand
+public class AddCharacteristicActionCommand : CardActionCommand
 {
     public CharacteristicType CharacteristicType { get; }
     public IEnumerable<Guid> TargetCharactersIds { get; }
     public Guid? CharacteristicId { get; }
-    public bool IsSelfTarget { get; }
 
-    public RerollCharacteristicActionCommand(
+    public AddCharacteristicActionCommand(
         CharacteristicType characteristicType,
         IEnumerable<Guid> targetCharactersIds,
-        Guid? characteristicId,
-        bool isSelfTarget
+        Guid? characteristicId
     )
     {
         CharacteristicType = characteristicType;
         TargetCharactersIds = targetCharactersIds;
         CharacteristicId = characteristicId;
-        IsSelfTarget = isSelfTarget;
     }
 }
