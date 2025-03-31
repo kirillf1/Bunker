@@ -25,6 +25,8 @@ namespace Bunker.GameComponents.API.Infrastructure
         public DbSet<EnvironmentEntity> BunkerEnvironments { get; set; }
         public DbSet<BunkerItemEntity> BunkerItems { get; set; }
 
+        public DbSet<CatastropheEntity> Catastrophes { get; set; }
+
         public GameComponentsContext(DbContextOptions<GameComponentsContext> options)
             : base(options) { }
 
