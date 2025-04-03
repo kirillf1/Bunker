@@ -1,8 +1,7 @@
-﻿namespace Bunker.GameComponents.API.Entities.CharacterComponents.Cards.CardActions
+﻿namespace Bunker.GameComponents.API.Entities.CharacterComponents.Cards.CardActions;
+
+public class EmptyActionEntity : CardActionEntity
 {
-    public class EmptyActionEntity : CardActionEntity
-    {
-        public EmptyActionEntity()
-            : base() { }
-    }
+    public EmptyActionEntity()
+        : base() { }
 }

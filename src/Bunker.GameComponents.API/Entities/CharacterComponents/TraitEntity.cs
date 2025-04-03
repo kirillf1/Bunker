@@ -11,7 +11,7 @@ public class TraitEntity
 
     public TraitEntity(string description)
     {
-        Id = Guid.NewGuid();
+        Id = Guid.CreateVersion7();
         Description = description;
     }
 }

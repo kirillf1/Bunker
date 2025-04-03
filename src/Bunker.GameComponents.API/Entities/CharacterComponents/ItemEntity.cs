@@ -11,7 +11,7 @@ public class ItemEntity
 
     public ItemEntity(string description)
     {
-        Id = Guid.NewGuid();
+        Id = Guid.CreateVersion7();
         Description = description;
     }
 }

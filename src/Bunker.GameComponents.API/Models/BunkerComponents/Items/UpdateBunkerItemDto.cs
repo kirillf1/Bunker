@@ -1,7 +1,6 @@
-﻿namespace Bunker.GameComponents.API.Models.BunkerComponents.Items
+﻿namespace Bunker.GameComponents.API.Models.BunkerComponents.Items;
+
+public class UpdateBunkerItemDto
 {
-    public class UpdateBunkerItemDto
-    {
-        public required string Description { get; set; }
-    }
+    public required string Description { get; set; }
 }

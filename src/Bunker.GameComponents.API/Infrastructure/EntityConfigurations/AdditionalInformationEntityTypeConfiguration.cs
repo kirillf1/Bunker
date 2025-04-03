@@ -2,14 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Bunker.GameComponents.API.Infrastructure.EntityConfigurations
+namespace Bunker.GameComponents.API.Infrastructure.EntityConfigurations;
+
+public class AdditionalInformationEntityTypeConfiguration : IEntityTypeConfiguration<AdditionalInformationEntity>
 {
-    public class AdditionalInformationEntityTypeConfiguration : IEntityTypeConfiguration<AdditionalInformationEntity>
+    public void Configure(EntityTypeBuilder<AdditionalInformationEntity> builder)
     {
-        public void Configure(EntityTypeBuilder<AdditionalInformationEntity> builder)
-        {
-            builder.HasKey(e => e.Id);
-            builder.Property(e => e.Description).IsRequired().HasMaxLength(200);
-        }
+        builder.HasKey(e => e.Id);
+        builder.Property(e => e.Description).IsRequired().HasMaxLength(200);
     }
 }

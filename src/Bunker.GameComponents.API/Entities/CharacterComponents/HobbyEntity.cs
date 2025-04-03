@@ -11,7 +11,7 @@ public class HobbyEntity
 
     public HobbyEntity(string description)
     {
-        Id = Guid.NewGuid();
+        Id = Guid.CreateVersion7();
         Description = description;
     }
 }

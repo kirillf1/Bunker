@@ -1,7 +1,6 @@
-﻿namespace Bunker.GameComponents.API.Models.BunkerComponents.Environments
+﻿namespace Bunker.GameComponents.API.Models.BunkerComponents.Environments;
+
+public class UpdateEnvironmentDto
 {
-    public class UpdateEnvironmentDto
-    {
-        public required string Description { get; set; }
-    }
+    public required string Description { get; set; }
 }

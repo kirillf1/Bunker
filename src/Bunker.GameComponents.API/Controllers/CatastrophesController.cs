@@ -4,89 +4,102 @@ using Bunker.GameComponents.API.Models.Catastrophes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bunker.GameComponents.API.Controllers
+namespace Bunker.GameComponents.API.Controllers;
+
+[Route("api/catastrophes")]
+[ApiController]
+[Produces("application/json")]
+public class CatastrophesController : ControllerBase
 {
-    [Route("api/catastrophes")]
-    [ApiController]
-    public class CatastrophesController : ControllerBase
+    private readonly GameComponentsContext _context;
+
+    public CatastrophesController(GameComponentsContext context)
     {
-        private readonly GameComponentsContext _context;
+        _context = context;
+    }
 
-        public CatastrophesController(GameComponentsContext context)
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<CatastropheDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<IEnumerable<CatastropheDto>>> GetAll()
+    {
+        var catastrophes = await _context
+            .Catastrophes.Select(p => new CatastropheDto { Id = p.Id, Description = p.Description })
+            .ToListAsync();
+
+        return Ok(catastrophes);
+    }
+
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(CatastropheDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<CatastropheDto>> GetById(Guid id)
+    {
+        var catastrophe = await _context.Catastrophes.FirstOrDefaultAsync(p => p.Id == id);
+        if (catastrophe is null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CatastropheDto>>> GetCatastrophes()
-        {
-            var catastrophes = await _context
-                .Catastrophes.Select(c => new CatastropheDto { Id = c.Id, Description = c.Description })
-                .ToListAsync();
+        var dto = new CatastropheDto { Id = catastrophe.Id, Description = catastrophe.Description };
+        return Ok(dto);
+    }
 
-            return Ok(catastrophes);
+    [HttpPost]
+    [ProducesResponseType(typeof(CatastropheDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<CatastropheDto>> Create([FromBody] CreateCatastropheDto dto)
+    {
+        var catastrophe = new CatastropheEntity(dto.Description);
+        _context.Catastrophes.Add(catastrophe);
+        await _context.SaveChangesAsync();
+
+        var resultDto = new CatastropheDto { Id = catastrophe.Id, Description = catastrophe.Description };
+        return CreatedAtAction(nameof(GetById), new { id = catastrophe.Id }, resultDto);
+    }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateCatastropheDto dto)
+    {
+        var catastrophe = await _context.Catastrophes.FirstOrDefaultAsync(p => p.Id == id);
+        if (catastrophe is null)
+        {
+            return NotFound();
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CatastropheDto>> GetCatastrophe(Guid id)
+        catastrophe.Description = dto.Description;
+        _context.Update(catastrophe);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var catastrophe = await _context.Catastrophes.FirstOrDefaultAsync(p => p.Id == id);
+        if (catastrophe is null)
         {
-            var catastrophe = await _context.Catastrophes.FirstOrDefaultAsync(x => x.Id == id);
-            if (catastrophe is null)
-            {
-                return NotFound();
-            }
-
-            var dto = new CatastropheDto { Id = catastrophe.Id, Description = catastrophe.Description };
-
-            return Ok(dto);
+            return NotFound();
         }
 
-        [HttpPost]
-        public async Task<ActionResult<CatastropheDto>> CreateCatastrophe([FromBody] CreateCatastropheDto dto)
-        {
-            var catastrophe = new CatastropheEntity(dto.Description);
+        _context.Catastrophes.Remove(catastrophe);
+        await _context.SaveChangesAsync();
 
-            await _context.Catastrophes.AddAsync(catastrophe);
-
-            await _context.SaveChangesAsync();
-
-            var resultDto = new CatastropheDto { Id = catastrophe.Id, Description = catastrophe.Description };
-
-            return CreatedAtAction(nameof(GetCatastrophe), new { id = catastrophe.Id }, resultDto);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCatastrophe(Guid id, [FromBody] UpdateCatastropheDto dto)
-        {
-            var catastrophe = await _context.Catastrophes.FirstOrDefaultAsync(x => x.Id == id);
-            if (catastrophe is null)
-            {
-                return NotFound();
-            }
-
-            catastrophe.Description = dto.Description;
-
-            _context.Update(catastrophe);
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCatastrophe(Guid id)
-        {
-            var catastrophe = await _context.Catastrophes.FirstOrDefaultAsync(x => x.Id == id);
-            if (catastrophe is null)
-            {
-                return NotFound();
-            }
-
-            _context.Catastrophes.Remove(catastrophe);
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
+        return NoContent();
     }
 }

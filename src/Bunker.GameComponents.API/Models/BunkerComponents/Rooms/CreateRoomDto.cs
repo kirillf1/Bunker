@@ -1,7 +1,6 @@
-﻿namespace Bunker.GameComponents.API.Models.BunkerComponents.Rooms
+﻿namespace Bunker.GameComponents.API.Models.BunkerComponents.Rooms;
+
+public class CreateRoomDto
 {
-    public class CreateRoomDto
-    {
-        public required string Description { get; set; }
-    }
+    public required string Description { get; set; }
 }

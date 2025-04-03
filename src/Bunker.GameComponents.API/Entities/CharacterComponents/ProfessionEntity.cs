@@ -11,7 +11,7 @@ public class ProfessionEntity
 
     public ProfessionEntity(string description)
     {
-        Id = Guid.NewGuid();
+        Id = Guid.CreateVersion7();
         Description = description;
     }
 }

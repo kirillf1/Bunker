@@ -2,14 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Bunker.GameComponents.API.Infrastructure.EntityConfigurations
+namespace Bunker.GameComponents.API.Infrastructure.EntityConfigurations;
+
+public class PhobiaEntityTypeConfiguration : IEntityTypeConfiguration<PhobiaEntity>
 {
-    public class PhobiaEntityTypeConfiguration : IEntityTypeConfiguration<PhobiaEntity>
+    public void Configure(EntityTypeBuilder<PhobiaEntity> builder)
     {
-        public void Configure(EntityTypeBuilder<PhobiaEntity> builder)
-        {
-            builder.HasKey(e => e.Id);
-            builder.Property(e => e.Description).IsRequired().HasMaxLength(300);
-        }
+        builder.HasKey(e => e.Id);
+        builder.Property(e => e.Description).IsRequired().HasMaxLength(300);
     }
 }

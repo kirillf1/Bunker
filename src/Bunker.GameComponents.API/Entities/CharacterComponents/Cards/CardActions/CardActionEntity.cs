@@ -1,14 +1,13 @@
-﻿namespace Bunker.GameComponents.API.Entities.CharacterComponents.Cards.CardActions
+﻿namespace Bunker.GameComponents.API.Entities.CharacterComponents.Cards.CardActions;
+
+public abstract class CardActionEntity
 {
-    public abstract class CardActionEntity
+    public Guid Id { get; set; }
+
+    public CardEntity CardEntity { get; set; } = default!;
+
+    protected CardActionEntity()
     {
-        public Guid Id { get; set; }
-
-        public CardEntity CardEntity { get; set; } = default!;
-
-        protected CardActionEntity()
-        {
-            Id = Guid.CreateVersion7();
-        }
+        Id = Guid.CreateVersion7();
     }
 }
