@@ -4,12 +4,15 @@ using Bunker.GameComponents.API.Entities.CharacterComponents;
 using Bunker.GameComponents.API.Entities.CharacterComponents.Cards;
 using Bunker.GameComponents.API.Entities.CharacterComponents.Cards.CardActions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Bunker.GameComponents.API.Infrastructure;
+namespace Bunker.GameComponents.API.Infrastructure.Database;
 
 public class GameComponentsContext : DbContext
 {
+    public const string SCHEMA_NAME = "game_components";
     public DbSet<AdditionalInformationEntity> AdditionalInformationEntitles { get; set; }
     public DbSet<HealthEntity> HealthEntitles { get; set; }
     public DbSet<HobbyEntity> Hobbies { get; set; }
@@ -31,7 +34,7 @@ public class GameComponentsContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("game_components");
+        modelBuilder.HasDefaultSchema(SCHEMA_NAME);
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(GameComponentsContext).Assembly);
 
@@ -51,9 +54,7 @@ public class GameComponentsContext : DbContext
                 var converter = Activator.CreateInstance(converterType) as ValueConverter;
 
                 if (converter != null)
-                {
                     property.SetValueConverter(converter);
-                }
             }
         }
     }

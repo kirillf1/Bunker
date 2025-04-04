@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Bunker.GameComponents.API.Infrastructure.EntityConfigurations;
+namespace Bunker.GameComponents.API.Infrastructure.Database.EntityConfigurations;
 
 public class CardActionEntityTypeConfiguration : IEntityTypeConfiguration<CardActionEntity>
 {

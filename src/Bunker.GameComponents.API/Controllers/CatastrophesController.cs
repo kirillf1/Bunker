@@ -1,5 +1,5 @@
 ﻿using Bunker.GameComponents.API.Entities.CatastropheComponents;
-using Bunker.GameComponents.API.Infrastructure;
+using Bunker.GameComponents.API.Infrastructure.Database;
 using Bunker.GameComponents.API.Models.Catastrophes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

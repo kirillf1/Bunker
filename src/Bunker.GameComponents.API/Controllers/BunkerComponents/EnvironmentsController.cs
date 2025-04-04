@@ -1,5 +1,5 @@
 ﻿using Bunker.GameComponents.API.Entities.BunkerComponents;
-using Bunker.GameComponents.API.Infrastructure;
+using Bunker.GameComponents.API.Infrastructure.Database;
 using Bunker.GameComponents.API.Models.BunkerComponents.Environments;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

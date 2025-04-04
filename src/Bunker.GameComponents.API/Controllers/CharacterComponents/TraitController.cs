@@ -1,5 +1,5 @@
 ﻿using Bunker.GameComponents.API.Entities.CharacterComponents;
-using Bunker.GameComponents.API.Infrastructure;
+using Bunker.GameComponents.API.Infrastructure.Database;
 using Bunker.GameComponents.API.Models.CharacterComponents.Trait;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

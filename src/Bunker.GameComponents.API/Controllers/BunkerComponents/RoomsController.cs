@@ -1,5 +1,5 @@
 ﻿using Bunker.GameComponents.API.Entities.BunkerComponents;
-using Bunker.GameComponents.API.Infrastructure;
+using Bunker.GameComponents.API.Infrastructure.Database;
 using Bunker.GameComponents.API.Models.BunkerComponents.Rooms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +18,6 @@ public class RoomsController : ControllerBase
         _context = context;
     }
 
-    // GET: api/bunker-components/rooms
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<RoomDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
