@@ -22,6 +22,7 @@ public class TraitController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<TraitDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<TraitDto>>> GetAll()
     {
         var traits = await _context
@@ -36,6 +37,7 @@ public class TraitController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<TraitDto>> GetById(Guid id)
     {
         var trait = await _context.Traits.FirstOrDefaultAsync(p => p.Id == id);
@@ -53,6 +55,7 @@ public class TraitController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<TraitDto>> Create([FromBody] CreateTraitDto dto)
     {
         var trait = new TraitEntity(dto.Description);
@@ -69,6 +72,7 @@ public class TraitController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTraitDto dto)
     {
         var trait = await _context.Traits.FirstOrDefaultAsync(p => p.Id == id);
@@ -89,6 +93,7 @@ public class TraitController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var trait = await _context.Traits.FirstOrDefaultAsync(p => p.Id == id);

@@ -22,6 +22,7 @@ public class HobbyController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<HobbyDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<HobbyDto>>> GetAll()
     {
         var hobbies = await _context
@@ -36,6 +37,7 @@ public class HobbyController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<HobbyDto>> GetById(Guid id)
     {
         var hobby = await _context.Hobbies.FirstOrDefaultAsync(p => p.Id == id);
@@ -53,6 +55,7 @@ public class HobbyController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<HobbyDto>> Create([FromBody] CreateHobbyDto dto)
     {
         var hobby = new HobbyEntity(dto.Description);
@@ -69,6 +72,7 @@ public class HobbyController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateHobbyDto dto)
     {
         var hobby = await _context.Hobbies.FirstOrDefaultAsync(p => p.Id == id);
@@ -89,6 +93,7 @@ public class HobbyController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var hobby = await _context.Hobbies.FirstOrDefaultAsync(p => p.Id == id);

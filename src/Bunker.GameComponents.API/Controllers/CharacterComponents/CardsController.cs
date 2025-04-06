@@ -23,6 +23,7 @@ public class CardsController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<CardDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<CardDto>>> GetAll()
     {
         var cards = await _context
@@ -42,6 +43,7 @@ public class CardsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<CardDto>> GetById(Guid id)
     {
         var card = await _context.Cards.FirstOrDefaultAsync(c => c.Id == id);
@@ -66,6 +68,7 @@ public class CardsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<CardDto>> Create([FromBody] CardCreateDto dto)
     {
         var cardAction = dto.CardAction.MapToCardActionEntity();
@@ -90,6 +93,7 @@ public class CardsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Update(Guid id, [FromBody] CardUpdateDto dto)
     {
         var card = await _context.Cards.FirstOrDefaultAsync(c => c.Id == id);
@@ -116,6 +120,7 @@ public class CardsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var card = await _context.Cards.FirstOrDefaultAsync(c => c.Id == id);

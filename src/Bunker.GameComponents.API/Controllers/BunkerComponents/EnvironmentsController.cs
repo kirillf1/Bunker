@@ -22,6 +22,7 @@ public class EnvironmentsController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<EnvironmentDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<EnvironmentDto>>> GetEnvironments()
     {
         var environments = await _context
@@ -35,6 +36,7 @@ public class EnvironmentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<EnvironmentDto>> GetEnvironment(Guid id)
     {
         var environment = await _context.BunkerEnvironments.FirstOrDefaultAsync(x => x.Id == id);
@@ -52,6 +54,7 @@ public class EnvironmentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<EnvironmentDto>> CreateEnvironment([FromBody] CreateEnvironmentDto dto)
     {
         var environment = new EnvironmentEntity(dto.Description);
@@ -71,6 +74,7 @@ public class EnvironmentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateEnvironment(Guid id, [FromBody] UpdateEnvironmentDto dto)
     {
         var environment = await _context.BunkerEnvironments.FirstOrDefaultAsync(x => x.Id == id);
@@ -91,6 +95,7 @@ public class EnvironmentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteEnvironment(Guid id)
     {
         var environment = await _context.BunkerEnvironments.FirstOrDefaultAsync(x => x.Id == id);

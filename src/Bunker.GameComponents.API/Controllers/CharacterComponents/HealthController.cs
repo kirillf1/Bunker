@@ -22,6 +22,7 @@ public class HealthController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<HealthDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<HealthDto>>> GetAll()
     {
         var healths = await _context
@@ -36,6 +37,7 @@ public class HealthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<HealthDto>> GetById(Guid id)
     {
         var health = await _context.HealthEntitles.FirstOrDefaultAsync(p => p.Id == id);
@@ -53,6 +55,7 @@ public class HealthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<HealthDto>> Create([FromBody] HealthCreateDto dto)
     {
         var health = new HealthEntity(dto.Description);
@@ -69,6 +72,7 @@ public class HealthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Update(Guid id, [FromBody] HealthUpdateDto dto)
     {
         var health = await _context.HealthEntitles.FirstOrDefaultAsync(p => p.Id == id);
@@ -89,6 +93,7 @@ public class HealthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var health = await _context.HealthEntitles.FirstOrDefaultAsync(p => p.Id == id);

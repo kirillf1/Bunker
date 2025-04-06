@@ -22,6 +22,7 @@ public class PhobiaController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<PhobiaDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<PhobiaDto>>> GetAll()
     {
         var phobias = await _context
@@ -36,6 +37,7 @@ public class PhobiaController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<PhobiaDto>> GetById(Guid id)
     {
         var phobia = await _context.Phobias.FirstOrDefaultAsync(p => p.Id == id);
@@ -53,6 +55,7 @@ public class PhobiaController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<PhobiaDto>> Create([FromBody] CreatePhobiaDto dto)
     {
         var phobia = new PhobiaEntity(dto.Description);
@@ -69,6 +72,7 @@ public class PhobiaController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdatePhobiaDto dto)
     {
         var phobia = await _context.Phobias.FirstOrDefaultAsync(p => p.Id == id);
@@ -89,6 +93,7 @@ public class PhobiaController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var phobia = await _context.Phobias.FirstOrDefaultAsync(p => p.Id == id);

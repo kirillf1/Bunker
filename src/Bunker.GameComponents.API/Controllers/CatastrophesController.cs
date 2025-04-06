@@ -22,6 +22,7 @@ public class CatastrophesController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<CatastropheDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<CatastropheDto>>> GetAll()
     {
         var catastrophes = await _context
@@ -36,6 +37,7 @@ public class CatastrophesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<CatastropheDto>> GetById(Guid id)
     {
         var catastrophe = await _context.Catastrophes.FirstOrDefaultAsync(p => p.Id == id);
@@ -53,6 +55,7 @@ public class CatastrophesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<CatastropheDto>> Create([FromBody] CreateCatastropheDto dto)
     {
         var catastrophe = new CatastropheEntity(dto.Description);
@@ -69,6 +72,7 @@ public class CatastrophesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateCatastropheDto dto)
     {
         var catastrophe = await _context.Catastrophes.FirstOrDefaultAsync(p => p.Id == id);
@@ -89,6 +93,7 @@ public class CatastrophesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var catastrophe = await _context.Catastrophes.FirstOrDefaultAsync(p => p.Id == id);

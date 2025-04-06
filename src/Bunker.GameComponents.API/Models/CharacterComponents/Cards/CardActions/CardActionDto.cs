@@ -69,8 +69,12 @@ public abstract class CardActionDto
             _ => throw new NotSupportedException($"Unknown CardActionEntity type: {entity.GetType().Name}"),
         };
 
-    public CardActionEntity MapToCardActionEntity() =>
-        this switch
+    // TODO change by Template method pattern
+    public CardActionEntity MapToCardActionEntity()
+    {
+        var cardAction = this;
+
+        return cardAction switch
         {
             AddCharacteristicDto d => new AddCharacteristicEntity(
                 d.CharacteristicType,
@@ -101,4 +105,5 @@ public abstract class CardActionDto
             ),
             _ => throw new NotSupportedException($"Unknown CardActionDto type: {this.GetType().Name}"),
         };
+    }
 }

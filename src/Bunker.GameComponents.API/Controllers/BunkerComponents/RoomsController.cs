@@ -22,6 +22,7 @@ public class RoomsController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<RoomDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<RoomDto>>> GetRooms()
     {
         var rooms = await _context
@@ -35,6 +36,7 @@ public class RoomsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<RoomDto>> GetRoom(Guid id)
     {
         var room = await _context.BunkerRooms.FirstOrDefaultAsync(x => x.Id == id);
@@ -52,6 +54,7 @@ public class RoomsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<RoomDto>> CreateRoom([FromBody] CreateRoomDto dto)
     {
         var room = new RoomEntity(dto.Description);
@@ -69,6 +72,7 @@ public class RoomsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateRoom(Guid id, [FromBody] UpdateRoomDto dto)
     {
         var room = await _context.BunkerRooms.FirstOrDefaultAsync(x => x.Id == id);
@@ -91,6 +95,7 @@ public class RoomsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteRoom(Guid id)
     {
         var room = await _context.BunkerRooms.FirstOrDefaultAsync(x => x.Id == id);

@@ -22,6 +22,7 @@ public class BunkerItemsController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<BunkerItemDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<BunkerItemDto>>> GetBunkerItems()
     {
         var items = await _context
@@ -36,6 +37,8 @@ public class BunkerItemsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<BunkerItemDto>> GetBunkerItem(Guid id)
     {
         var item = await _context.BunkerItems.FirstOrDefaultAsync(x => x.Id == id);
@@ -52,7 +55,6 @@ public class BunkerItemsController : ControllerBase
     [ProducesResponseType(typeof(BunkerItemDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<BunkerItemDto>> CreateBunkerItem([FromBody] CreateBunkerItemDto dto)
     {
         var item = new BunkerItemEntity(dto.Description);
@@ -69,7 +71,7 @@ public class BunkerItemsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateBunkerItem(Guid id, [FromBody] UpdateBunkerItemDto dto)
     {
         var item = await _context.BunkerItems.FirstOrDefaultAsync(x => x.Id == id);
@@ -91,7 +93,7 @@ public class BunkerItemsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteBunkerItem(Guid id)
     {
         var item = await _context.BunkerItems.FirstOrDefaultAsync(x => x.Id == id);

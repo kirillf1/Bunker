@@ -8,6 +8,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Bunker.GameComponents.API.Infrastructure.OpenApi;
 
+#pragma warning disable CS8619
 public class CardActionDtoSchemaFilter : ISchemaFilter
 {
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
@@ -61,6 +62,8 @@ public class CardActionDtoSchemaFilter : ISchemaFilter
     private static IEnumerable<(Type Type, string Discriminator)> GetDerivedTypesFromBaseClassAttributes(Type baseType)
     {
         var attributes = baseType.GetCustomAttributes<JsonDerivedTypeAttribute>(inherit: true);
-        return attributes.Select(attr => (attr.DerivedType, attr.TypeDiscriminator.ToString()));
+
+        return attributes.Select(attr => (attr.DerivedType, attr.TypeDiscriminator?.ToString()));
     }
 }
+#pragma warning restore CS8619

@@ -22,6 +22,7 @@ public class ProfessionController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<ProfessionDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<ProfessionDto>>> GetAll()
     {
         var professions = await _context
@@ -36,6 +37,7 @@ public class ProfessionController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<ProfessionDto>> GetById(Guid id)
     {
         var profession = await _context.Professions.FirstOrDefaultAsync(p => p.Id == id);
@@ -53,6 +55,7 @@ public class ProfessionController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<ProfessionDto>> Create([FromBody] CreateProfessionDto dto)
     {
         var profession = new ProfessionEntity(dto.Description);
@@ -69,6 +72,7 @@ public class ProfessionController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProfessionDto dto)
     {
         var profession = await _context.Professions.FirstOrDefaultAsync(p => p.Id == id);
@@ -89,6 +93,7 @@ public class ProfessionController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var profession = await _context.Professions.FirstOrDefaultAsync(p => p.Id == id);
