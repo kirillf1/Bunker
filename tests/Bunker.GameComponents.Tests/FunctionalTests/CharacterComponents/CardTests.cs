@@ -7,7 +7,6 @@ using Bunker.GameComponents.API.Entities.CharacterComponents.Cards;
 using Bunker.GameComponents.API.Entities.CharacterComponents.Cards.CardActions;
 using Bunker.GameComponents.API.Infrastructure.Database;
 using Bunker.GameComponents.API.Models.CharacterComponents.Cards;
-using Bunker.GameComponents.API.Models.CharacterComponents.Cards.CardActions;
 using Bunker.GameComponents.Tests.Fixtures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -69,7 +68,7 @@ public class CardTests
         Assert.NotNull(dto);
         Assert.Equal(card.Id, dto.Id);
         Assert.Equal("Test Card", dto.Description);
-        Assert.IsType<EmptyActionDto>(dto.CardAction);
+        Assert.IsType<EmptyActionEntity>(dto.CardAction);
     }
 
     [Fact]
@@ -83,16 +82,16 @@ public class CardTests
     }
 
     [Theory]
-    [InlineData(typeof(AddCharacteristicDto), CharacteristicType.Health, 1)]
-    [InlineData(typeof(EmptyActionDto), null, 0)]
-    [InlineData(typeof(ExchangeCharacteristicActionDto), CharacteristicType.Profession, 0)]
-    [InlineData(typeof(RecreateBunkerActionDto), null, 0)]
-    [InlineData(typeof(RecreateCatastropheActionDto), null, 0)]
-    [InlineData(typeof(RecreateCharacterActionDto), null, 2)]
-    [InlineData(typeof(RemoveCharacteristicCardActionDto), CharacteristicType.Trait, 1)]
-    [InlineData(typeof(RerollCharacteristicCardActionDto), CharacteristicType.Hobby, 1)]
-    [InlineData(typeof(RevealBunkerGameComponentCardActionDto), null, 0)]
-    [InlineData(typeof(SpyCharacteristicCardActionDto), CharacteristicType.AdditionalInformation, 1)]
+    [InlineData(typeof(AddCharacteristicEntity), CharacteristicType.Health, 1)]
+    [InlineData(typeof(EmptyActionEntity), null, 0)]
+    [InlineData(typeof(ExchangeCharacteristicActionEntity), CharacteristicType.Profession, 0)]
+    [InlineData(typeof(RecreateBunkerActionEntity), null, 0)]
+    [InlineData(typeof(RecreateCatastropheActionEntity), null, 0)]
+    [InlineData(typeof(RecreateCharacterActionEntity), null, 2)]
+    [InlineData(typeof(RemoveCharacteristicCardActionEntity), CharacteristicType.Trait, 1)]
+    [InlineData(typeof(RerollCharacteristicCardActionEntity), CharacteristicType.Hobby, 1)]
+    [InlineData(typeof(RevealBunkerGameComponentCardActionEntity), null, 0)]
+    [InlineData(typeof(SpyCharacteristicCardActionEntity), CharacteristicType.AdditionalInformation, 1)]
     public async Task Create_ValidCardAction_ReturnsCreated(
         Type actionType,
         CharacteristicType? characteristicType,
@@ -118,9 +117,9 @@ public class CardTests
     }
 
     [Theory]
-    [InlineData(typeof(AddCharacteristicDto), CharacteristicType.Health, 1)]
-    [InlineData(typeof(ExchangeCharacteristicActionDto), CharacteristicType.Profession, 0)]
-    [InlineData(typeof(RemoveCharacteristicCardActionDto), CharacteristicType.CharacterItem, 1)]
+    [InlineData(typeof(AddCharacteristicEntity), CharacteristicType.Health, 1)]
+    [InlineData(typeof(ExchangeCharacteristicActionEntity), CharacteristicType.Profession, 0)]
+    [InlineData(typeof(RemoveCharacteristicCardActionEntity), CharacteristicType.CharacterItem, 1)]
     public async Task Update_ExistingCard_UpdatesSuccessfully(
         Type actionType,
         CharacteristicType? characteristicType,
@@ -130,7 +129,7 @@ public class CardTests
         // Arrange
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<GameComponentsContext>();
-        var cardAction = new EmptyActionEntity() { Id = Guid.NewGuid() };
+        var cardAction = new EmptyActionEntity() { };
         var card = new CardEntity("Old Card", cardAction);
         context.Cards.Add(card);
         await context.SaveChangesAsync();
@@ -138,7 +137,7 @@ public class CardTests
         var updateDto = new CardUpdateDto
         {
             Description = "Updated Card",
-            CardAction = CreateCardActionDto(actionType, characteristicType, targetCount, cardAction.Id),
+            CardAction = CreateCardActionDto(actionType, characteristicType, targetCount),
         };
 
         // Act
@@ -148,10 +147,10 @@ public class CardTests
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
         context.ChangeTracker.Clear();
-        var updatedCard = await context.Cards.Include(c => c.CardAction).FirstOrDefaultAsync(c => c.Id == card.Id);
+        var updatedCard = await context.Cards.FirstOrDefaultAsync(c => c.Id == card.Id);
         Assert.NotNull(updatedCard);
         Assert.Equal("Updated Card", updatedCard.Description);
-        Assert.IsType(GetEntityTypeFromDtoType(actionType), updatedCard.CardAction);
+        Assert.IsType(actionType, updatedCard.CardAction);
     }
 
     [Fact]
@@ -184,85 +183,45 @@ public class CardTests
         };
     }
 
-    private CardActionDto CreateCardActionDto(
+    private CardActionEntity CreateCardActionDto(
         Type actionType,
         CharacteristicType? characteristicType,
-        int targetCount,
-        Guid? id = null
+        int targetCount
     )
     {
         return actionType switch
         {
-            Type t when t == typeof(AddCharacteristicDto) => new AddCharacteristicDto
-            {
-                CharacteristicType = characteristicType!.Value,
-                TargetCharactersCount = targetCount,
-                Id = id ?? Guid.CreateVersion7(),
-            },
-            Type t when t == typeof(EmptyActionDto) => new EmptyActionDto() { Id = id ?? Guid.CreateVersion7() },
-            Type t when t == typeof(ExchangeCharacteristicActionDto) => new ExchangeCharacteristicActionDto
-            {
-                CharacteristicType = characteristicType!.Value,
-                Id = id ?? Guid.CreateVersion7(),
-            },
-            Type t when t == typeof(RecreateBunkerActionDto) => new RecreateBunkerActionDto()
-            {
-                Id = id ?? Guid.CreateVersion7(),
-            },
-            Type t when t == typeof(RecreateCatastropheActionDto) => new RecreateCatastropheActionDto()
-            {
-                Id = id ?? Guid.CreateVersion7(),
-            },
-            Type t when t == typeof(RecreateCharacterActionDto) => new RecreateCharacterActionDto
-            {
-                TargetCharactersCount = targetCount,
-                Id = id ?? Guid.CreateVersion7(),
-            },
-            Type t when t == typeof(RemoveCharacteristicCardActionDto) => new RemoveCharacteristicCardActionDto
-            {
-                CharacteristicType = characteristicType!.Value,
-                TargetCharactersCount = targetCount,
-                Id = id ?? Guid.CreateVersion7(),
-            },
-            Type t when t == typeof(RerollCharacteristicCardActionDto) => new RerollCharacteristicCardActionDto
-            {
-                CharacteristicType = characteristicType!.Value,
-                TargetCharactersCount = targetCount,
-                IsSelfTarget = false,
-                Id = id ?? Guid.CreateVersion7(),
-            },
-            Type t when t == typeof(RevealBunkerGameComponentCardActionDto) =>
-                new RevealBunkerGameComponentCardActionDto
-                {
-                    BunkerObjectType = BunkerObjectType.BunkerItem,
-                    Id = id ?? Guid.CreateVersion7(),
-                },
-            Type t when t == typeof(SpyCharacteristicCardActionDto) => new SpyCharacteristicCardActionDto
-            {
-                CharacteristicType = characteristicType!.Value,
-                TargetCharactersCount = targetCount,
-                Id = id ?? Guid.CreateVersion7(),
-            },
+            Type t when t == typeof(AddCharacteristicEntity) => new AddCharacteristicEntity(
+                characteristicType!.Value,
+                null, // CharacteristicId по умолчанию null, если не указано
+                targetCount
+            ),
+            Type t when t == typeof(EmptyActionEntity) => new EmptyActionEntity(),
+            Type t when t == typeof(ExchangeCharacteristicActionEntity) => new ExchangeCharacteristicActionEntity(
+                characteristicType!.Value
+            ),
+            Type t when t == typeof(RecreateBunkerActionEntity) => new RecreateBunkerActionEntity(),
+            Type t when t == typeof(RecreateCatastropheActionEntity) => new RecreateCatastropheActionEntity(),
+            Type t when t == typeof(RecreateCharacterActionEntity) => new RecreateCharacterActionEntity(targetCount),
+            Type t when t == typeof(RemoveCharacteristicCardActionEntity) => new RemoveCharacteristicCardActionEntity(
+                characteristicType!.Value,
+                targetCount
+            ),
+            Type t when t == typeof(RerollCharacteristicCardActionEntity) => new RerollCharacteristicCardActionEntity(
+                characteristicType!.Value,
+                false, // IsSelfTarget по умолчанию false
+                null, // CharacteristicId по умолчанию null
+                targetCount
+            ),
+            Type t when t == typeof(RevealBunkerGameComponentCardActionEntity) =>
+                new RevealBunkerGameComponentCardActionEntity(
+                    BunkerObjectType.BunkerItem // Значение по умолчанию из оригинального кода
+                ),
+            Type t when t == typeof(SpyCharacteristicCardActionEntity) => new SpyCharacteristicCardActionEntity(
+                characteristicType!.Value,
+                targetCount
+            ),
             _ => throw new ArgumentException($"Unsupported action type: {actionType}"),
-        };
-    }
-
-    private Type GetEntityTypeFromDtoType(Type dtoType)
-    {
-        return dtoType switch
-        {
-            Type t when t == typeof(AddCharacteristicDto) => typeof(AddCharacteristicEntity),
-            Type t when t == typeof(EmptyActionDto) => typeof(EmptyActionEntity),
-            Type t when t == typeof(ExchangeCharacteristicActionDto) => typeof(ExchangeCharacteristicActionEntity),
-            Type t when t == typeof(RecreateBunkerActionDto) => typeof(RecreateBunkerActionEntity),
-            Type t when t == typeof(RecreateCatastropheActionDto) => typeof(RecreateCatastropheActionEntity),
-            Type t when t == typeof(RecreateCharacterActionDto) => typeof(RecreateCharacterActionEntity),
-            Type t when t == typeof(RemoveCharacteristicCardActionDto) => typeof(RemoveCharacteristicCardActionEntity),
-            Type t when t == typeof(RerollCharacteristicCardActionDto) => typeof(RerollCharacteristicCardActionEntity),
-            Type t when t == typeof(RevealBunkerGameComponentCardActionDto) =>
-                typeof(RevealBunkerGameComponentCardActionEntity),
-            Type t when t == typeof(SpyCharacteristicCardActionDto) => typeof(SpyCharacteristicCardActionEntity),
-            _ => throw new ArgumentException($"Unsupported DTO type: {dtoType}"),
         };
     }
 }

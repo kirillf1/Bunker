@@ -1,9 +1,6 @@
 ﻿using Bunker.GameComponents.API.Entities.CharacterComponents.Cards;
-using Bunker.GameComponents.API.Entities.CharacterComponents.Cards.CardActions;
 using Bunker.GameComponents.API.Infrastructure.Database;
-using Bunker.GameComponents.API.Infrastructure.Database.EntityConfigurations;
 using Bunker.GameComponents.API.Models.CharacterComponents.Cards;
-using Bunker.GameComponents.API.Models.CharacterComponents.Cards.CardActions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,7 +30,7 @@ public class CardsController : ControllerBase
             {
                 Id = c.Id,
                 Description = c.Description,
-                CardAction = CardActionDto.MapToCardActionDto(c.CardAction),
+                CardAction = c.CardAction,
             })
             .ToListAsync();
 
@@ -59,7 +56,7 @@ public class CardsController : ControllerBase
         {
             Id = card.Id,
             Description = card.Description,
-            CardAction = CardActionDto.MapToCardActionDto(card.CardAction),
+            CardAction = card.CardAction,
         };
 
         return Ok(dto);
@@ -73,8 +70,7 @@ public class CardsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<CardDto>> Create([FromBody] CardCreateDto dto)
     {
-        var cardAction = dto.CardAction.MapToCardActionEntity();
-        var card = new CardEntity(dto.Description, cardAction);
+        var card = new CardEntity(dto.Description, dto.CardAction);
 
         _context.Cards.Add(card);
         await _context.SaveChangesAsync();
@@ -83,7 +79,7 @@ public class CardsController : ControllerBase
         {
             Id = card.Id,
             Description = card.Description,
-            CardAction = CardActionDto.MapToCardActionDto(card.CardAction),
+            CardAction = card.CardAction,
         };
 
         return CreatedAtAction(nameof(GetById), new { id = card.Id }, resultDto);
@@ -98,7 +94,7 @@ public class CardsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Update(Guid id, [FromBody] CardUpdateDto dto)
     {
-        var card = await _context.Cards.IgnoreAutoIncludes().FirstOrDefaultAsync(c => c.Id == id);
+        var card = await _context.Cards.FirstOrDefaultAsync(c => c.Id == id);
 
         if (card is null)
         {
@@ -106,10 +102,7 @@ public class CardsController : ControllerBase
         }
 
         card.Description = dto.Description;
-        var cardAction = dto.CardAction.MapToCardActionEntity();
-        _context.CardActions.Attach(cardAction);
-
-        await UpdateCardActionDiscriminator(card, cardAction);
+        card.CardAction = dto.CardAction;
 
         _context.Update(card);
         await _context.SaveChangesAsync();
@@ -136,25 +129,5 @@ public class CardsController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
-    }
-
-    // 06.04 Ef core don't support discriminator in tracking. User should change name by himself
-    private async Task UpdateCardActionDiscriminator(CardEntity card, CardActionEntity cardAction)
-    {
-        var existingId = card.CardActionId;
-        var newDiscriminator = CardActionEntityTypeConfiguration.DiscriminatorValues[cardAction.GetType()];
-
-        var sql =
-            $@"
-        UPDATE game_components.card_actions 
-        SET 
-            {CardActionEntityTypeConfiguration.DiscriminatorName} = @p1
-        WHERE id = @p0;";
-
-        // Параметры для SQL-запроса
-        var parameters = new List<object> { existingId, newDiscriminator };
-
-        // Выполняем raw SQL
-        await _context.Database.ExecuteSqlRawAsync(sql, [.. parameters]);
     }
 }

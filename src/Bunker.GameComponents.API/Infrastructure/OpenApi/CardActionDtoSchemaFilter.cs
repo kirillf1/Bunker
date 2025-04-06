@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using System.Text.Json.Serialization;
-using Bunker.Domain.Shared.GameComponents;
-using Bunker.GameComponents.API.Models.CharacterComponents.Cards.CardActions;
+using Bunker.GameComponents.API.Entities.CharacterComponents.Cards.CardActions;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -13,13 +12,13 @@ public class CardActionDtoSchemaFilter : ISchemaFilter
 {
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
-        if (context.Type != typeof(CardActionDto))
+        if (context.Type != typeof(CardActionEntity))
             return;
 
         schema.Properties.Clear();
         schema.Type = "object";
 
-        var derivedTypes = GetDerivedTypesFromBaseClassAttributes(typeof(CardActionDto));
+        var derivedTypes = GetDerivedTypesFromBaseClassAttributes(typeof(CardActionEntity));
         var discriminatorValues = new Dictionary<string, string>();
 
         var oneOfSchemas = new List<OpenApiSchema>();

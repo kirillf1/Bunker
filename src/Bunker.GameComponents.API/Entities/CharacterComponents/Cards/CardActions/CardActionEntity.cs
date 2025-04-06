@@ -1,13 +1,19 @@
-﻿namespace Bunker.GameComponents.API.Entities.CharacterComponents.Cards.CardActions;
+﻿using System.Text.Json.Serialization;
 
-public abstract class CardActionEntity
+namespace Bunker.GameComponents.API.Entities.CharacterComponents.Cards.CardActions;
+
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
+[JsonDerivedType(typeof(AddCharacteristicEntity), "$AddCharacteristic")]
+[JsonDerivedType(typeof(EmptyActionEntity), "$EmptyAction")]
+[JsonDerivedType(typeof(ExchangeCharacteristicActionEntity), "$ExchangeCharacteristicAction")]
+[JsonDerivedType(typeof(RecreateBunkerActionEntity), "$RecreateBunkerAction")]
+[JsonDerivedType(typeof(RecreateCatastropheActionEntity), "$RecreateCatastropheAction")]
+[JsonDerivedType(typeof(RecreateCharacterActionEntity), "$RecreateCharacterAction")]
+[JsonDerivedType(typeof(RemoveCharacteristicCardActionEntity), "$RemoveCharacteristicCardAction")]
+[JsonDerivedType(typeof(RerollCharacteristicCardActionEntity), "$RerollCharacteristicCardAction")]
+[JsonDerivedType(typeof(RevealBunkerGameComponentCardActionEntity), "$RevealBunkerGameComponentCardAction")]
+[JsonDerivedType(typeof(SpyCharacteristicCardActionEntity), "$SpyCharacteristicCardAction")]
+public class CardActionEntity
 {
-    public Guid Id { get; set; }
-
-    public CardEntity CardEntity { get; set; } = default!;
-
-    protected CardActionEntity()
-    {
-        Id = Guid.CreateVersion7();
-    }
+    protected CardActionEntity() { }
 }
