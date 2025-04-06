@@ -3,6 +3,7 @@ using System;
 using Bunker.GameComponents.API.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bunker.GameComponents.API.Migrations
 {
     [DbContext(typeof(GameComponentsContext))]
-    partial class GameComponentsContextModelSnapshot : ModelSnapshot
+    [Migration("20250406130739_AddedDescriminatorName")]
+    partial class AddedDescriminatorName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

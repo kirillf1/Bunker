@@ -4,7 +4,6 @@ using Bunker.GameComponents.API.Infrastructure.OpenApi;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Serilog;
-using Serilog.Core;
 using Serilog.Events;
 
 Log.Logger = new LoggerConfiguration()
@@ -21,8 +20,7 @@ try
         .Services.AddControllers()
         .AddJsonOptions(opts =>
         {
-            var enumConverter = new JsonStringEnumConverter();
-            opts.JsonSerializerOptions.Converters.Add(enumConverter);
+            opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
 
     builder.Services.AddSerilog(
@@ -58,8 +56,6 @@ try
         app.UseSwaggerUI();
     }
 
-    app.UseHttpsRedirection();
-
     app.UseAuthorization();
 
     app.MapControllers();
@@ -79,3 +75,5 @@ finally
 {
     await Log.CloseAndFlushAsync();
 }
+
+public partial class Program { }

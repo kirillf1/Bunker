@@ -80,29 +80,50 @@ public abstract class CardActionDto
                 d.CharacteristicType,
                 d.CharacteristicId,
                 d.TargetCharactersCount
-            ),
-            EmptyActionDto => new EmptyActionEntity(),
-            ExchangeCharacteristicActionDto d => new ExchangeCharacteristicActionEntity(d.CharacteristicType),
-            RecreateBunkerActionDto => new RecreateBunkerActionEntity(),
-            RecreateCatastropheActionDto => new RecreateCatastropheActionEntity(),
-            RecreateCharacterActionDto d => new RecreateCharacterActionEntity(d.TargetCharactersCount),
+            )
+            {
+                Id = cardAction.Id,
+            },
+            EmptyActionDto => new EmptyActionEntity() { Id = cardAction.Id },
+            ExchangeCharacteristicActionDto d => new ExchangeCharacteristicActionEntity(d.CharacteristicType)
+            {
+                Id = cardAction.Id,
+            },
+            RecreateBunkerActionDto => new RecreateBunkerActionEntity() { Id = cardAction.Id },
+            RecreateCatastropheActionDto => new RecreateCatastropheActionEntity() { Id = cardAction.Id },
+            RecreateCharacterActionDto d => new RecreateCharacterActionEntity(d.TargetCharactersCount)
+            {
+                Id = cardAction.Id,
+            },
             RemoveCharacteristicCardActionDto d => new RemoveCharacteristicCardActionEntity(
                 d.CharacteristicType,
                 d.TargetCharactersCount
-            ),
+            )
+            {
+                Id = cardAction.Id,
+            },
             RerollCharacteristicCardActionDto d => new RerollCharacteristicCardActionEntity(
                 d.CharacteristicType,
                 d.IsSelfTarget,
                 d.CharacteristicId,
                 d.TargetCharactersCount
-            ),
+            )
+            {
+                Id = cardAction.Id,
+            },
             RevealBunkerGameComponentCardActionDto d => new RevealBunkerGameComponentCardActionEntity(
                 d.BunkerObjectType
-            ),
+            )
+            {
+                Id = cardAction.Id,
+            },
             SpyCharacteristicCardActionDto d => new SpyCharacteristicCardActionEntity(
                 d.CharacteristicType,
                 d.TargetCharactersCount
-            ),
+            )
+            {
+                Id = cardAction.Id,
+            },
             _ => throw new NotSupportedException($"Unknown CardActionDto type: {this.GetType().Name}"),
         };
     }
