@@ -34,7 +34,7 @@ public class BunkerGameComponentsApiFixture : WebApplicationFactory<Program>, IA
         {
             var context = scope.ServiceProvider.GetRequiredService<GameComponentsContext>();
 
-            //await context.Database.EnsureDeletedAsync();
+            await context.Database.EnsureDeletedAsync();
             await base.DisposeAsync();
 
             logger.LogInformation("Test app disposed");

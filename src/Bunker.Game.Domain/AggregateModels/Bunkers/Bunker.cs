@@ -4,6 +4,15 @@ namespace Bunker.Game.Domain.AggregateModels.Bunkers;
 
 public class Bunker : Entity<Guid>, IAggregateRoot
 {
+    public const int MAX_ROOMS_COUNT = 3;
+    public const int MIN_ROOMS_COUNT = 1;
+
+    public const int MAX_BUNKER_ENVIROMENT_COUNT = 3;
+    public const int MIN_BUNKER_ENVIROMENT_COUNT = 1;
+
+    public const int MAX_BUNKER_ITEM_COUNT = 4;
+    public const int MIN_BUNKER_ITEM_COUNT = 1;
+
     private List<Item> _items;
     private List<Environment> _environments;
     private List<Room> _rooms;

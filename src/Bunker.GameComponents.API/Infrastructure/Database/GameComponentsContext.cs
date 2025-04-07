@@ -20,6 +20,7 @@ public class GameComponentsContext : DbContext
     public DbSet<TraitEntity> Traits { get; set; }
     public DbSet<CardEntity> Cards { get; set; }
 
+    public DbSet<BunkerDescriptionEntity> BunkerDescriptions { get; set; }
     public DbSet<RoomEntity> BunkerRooms { get; set; }
     public DbSet<EnvironmentEntity> BunkerEnvironments { get; set; }
     public DbSet<BunkerItemEntity> BunkerItems { get; set; }
