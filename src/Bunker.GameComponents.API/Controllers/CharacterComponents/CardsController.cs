@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bunker.GameComponents.API.Controllers.CharacterComponents;
 
-[Route("api/cards")]
+[Route("api/character-components/cards")]
 [ApiController]
 [Produces("application/json")]
 public class CardsController : ControllerBase

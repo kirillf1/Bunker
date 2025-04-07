@@ -4,9 +4,9 @@ using Bunker.GameComponents.API.Models.Catastrophes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bunker.GameComponents.API.Controllers;
+namespace Bunker.GameComponents.API.Controllers.CatastropheComponents;
 
-[Route("api/catastrophes")]
+[Route("api/catastrophe-components/descriptions")]
 [ApiController]
 [Produces("application/json")]
 public class CatastrophesController : ControllerBase
@@ -42,9 +42,7 @@ public class CatastrophesController : ControllerBase
     {
         var catastrophe = await _context.Catastrophes.FirstOrDefaultAsync(p => p.Id == id);
         if (catastrophe is null)
-        {
             return NotFound();
-        }
 
         var dto = new CatastropheDto { Id = catastrophe.Id, Description = catastrophe.Description };
         return Ok(dto);
@@ -77,9 +75,7 @@ public class CatastrophesController : ControllerBase
     {
         var catastrophe = await _context.Catastrophes.FirstOrDefaultAsync(p => p.Id == id);
         if (catastrophe is null)
-        {
             return NotFound();
-        }
 
         catastrophe.Description = dto.Description;
         _context.Update(catastrophe);
@@ -98,9 +94,7 @@ public class CatastrophesController : ControllerBase
     {
         var catastrophe = await _context.Catastrophes.FirstOrDefaultAsync(p => p.Id == id);
         if (catastrophe is null)
-        {
             return NotFound();
-        }
 
         _context.Catastrophes.Remove(catastrophe);
         await _context.SaveChangesAsync();

@@ -1,6 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Reflection;
+using System.Text.Json.Serialization;
 using Bunker.GameComponents.API.Infrastructure.Database;
-using Bunker.GameComponents.API.Infrastructure.OpenApi;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Serilog;
@@ -31,11 +31,19 @@ try
                 .Enrich.FromLogContext()
                 .WriteTo.Async(c => c.Console())
     );
-
-    builder.Services.AddSwaggerGen(c =>
+    builder.Services.ConfigureSwaggerGen(opt =>
     {
-        c.SchemaFilter<CardActionDtoSchemaFilter>();
+        opt.UseOneOfForPolymorphism();
+
+        opt.SelectDiscriminatorNameUsing(_ => "$type");
+        opt.SelectDiscriminatorValueUsing(subType =>
+            subType
+                .BaseType!.GetCustomAttributes<JsonDerivedTypeAttribute>()
+                .FirstOrDefault(x => x.DerivedType == subType)
+                ?.TypeDiscriminator!.ToString()
+        );
     });
+    builder.Services.AddSwaggerGen(c => { });
 
     builder.Services.AddDbContext<GameComponentsContext>(options =>
     {

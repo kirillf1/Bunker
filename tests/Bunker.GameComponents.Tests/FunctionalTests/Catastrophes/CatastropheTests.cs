@@ -33,7 +33,7 @@ namespace Bunker.GameComponents.Tests.FunctionalTests.Catastrophes
             await context.SaveChangesAsync();
 
             // Act
-            var response = await _client.GetAsync("/api/catastrophes");
+            var response = await _client.GetAsync("/api/catastrophe-components/descriptions");
 
             // Assert
             Assert.True(response.IsSuccessStatusCode);
@@ -53,7 +53,7 @@ namespace Bunker.GameComponents.Tests.FunctionalTests.Catastrophes
             await context.SaveChangesAsync();
 
             // Act
-            var response = await _client.GetAsync($"/api/catastrophes/{entity.Id}");
+            var response = await _client.GetAsync($"/api/catastrophe-components/descriptions/{entity.Id}");
 
             // Assert
             Assert.True(response.IsSuccessStatusCode);
@@ -67,7 +67,7 @@ namespace Bunker.GameComponents.Tests.FunctionalTests.Catastrophes
         public async Task GetById_NonExistingId_ReturnsNotFound()
         {
             // Act
-            var response = await _client.GetAsync($"/api/catastrophes/{Guid.NewGuid()}");
+            var response = await _client.GetAsync($"/api/catastrophe-components/descriptions/{Guid.NewGuid()}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -80,7 +80,7 @@ namespace Bunker.GameComponents.Tests.FunctionalTests.Catastrophes
             var createDto = new CreateCatastropheDto { Description = "New Description" };
 
             // Act
-            var response = await _client.PostAsJsonAsync("/api/catastrophes", createDto);
+            var response = await _client.PostAsJsonAsync("/api/catastrophe-components/descriptions", createDto);
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -106,7 +106,10 @@ namespace Bunker.GameComponents.Tests.FunctionalTests.Catastrophes
             var updateDto = new UpdateCatastropheDto { Description = "Updated Description" };
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/api/catastrophes/{entity.Id}", updateDto);
+            var response = await _client.PutAsJsonAsync(
+                $"/api/catastrophe-components/descriptions/{entity.Id}",
+                updateDto
+            );
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -124,7 +127,10 @@ namespace Bunker.GameComponents.Tests.FunctionalTests.Catastrophes
             var updateDto = new UpdateCatastropheDto { Description = "Updated Description" };
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/api/catastrophes/{Guid.NewGuid()}", updateDto);
+            var response = await _client.PutAsJsonAsync(
+                $"/api/catastrophe-components/descriptions/{Guid.NewGuid()}",
+                updateDto
+            );
 
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -141,7 +147,7 @@ namespace Bunker.GameComponents.Tests.FunctionalTests.Catastrophes
             await context.SaveChangesAsync();
 
             // Act
-            var response = await _client.DeleteAsync($"/api/catastrophes/{entity.Id}");
+            var response = await _client.DeleteAsync($"/api/catastrophe-components/descriptions/{entity.Id}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -155,7 +161,7 @@ namespace Bunker.GameComponents.Tests.FunctionalTests.Catastrophes
         public async Task Delete_NonExistingId_ReturnsNotFound()
         {
             // Act
-            var response = await _client.DeleteAsync($"/api/catastrophes/{Guid.NewGuid()}");
+            var response = await _client.DeleteAsync($"/api/catastrophe-components/descriptions/{Guid.NewGuid()}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);

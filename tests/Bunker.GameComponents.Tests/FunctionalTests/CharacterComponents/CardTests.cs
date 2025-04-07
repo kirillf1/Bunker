@@ -40,7 +40,7 @@ public class CardTests
         await context.SaveChangesAsync();
 
         // Act
-        var response = await _client.GetAsync("/api/cards");
+        var response = await _client.GetAsync("/api/character-components/cards");
 
         // Assert
         Assert.True(response.IsSuccessStatusCode);
@@ -60,7 +60,7 @@ public class CardTests
         await context.SaveChangesAsync();
 
         // Act
-        var response = await _client.GetAsync($"/api/cards/{card.Id}");
+        var response = await _client.GetAsync($"/api/character-components/cards/{card.Id}");
 
         // Assert
         Assert.True(response.IsSuccessStatusCode);
@@ -75,7 +75,7 @@ public class CardTests
     public async Task GetById_NonExistingId_ReturnsNotFound()
     {
         // Act
-        var response = await _client.GetAsync($"/api/cards/{Guid.NewGuid()}");
+        var response = await _client.GetAsync($"/api/character-components/cards/{Guid.NewGuid()}");
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -102,7 +102,7 @@ public class CardTests
         var createDto = CreateCardDto(actionType, characteristicType, targetCount);
 
         // Act
-        var response = await _client.PostAsJsonAsync("/api/cards", createDto);
+        var response = await _client.PostAsJsonAsync("/api/character-components/cards", createDto);
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -141,7 +141,7 @@ public class CardTests
         };
 
         // Act
-        var response = await _client.PutAsJsonAsync($"/api/cards/{card.Id}", updateDto);
+        var response = await _client.PutAsJsonAsync($"/api/character-components/cards/{card.Id}", updateDto);
 
         // Assert
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -164,7 +164,7 @@ public class CardTests
         await context.SaveChangesAsync();
 
         // Act
-        var response = await _client.DeleteAsync($"/api/cards/{card.Id}");
+        var response = await _client.DeleteAsync($"/api/character-components/cards/{card.Id}");
 
         // Assert
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);

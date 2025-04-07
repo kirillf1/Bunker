@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bunker.Game.Domain\Bunker.Game.Domain.csproj" />
+    <ProjectReference Include="..\Bunker.Game.Infrastructure\Bunker.Game.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
