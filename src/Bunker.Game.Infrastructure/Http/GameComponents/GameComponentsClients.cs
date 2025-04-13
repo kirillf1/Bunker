@@ -27,7 +27,7 @@ namespace Bunker.Game.Infrastructure.Http.GameComponents
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.3.0.0 (NJsonSchema v11.2.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CharacterComponentsClient 
+    public partial class CharacterComponentsClient : ICharacterComponentsClient
     {
         private System.Net.Http.HttpClient _httpClient;
         private static System.Lazy<System.Text.Json.JsonSerializerOptions> _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings, true);
@@ -4792,7 +4792,7 @@ namespace Bunker.Game.Infrastructure.Http.GameComponents
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.3.0.0 (NJsonSchema v11.2.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class BunkerComponentsClient 
+    public partial class BunkerComponentsClient : IBunkerComponentsClient
     {
         private System.Net.Http.HttpClient _httpClient;
         private static System.Lazy<System.Text.Json.JsonSerializerOptions> _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings, true);
@@ -7209,7 +7209,7 @@ namespace Bunker.Game.Infrastructure.Http.GameComponents
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.3.0.0 (NJsonSchema v11.2.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CatastropheComponentsClient 
+    public partial class CatastropheComponentsClient : ICatastropheComponentsClient
     {
         private System.Net.Http.HttpClient _httpClient;
         private static System.Lazy<System.Text.Json.JsonSerializerOptions> _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings, true);

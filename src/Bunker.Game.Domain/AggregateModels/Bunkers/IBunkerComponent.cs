@@ -8,7 +8,7 @@ public interface IBunkerComponent
 }
 
 public interface IBunkerComponent<out T> : IBunkerComponent
-    where T : IBunkerComponent
+    where T : class, IBunkerComponent
 {
     T Reveal();
 }

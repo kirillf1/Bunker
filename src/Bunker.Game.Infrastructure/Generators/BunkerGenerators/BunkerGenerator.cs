@@ -1,118 +1,111 @@
 ﻿using Bunker.Game.Domain.AggregateModels.Bunkers;
-using Bunker.Game.Infrastructure.Http.GameComponents;
 using Bunker.Game.Infrastructure.Http.GameComponents.Contracts;
 using BunkerAggregate = Bunker.Game.Domain.AggregateModels.Bunkers.Bunker;
 using Environment = Bunker.Game.Domain.AggregateModels.Bunkers.Environment;
 
-namespace Bunker.Game.Infrastructure.Generators.BunkerGenerators
-{
-    // Я понял, что BunkerComponentsClient не подойдет, нужно еще иметь интерфейс чтобы можно было кэшом задекорировать
-    public class BunkerGenerator : IBunkerGenerator
-    {
-        private readonly BunkerComponentsClient _client;
+namespace Bunker.Game.Infrastructure.Generators.BunkerGenerators;
 
-        public BunkerGenerator(BunkerComponentsClient client)
+public class BunkerGenerator : IBunkerGenerator
+{
+    private readonly IBunkerComponentsClient _client;
+
+    public BunkerGenerator(IBunkerComponentsClient client)
+    {
+        _client = client ?? throw new ArgumentNullException(nameof(client));
+    }
+
+    public async Task<T> GenerateBunkerComponent<T>()
+        where T : IBunkerComponent
+    {
+        if (typeof(T) == typeof(Item))
         {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
+            var itemsDto = await _client.ItemsGetAsync();
+            var itemDto = itemsDto.ElementAt(Random.Shared.Next(0, itemsDto.Count));
+            return (T)Convert.ChangeType(new Item(itemDto.Description), typeof(T));
+        }
+        else if (typeof(T) == typeof(Room))
+        {
+            var roomsDto = await _client.RoomsGetAsync();
+            var roomDto = roomsDto.ElementAt(Random.Shared.Next(0, roomsDto.Count));
+            return (T)Convert.ChangeType(new Room(roomDto.Description), typeof(T));
+        }
+        else if (typeof(T) == typeof(Environment))
+        {
+            var environmentsDto = await _client.EnvironmentsGetAsync();
+            var environmentDto = environmentsDto.ElementAt(Random.Shared.Next(0, environmentsDto.Count));
+            return (T)Convert.ChangeType(new Environment(environmentDto.Description), typeof(T));
         }
 
-        public async Task<T> GenerateBunkerComponent<T>()
-            where T : IBunkerComponent
+        throw new NotSupportedException($"Type {typeof(T).Name} is not supported as a bunker component.");
+    }
+
+    public async Task<IEnumerable<T>> GenerateBunkerComponents<T>(int count)
+        where T : IBunkerComponent
+    {
+        if (count < 0)
+            throw new ArgumentException("Count cannot be negative.", nameof(count));
+
+        var components = new List<T>();
+        for (int i = 0; i < count; i++)
         {
-            // Определяем тип компонента на основе T и создаем соответствующий DTO
-            if (typeof(T) == typeof(BunkerItemDto))
+            var component = await GenerateBunkerComponent<T>();
+            components.Add(component);
+        }
+        return components;
+    }
+
+    public async Task<T?> GetBunkerComponent<T>(Guid id)
+        where T : IBunkerComponent
+    {
+        try
+        {
+            if (typeof(T) == typeof(Item))
             {
-                var createDto = new CreateBunkerItemDto { Description = $"Generated bunker item {Guid.NewGuid()}" };
-                var result = await _client.ItemsGetAsync();
-                return (T)(object)result;
+                var itemDto = await _client.ItemsGetAsync(id);
+                return (T)Convert.ChangeType(new Item(itemDto.Description), typeof(T));
             }
-            else if (typeof(T) == typeof(RoomDto))
+            else if (typeof(T) == typeof(Room))
             {
-                var createDto = new CreateRoomDto { Description = $"Generated bunker room {Guid.NewGuid()}" };
-                var result = await _client.RoomsPostAsync(createDto); // Предполагаем, что метод существует
-                return (T)(object)result;
+                var roomDto = await _client.RoomsGetAsync(id);
+                return (T)Convert.ChangeType(new Room(roomDto.Description), typeof(T));
             }
-            else if (typeof(T) == typeof(EnvironmentDto))
+            else if (typeof(T) == typeof(Environment))
             {
-                var createDto = new CreateEnvironmentDto { Description = $"Generated environment {Guid.NewGuid()}" };
-                var result = await _client.EnvironmentsPostAsync(createDto);
-                return (T)(object)result;
+                var environmentDto = await _client.EnvironmentsGetAsync(id);
+                return (T)Convert.ChangeType(new Environment(environmentDto.Description), typeof(T));
             }
 
             throw new NotSupportedException($"Type {typeof(T).Name} is not supported as a bunker component.");
         }
-
-        public async Task<IEnumerable<T>> GenerateBunkerComponents<T>(int count)
-            where T : IBunkerComponent
+        catch (ApiException ex) when (ex.StatusCode == 404)
         {
-            if (count < 0)
-                throw new ArgumentException("Count cannot be negative.", nameof(count));
-
-            var components = new List<T>();
-            for (int i = 0; i < count; i++)
-            {
-                var component = await GenerateBunkerComponent<T>();
-                components.Add(component);
-            }
-            return components;
+            return default;
         }
+    }
 
-        public async Task<T?> GetBunkerComponent<T>(Guid id)
-            where T : IBunkerComponent
-        {
-            try
-            {
-                if (typeof(T) == typeof(BunkerItemDto))
-                {
-                    var result = await _client.ItemsGetAsync(id);
-                    return (T)(object)result;
-                }
-                else if (typeof(T) == typeof(RoomDto))
-                {
-                    var result = await _client.RoomsGetAsync(id); // Предполагаем, что метод существует
-                    return (T)(object)result;
-                }
-                else if (typeof(T) == typeof(EnvironmentDto))
-                {
-                    var result = await _client.EnvironmentsGetAsync(id);
-                    return (T)(object)result;
-                }
+    public async Task<BunkerAggregate> GenerateBunker(Guid gameSessionId)
+    {
+        var rooms = await GenerateBunkerComponents<Room>(
+            Random.Shared.Next(BunkerAggregate.MIN_ROOMS_COUNT, BunkerAggregate.MAX_ROOMS_COUNT + 1)
+        );
+        var items = await GenerateBunkerComponents<Item>(
+            Random.Shared.Next(BunkerAggregate.MIN_BUNKER_ITEM_COUNT, BunkerAggregate.MAX_BUNKER_ITEM_COUNT + 1)
+        );
+        var environment = await GenerateBunkerComponents<Environment>(
+            Random.Shared.Next(
+                BunkerAggregate.MIN_BUNKER_ENVIROMENT_COUNT,
+                BunkerAggregate.MAX_BUNKER_ENVIROMENT_COUNT + 1
+            )
+        );
+        var description = await GenerateBunkerDescription();
 
-                throw new NotSupportedException($"Type {typeof(T).Name} is not supported as a bunker component.");
-            }
-            catch (ApiException ex) when (ex.StatusCode == 404)
-            {
-                return default; // Возвращаем null, если компонент не найден
-            }
-        }
+        return new BunkerAggregate(Guid.CreateVersion7(), gameSessionId, description, items, environment, rooms);
+    }
 
-        public async Task<BunkerAggregate> GenerateBunker(Guid gameSessionId)
-        {
-            // Генерируем случайное количество комнат, предметов и окружение
-            var rooms = await GenerateBunkerComponents<Room>(
-                Random.Shared.Next(BunkerAggregate.MIN_ROOMS_COUNT, BunkerAggregate.MAX_ROOMS_COUNT + 1)
-            );
-            var items = await GenerateBunkerComponents<Item>(
-                Random.Shared.Next(BunkerAggregate.MIN_BUNKER_ITEM_COUNT, BunkerAggregate.MAX_BUNKER_ITEM_COUNT + 1)
-            );
-            var environment = await GenerateBunkerComponents<Environment>(
-                Random.Shared.Next(
-                    BunkerAggregate.MIN_BUNKER_ENVIROMENT_COUNT,
-                    BunkerAggregate.MAX_BUNKER_ENVIROMENT_COUNT + 1
-                )
-            );
-            var description = await GenerateBunkerDescription();
+    public async Task<string> GenerateBunkerDescription()
+    {
+        var descriptions = await _client.DescriptionsGetAsync();
 
-            return new BunkerAggregate(Guid.CreateVersion7(), gameSessionId, description, items, environment, rooms);
-        }
-
-        public async Task<string> GenerateBunkerDescription()
-        {
-            // Простая генерация описания
-
-            var desctiptions = await _client.DescriptionsGetAsync();
-
-            return desctiptions.First().Text;
-        }
+        return descriptions.ElementAt(Random.Shared.Next(0, descriptions.Count)).Text;
     }
 }

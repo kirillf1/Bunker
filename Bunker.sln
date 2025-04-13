@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunker.GameComponents.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunker.Game.Infrastructure", "src\Bunker.Game.Infrastructure\Bunker.Game.Infrastructure.csproj", "{BA4BFF28-628D-40DF-AD56-E340A754DC1C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunker.Game.Tests", "tests\Bunker.Game.Tests\Bunker.Game.Tests.csproj", "{6C366C53-CF72-484F-8223-B533E6488BA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{BA4BFF28-628D-40DF-AD56-E340A754DC1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA4BFF28-628D-40DF-AD56-E340A754DC1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA4BFF28-628D-40DF-AD56-E340A754DC1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C366C53-CF72-484F-8223-B533E6488BA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C366C53-CF72-484F-8223-B533E6488BA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C366C53-CF72-484F-8223-B533E6488BA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C366C53-CF72-484F-8223-B533E6488BA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,5 +81,6 @@ Global
 		{E1A1CC12-9D15-453D-88E6-93A23B38CAEF} = {760DE308-11F0-46EF-BAFF-92D31554A202}
 		{6BEF85CF-0C89-49B9-AF37-CB28AA4BD12D} = {2BE0C0AC-3794-4A75-8C81-E58A9021AEA8}
 		{BA4BFF28-628D-40DF-AD56-E340A754DC1C} = {760DE308-11F0-46EF-BAFF-92D31554A202}
+		{6C366C53-CF72-484F-8223-B533E6488BA2} = {2BE0C0AC-3794-4A75-8C81-E58A9021AEA8}
 	EndGlobalSection
 EndGlobal
