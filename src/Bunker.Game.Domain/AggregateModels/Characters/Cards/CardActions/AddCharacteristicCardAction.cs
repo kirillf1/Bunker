@@ -2,19 +2,13 @@
 
 namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
-public partial class AddCharacteristic : CardAction
+public partial class AddCharacteristicCardAction : CardAction
 {
     public CharacteristicType CharacteristicType { get; }
     public Guid? CharacteristicId { get; }
     public int TargetCharactersCount { get; }
 
-    public AddCharacteristic(
-        CardActionRequirements cardActionRequirements,
-        CharacteristicType characteristicType,
-        Guid? characteristicId,
-        int targetCharactersCount
-    )
-        : base(cardActionRequirements)
+    public AddCharacteristicCardAction(CharacteristicType characteristicType, Guid? characteristicId, int targetCharactersCount)
     {
         CharacteristicType = characteristicType;
         CharacteristicId = characteristicId;

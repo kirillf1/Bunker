@@ -2,19 +2,24 @@
 
 public class Age : ValueObject, ICharacteristic
 {
+    public const int MAX_GAME_CHARACTER_YEARS = 100;
+    public const int MIN_GAME_CHARACTER_YEARS = 17;
+
     public int Years { get; }
 
     public Age(int years)
     {
-        if (years <= 17 || years >= 100)
-            throw new ArgumentException("Age must be more than 17 and less then 100");
+        if (years < MIN_GAME_CHARACTER_YEARS || years > MAX_GAME_CHARACTER_YEARS)
+            throw new ArgumentException(
+                $"Age must be more than {MIN_GAME_CHARACTER_YEARS} and less then {MAX_GAME_CHARACTER_YEARS}"
+            );
 
         Years = years;
     }
 
     public Age()
     {
-        Years = 18;
+        Years = MIN_GAME_CHARACTER_YEARS;
     }
 
     public string GetDescription()

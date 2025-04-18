@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Bunker.Game.Domain\Bunker.Game.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Generators\CharacterFactories\" />
+  </ItemGroup>
+
 </Project>

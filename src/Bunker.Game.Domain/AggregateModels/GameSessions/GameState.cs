@@ -3,7 +3,7 @@
 [Flags]
 public enum GameState
 {
-    Prepering = 1,
+    Preparing = 1,
     Playing = 2,
     WaitingForGameResult = 4,
     Completed = 8,

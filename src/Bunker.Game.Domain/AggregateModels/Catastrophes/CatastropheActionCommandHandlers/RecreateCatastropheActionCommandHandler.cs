@@ -22,7 +22,7 @@ public class RecreateCatastropheActionCommandHandler : ICardActionCommandHandler
             await _catastropheRepository.GetCatastropheByGameSession(command.GameSessionId)
             ?? throw new InvalidGameOperationException("Unknown game session to activate card");
 
-        var description = await _catastropheGenerator.GenerateDescription(command.GameSessionId);
+        var description = await _catastropheGenerator.GenerateDescription();
 
         catastrophe.UpdateDescription(description);
 

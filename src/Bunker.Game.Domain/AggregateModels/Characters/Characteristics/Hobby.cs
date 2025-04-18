@@ -2,6 +2,9 @@
 
 public class Hobby : ValueObject, ICharacteristic
 {
+    public const byte MAX_GAME_EXPERIENCE_YEARS = 3;
+    public const byte MIN_GAME_EXPERIENCE_YEARS = 1;
+
     public string Description { get; }
     public byte Experience { get; }
 

@@ -6,11 +6,7 @@ public class RevealBunkerGameComponentCardAction : CardAction
 {
     public BunkerObjectType BunkerObjectType { get; }
 
-    public RevealBunkerGameComponentCardAction(
-        CardActionRequirements cardActionRequirements,
-        BunkerObjectType bunkerObjectType
-    )
-        : base(cardActionRequirements)
+    public RevealBunkerGameComponentCardAction(BunkerObjectType bunkerObjectType)
     {
         BunkerObjectType = bunkerObjectType;
     }
@@ -27,7 +23,6 @@ public class RevealBunkerGameComponentCardAction : CardAction
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
-        yield return CardActionRequirements;
         yield return BunkerObjectType;
     }
 }

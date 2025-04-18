@@ -2,15 +2,18 @@
 
 public class Profession : ValueObject, ICharacteristic
 {
-    public string Description { get; }
-    public byte Experience { get; }
+    public const byte MAX_GAME_EXPERIENCE_YEARS = 5;
+    public const byte MIN_GAME_EXPERIENCE_YEARS = 1;
 
-    public Profession(string description, byte experience)
+    public string Description { get; }
+    public byte ExperienceYears { get; }
+
+    public Profession(string description, byte experienceYears)
     {
-        if (experience > 20)
+        if (experienceYears > 20)
             throw new ArgumentException("Experience must be less then 20");
         Description = description;
-        Experience = experience;
+        ExperienceYears = experienceYears;
     }
 
 #pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Рассмотрите возможность добавления модификатора "required" или объявления значения, допускающего значение NULL.
@@ -25,6 +28,6 @@ public class Profession : ValueObject, ICharacteristic
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return Description;
-        yield return Experience;
+        yield return ExperienceYears;
     }
 }

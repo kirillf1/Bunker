@@ -10,13 +10,11 @@ public class RerollCharacteristicCardAction : CardAction
     public int TargetCharactersCount { get; }
 
     public RerollCharacteristicCardAction(
-        CardActionRequirements cardActionRequirements,
         CharacteristicType characteristicType,
         bool isSelfTarget,
         Guid? characteristicId,
         int targetCharactersCount
     )
-        : base(cardActionRequirements)
     {
         CharacteristicType = characteristicType;
         IsSelfTarget = isSelfTarget;
@@ -46,7 +44,6 @@ public class RerollCharacteristicCardAction : CardAction
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
-        yield return CardActionRequirements;
         yield return CharacteristicType;
         yield return CharacteristicId ?? Guid.Empty;
     }

@@ -7,12 +7,7 @@ public class RemoveCharacteristicCardAction : CardAction
     public CharacteristicType CharacteristicType { get; }
     public int TargetCharactersCount { get; }
 
-    public RemoveCharacteristicCardAction(
-        CardActionRequirements cardActionRequirements,
-        CharacteristicType characteristicType,
-        int targetCharactersCount
-    )
-        : base(cardActionRequirements)
+    public RemoveCharacteristicCardAction(CharacteristicType characteristicType, int targetCharactersCount)
     {
         CharacteristicType = characteristicType;
         TargetCharactersCount = targetCharactersCount;
@@ -35,7 +30,6 @@ public class RemoveCharacteristicCardAction : CardAction
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
-        yield return CardActionRequirements;
         yield return CharacteristicType;
         yield return TargetCharactersCount;
     }

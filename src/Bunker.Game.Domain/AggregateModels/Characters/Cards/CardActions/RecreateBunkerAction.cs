@@ -4,8 +4,7 @@ namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 
 public class RecreateBunkerAction : CardAction
 {
-    public RecreateBunkerAction(CardActionRequirements cardActionRequirements)
-        : base(cardActionRequirements) { }
+    public RecreateBunkerAction() { }
 
     public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams, Guid gameSessionId)
     {
@@ -19,6 +18,6 @@ public class RecreateBunkerAction : CardAction
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
-        yield return CardActionRequirements;
+        yield return this;
     }
 }

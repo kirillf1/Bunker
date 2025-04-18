@@ -35,7 +35,7 @@ public class GameSession : Entity<Guid>, IAggregateRoot
         ValidateName(name);
         Name = name;
 
-        GameState = GameState.Prepering;
+        GameState = GameState.Preparing;
 
         var charactersCount = characters.Count();
         if (charactersCount > MaxCharactersInGame || charactersCount < MinCharactersInGame)
@@ -65,9 +65,9 @@ public class GameSession : Entity<Guid>, IAggregateRoot
 
     public Character OccupyCharacter(Player player)
     {
-        if (GameState != GameState.Prepering)
+        if (GameState != GameState.Preparing)
         {
-            throw new InvalidGameOperationException($"Game state should be {GameState.Prepering}");
+            throw new InvalidGameOperationException($"Game state should be {GameState.Preparing}");
         }
 
         var occupyCharacterCandidate =

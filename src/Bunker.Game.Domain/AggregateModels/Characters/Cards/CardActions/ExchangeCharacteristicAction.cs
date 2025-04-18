@@ -6,11 +6,7 @@ public class ExchangeCharacteristicAction : CardAction
 {
     public CharacteristicType CharacteristicType { get; }
 
-    public ExchangeCharacteristicAction(
-        CardActionRequirements cardActionRequirements,
-        CharacteristicType characteristicType
-    )
-        : base(cardActionRequirements)
+    public ExchangeCharacteristicAction(CharacteristicType characteristicType)
     {
         CharacteristicType = characteristicType;
     }
@@ -31,7 +27,6 @@ public class ExchangeCharacteristicAction : CardAction
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
-        yield return CardActionRequirements;
         yield return CharacteristicType;
     }
 }

@@ -7,10 +7,15 @@ namespace Bunker.Game.Domain.AggregateModels.Characters;
 
 public class Character : Entity<Guid>, IAggregateRoot
 {
+    public const int MAX_TRAITS_IN_START_GAME = 2;
+    public const int MIN_TRAITS_IN_START_GAME = 1;
+    public const int MAX_CARDS_IN_START_GAME = 2;
+    public const int MIN_CARDS_IN_START_GAME = 2;
+    public const int MAX_ITEMS_IN_START_GAME = 2;
+    public const int MIN_ITEMS_IN_START_GAME = 1;
+
     private List<Item> _items;
-
     private List<Trait> _traits;
-
     private List<Card> _cards;
 
     public Guid GameSessionId { get; private set; }
@@ -67,16 +72,31 @@ public class Character : Entity<Guid>, IAggregateRoot
         Sex = sex;
         IsKicked = false;
 
-        if (!items.Any())
-            throw new ArgumentException("Character must have one or more items");
+        var itemsCount = items.Count();
+        if (itemsCount < MIN_ITEMS_IN_START_GAME || itemsCount > MAX_ITEMS_IN_START_GAME)
+        {
+            throw new ArgumentException(
+                $"Invalid items count. Min items count {MIN_ITEMS_IN_START_GAME}, Max items count {MAX_ITEMS_IN_START_GAME}"
+            );
+        }
         _items = new List<Item>(items);
 
-        if (!traits.Any())
-            throw new ArgumentException("Character must have one or more traits");
+        var traitsCount = traits.Count();
+        if (traitsCount < MIN_TRAITS_IN_START_GAME || traitsCount > MAX_TRAITS_IN_START_GAME)
+        {
+            throw new ArgumentException(
+                $"Invalid traits count. Min traits count {MIN_TRAITS_IN_START_GAME}, Max traits count {MAX_TRAITS_IN_START_GAME}"
+            );
+        }
         _traits = new List<Trait>(traits);
 
-        if (cards.Count() != 2)
-            throw new ArgumentException("Character must have two cards");
+        var cardsCount = cards.Count();
+        if (cardsCount < MIN_CARDS_IN_START_GAME || cardsCount > MAX_CARDS_IN_START_GAME)
+        {
+            throw new ArgumentException(
+                $"Invalid cards count. Min cards count {MIN_CARDS_IN_START_GAME}, Max cards count {MAX_CARDS_IN_START_GAME}"
+            );
+        }
         _cards = new List<Card>(cards);
     }
 
@@ -279,7 +299,7 @@ public class Character : Entity<Guid>, IAggregateRoot
     {
         var card = _cards.FirstOrDefault(x => x.Id == cardId) ?? throw new ArgumentException("Unknown card");
 
-        return card.CardAction.CardActionRequirements;
+        return card.CardAction.GetCurrentCardActionRequirements();
     }
 
     public CardActionCommand UseCard(Guid cardId, ActivateCardParams activateCardParams)

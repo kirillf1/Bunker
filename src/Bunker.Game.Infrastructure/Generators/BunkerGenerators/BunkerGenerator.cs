@@ -17,26 +17,40 @@ public class BunkerGenerator : IBunkerGenerator
     public async Task<T> GenerateBunkerComponent<T>()
         where T : IBunkerComponent
     {
-        if (typeof(T) == typeof(Item))
+        return (T)await GenerateBunkerComponent(typeof(T));
+    }
+
+    public async Task<IBunkerComponent> GenerateBunkerComponent(Type componentType)
+    {
+        if (!typeof(IBunkerComponent).IsAssignableFrom(componentType))
+            throw new NotSupportedException($"Type {componentType.Name} does not implement IBunkerComponent.");
+
+        if (componentType == typeof(Item))
         {
             var itemsDto = await _client.ItemsGetAsync();
+            if (itemsDto.Count == 0)
+                throw new InvalidOperationException($"No {componentType.Name} data available.");
             var itemDto = itemsDto.ElementAt(Random.Shared.Next(0, itemsDto.Count));
-            return (T)Convert.ChangeType(new Item(itemDto.Description), typeof(T));
+            return new Item(itemDto.Description);
         }
-        else if (typeof(T) == typeof(Room))
+        else if (componentType == typeof(Room))
         {
             var roomsDto = await _client.RoomsGetAsync();
+            if (roomsDto.Count == 0)
+                throw new InvalidOperationException($"No {componentType.Name} data available.");
             var roomDto = roomsDto.ElementAt(Random.Shared.Next(0, roomsDto.Count));
-            return (T)Convert.ChangeType(new Room(roomDto.Description), typeof(T));
+            return new Room(roomDto.Description);
         }
-        else if (typeof(T) == typeof(Environment))
+        else if (componentType == typeof(Environment))
         {
             var environmentsDto = await _client.EnvironmentsGetAsync();
+            if (environmentsDto.Count == 0)
+                throw new InvalidOperationException($"No {componentType.Name} data available.");
             var environmentDto = environmentsDto.ElementAt(Random.Shared.Next(0, environmentsDto.Count));
-            return (T)Convert.ChangeType(new Environment(environmentDto.Description), typeof(T));
+            return new Environment(environmentDto.Description);
         }
 
-        throw new NotSupportedException($"Type {typeof(T).Name} is not supported as a bunker component.");
+        throw new NotSupportedException($"Type {componentType.Name} is not supported as a bunker component.");
     }
 
     public async Task<IEnumerable<T>> GenerateBunkerComponents<T>(int count)
@@ -57,29 +71,37 @@ public class BunkerGenerator : IBunkerGenerator
     public async Task<T?> GetBunkerComponent<T>(Guid id)
         where T : IBunkerComponent
     {
+        return (T?)await GetBunkerComponent(id, typeof(T));
+    }
+
+    public async Task<IBunkerComponent?> GetBunkerComponent(Guid id, Type componentType)
+    {
+        if (!typeof(IBunkerComponent).IsAssignableFrom(componentType))
+            throw new NotSupportedException($"Type {componentType.Name} does not implement IBunkerComponent.");
+
         try
         {
-            if (typeof(T) == typeof(Item))
+            if (componentType == typeof(Item))
             {
                 var itemDto = await _client.ItemsGetAsync(id);
-                return (T)Convert.ChangeType(new Item(itemDto.Description), typeof(T));
+                return new Item(itemDto.Description);
             }
-            else if (typeof(T) == typeof(Room))
+            else if (componentType == typeof(Room))
             {
                 var roomDto = await _client.RoomsGetAsync(id);
-                return (T)Convert.ChangeType(new Room(roomDto.Description), typeof(T));
+                return new Room(roomDto.Description);
             }
-            else if (typeof(T) == typeof(Environment))
+            else if (componentType == typeof(Environment))
             {
                 var environmentDto = await _client.EnvironmentsGetAsync(id);
-                return (T)Convert.ChangeType(new Environment(environmentDto.Description), typeof(T));
+                return new Environment(environmentDto.Description);
             }
 
-            throw new NotSupportedException($"Type {typeof(T).Name} is not supported as a bunker component.");
+            throw new NotSupportedException($"Type {componentType.Name} is not supported as a bunker component.");
         }
         catch (ApiException ex) when (ex.StatusCode == 404)
         {
-            return default;
+            return null;
         }
     }
 

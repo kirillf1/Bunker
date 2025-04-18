@@ -6,8 +6,7 @@ public class RecreateCharacterAction : CardAction
 {
     public int TargetCharactersCount { get; }
 
-    public RecreateCharacterAction(CardActionRequirements cardActionRequirements, int targetCharactersCount)
-        : base(cardActionRequirements)
+    public RecreateCharacterAction(int targetCharactersCount)
     {
         TargetCharactersCount = targetCharactersCount;
     }
@@ -29,7 +28,6 @@ public class RecreateCharacterAction : CardAction
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
-        yield return CardActionRequirements;
         yield return TargetCharactersCount;
     }
 }

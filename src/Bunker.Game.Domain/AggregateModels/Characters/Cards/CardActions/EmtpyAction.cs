@@ -8,8 +8,7 @@ namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 /// </summary>
 public partial class EmptyAction : CardAction
 {
-    public EmptyAction(CardActionRequirements cardActionRequirements)
-        : base(cardActionRequirements) { }
+    public EmptyAction() { }
 
     public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams, Guid gameSessionId)
     {

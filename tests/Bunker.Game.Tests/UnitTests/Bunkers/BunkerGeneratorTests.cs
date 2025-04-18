@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Bunker.Game.Domain.AggregateModels.Bunkers;
+﻿using Bunker.Game.Domain.AggregateModels.Bunkers;
 using Bunker.Game.Infrastructure.Generators.BunkerGenerators;
 using Bunker.Game.Infrastructure.Http.GameComponents.Contracts;
-using Moq;
+using Bunker.Game.Tests.Fakes;
 using BunkerAggregate = Bunker.Game.Domain.AggregateModels.Bunkers.Bunker;
 using Environment = Bunker.Game.Domain.AggregateModels.Bunkers.Environment;
 
@@ -14,18 +9,19 @@ namespace Bunker.Game.Tests.UnitTests.Bunkers
 {
     public class BunkerGeneratorTests
     {
-        private readonly Mock<IBunkerComponentsClient> _clientMock;
+        private readonly IBunkerComponentsClient _client;
         private readonly BunkerGenerator _generator;
 
         public BunkerGeneratorTests()
         {
-            _clientMock = new Mock<IBunkerComponentsClient>();
-            _generator = new BunkerGenerator(_clientMock.Object);
+            _client = new FakeBunkerComponentsClient();
+            _generator = new BunkerGenerator(_client);
         }
 
         [Fact]
         public void Constructor_NullClient_ThrowsArgumentNullException()
         {
+            // Act & Assert
             var exception = Assert.Throws<ArgumentNullException>(() => new BunkerGenerator(null));
             Assert.Equal("client", exception.ParamName);
         }
@@ -33,10 +29,6 @@ namespace Bunker.Game.Tests.UnitTests.Bunkers
         [Fact]
         public async Task GenerateBunkerComponent_Item_ReturnsItem()
         {
-            // Arrange
-            var items = new List<BunkerItemDto> { new BunkerItemDto { Description = "Test Item" } };
-            _clientMock.Setup(c => c.ItemsGetAsync()).ReturnsAsync(items);
-
             // Act
             var result = await _generator.GenerateBunkerComponent<Item>();
 
@@ -48,10 +40,6 @@ namespace Bunker.Game.Tests.UnitTests.Bunkers
         [Fact]
         public async Task GenerateBunkerComponent_Room_ReturnsRoom()
         {
-            // Arrange
-            var rooms = new List<RoomDto> { new RoomDto { Description = "Test Room" } };
-            _clientMock.Setup(c => c.RoomsGetAsync()).ReturnsAsync(rooms);
-
             // Act
             var result = await _generator.GenerateBunkerComponent<Room>();
 
@@ -63,10 +51,6 @@ namespace Bunker.Game.Tests.UnitTests.Bunkers
         [Fact]
         public async Task GenerateBunkerComponent_Environment_ReturnsEnvironment()
         {
-            // Arrange
-            var environments = new List<EnvironmentDto> { new EnvironmentDto { Description = "Test Environment" } };
-            _clientMock.Setup(c => c.EnvironmentsGetAsync()).ReturnsAsync(environments);
-
             // Act
             var result = await _generator.GenerateBunkerComponent<Environment>();
 
@@ -101,15 +85,14 @@ namespace Bunker.Game.Tests.UnitTests.Bunkers
         public async Task GenerateBunkerComponents_ValidCount_ReturnsCorrectNumberOfItems()
         {
             // Arrange
-            var items = new List<BunkerItemDto> { new BunkerItemDto { Description = "Test Item" } };
-            _clientMock.Setup(c => c.ItemsGetAsync()).ReturnsAsync(items);
+            var count = 3;
 
             // Act
-            var result = await _generator.GenerateBunkerComponents<Item>(3);
+            var result = await _generator.GenerateBunkerComponents<Item>(count);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(3, result.Count());
+            Assert.Equal(count, result.Count());
             Assert.All(result, item => Assert.IsType<Item>(item));
         }
 
@@ -118,8 +101,6 @@ namespace Bunker.Game.Tests.UnitTests.Bunkers
         {
             // Arrange
             var id = Guid.NewGuid();
-            var itemDto = new BunkerItemDto { Description = "Test Item" };
-            _clientMock.Setup(c => c.ItemsGetAsync(id)).ReturnsAsync(itemDto);
 
             // Act
             var result = await _generator.GetBunkerComponent<Item>(id);
@@ -134,8 +115,6 @@ namespace Bunker.Game.Tests.UnitTests.Bunkers
         {
             // Arrange
             var id = Guid.NewGuid();
-            var roomDto = new RoomDto { Description = "Test Room" };
-            _clientMock.Setup(c => c.RoomsGetAsync(id)).ReturnsAsync(roomDto);
 
             // Act
             var result = await _generator.GetBunkerComponent<Room>(id);
@@ -150,8 +129,6 @@ namespace Bunker.Game.Tests.UnitTests.Bunkers
         {
             // Arrange
             var id = Guid.NewGuid();
-            var environmentDto = new EnvironmentDto { Description = "Test Environment" };
-            _clientMock.Setup(c => c.EnvironmentsGetAsync(id)).ReturnsAsync(environmentDto);
 
             // Act
             var result = await _generator.GetBunkerComponent<Environment>(id);
@@ -162,21 +139,14 @@ namespace Bunker.Game.Tests.UnitTests.Bunkers
         }
 
         [Fact]
-        public async Task GetBunkerComponent_NotFound_ReturnsNull()
+        public async Task GenerateBunkerDescription_ReturnsDescription()
         {
-            // Arrange
-            var id = Guid.NewGuid();
-            _clientMock
-                .Setup(c => c.ItemsGetAsync(id))
-                .ThrowsAsync(
-                    new ApiException("not fonund", 404, "test", new Dictionary<string, IEnumerable<string>>(), default)
-                );
-
             // Act
-            var result = await _generator.GetBunkerComponent<Item>(id);
+            var result = await _generator.GenerateBunkerDescription();
 
             // Assert
-            Assert.Null(result);
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
         }
 
         [Fact]
@@ -184,43 +154,28 @@ namespace Bunker.Game.Tests.UnitTests.Bunkers
         {
             // Arrange
             var gameSessionId = Guid.NewGuid();
-            var items = new List<BunkerItemDto> { new BunkerItemDto { Description = "Test Item" } };
-            var rooms = new List<RoomDto> { new RoomDto { Description = "Test Room" } };
-            var environments = new List<EnvironmentDto> { new EnvironmentDto { Description = "Test Environment" } };
-            var descriptions = new List<BunkerDescriptionDto>
-            {
-                new BunkerDescriptionDto { Text = "Test Description" },
-            };
-
-            _clientMock.Setup(c => c.ItemsGetAsync()).ReturnsAsync(items);
-            _clientMock.Setup(c => c.RoomsGetAsync()).ReturnsAsync(rooms);
-            _clientMock.Setup(c => c.EnvironmentsGetAsync()).ReturnsAsync(environments);
-            _clientMock.Setup(c => c.DescriptionsGetAsync()).ReturnsAsync(descriptions);
 
             // Act
-            var result = await _generator.GenerateBunker(gameSessionId);
+            var bunker = await _generator.GenerateBunker(gameSessionId);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.IsType<BunkerAggregate>(result);
-        }
+            Assert.NotNull(bunker);
+            Assert.IsType<BunkerAggregate>(bunker);
+            Assert.Equal(gameSessionId, bunker.GameSessionId);
 
-        [Fact]
-        public async Task GenerateBunkerDescription_ReturnsDescription()
-        {
-            // Arrange
-            var descriptions = new List<BunkerDescriptionDto>
-            {
-                new BunkerDescriptionDto { Text = "Test Description" },
-            };
-            _clientMock.Setup(c => c.DescriptionsGetAsync()).ReturnsAsync(descriptions);
+            Assert.InRange(bunker.Rooms.Count, BunkerAggregate.MIN_ROOMS_COUNT, BunkerAggregate.MAX_ROOMS_COUNT);
 
-            // Act
-            var result = await _generator.GenerateBunkerDescription();
+            Assert.InRange(
+                bunker.Items.Count,
+                BunkerAggregate.MIN_BUNKER_ITEM_COUNT,
+                BunkerAggregate.MAX_BUNKER_ITEM_COUNT
+            );
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal("Test Description", result);
+            Assert.InRange(
+                bunker.Environments.Count,
+                BunkerAggregate.MIN_BUNKER_ENVIROMENT_COUNT,
+                BunkerAggregate.MAX_BUNKER_ENVIROMENT_COUNT
+            );
         }
     }
 }
