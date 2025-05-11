@@ -128,6 +128,12 @@ public class RerollCharacteristicActionCommandHandler : ICardActionCommandHandle
             case Type t when t == typeof(Size):
                 character.UpdateSize((Size)characteristic);
                 break;
+            case Type t when t == typeof(Sex):
+                character.UpdateSex((Sex)characteristic);
+                break;
+            case Type t when t == typeof(Childbearing):
+                character.UpdateChildbearing((Childbearing)characteristic);
+                break;
             default:
                 throw new ArgumentException($"Unknown characteristic type: {characteristic.GetType().Name}");
         }

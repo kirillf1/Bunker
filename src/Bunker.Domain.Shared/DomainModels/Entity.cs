@@ -2,7 +2,7 @@
 
 namespace Bunker.Domain.Shared.DomainModels;
 
-public abstract class Entity<T>
+public abstract class Entity<T> : IEntity
 {
     int? _requestedHashCode;
 

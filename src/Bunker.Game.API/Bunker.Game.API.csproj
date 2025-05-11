@@ -16,6 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Application\Commands\Bunkers\" />
+    <Folder Include="Application\Commands\Catastrophes\" />
     <Folder Include="Controllers\" />
   </ItemGroup>
 
