@@ -41,7 +41,7 @@ public class CharacterFactoryTests
         Assert.NotNull(character.Sex);
 
         // Check collections
-        var itemsCount = character.Items.Count();
+        var itemsCount = character.Items.Count;
         Assert.InRange(itemsCount, Character.MIN_ITEMS_IN_START_GAME, Character.MAX_ITEMS_IN_START_GAME);
 
         var traitsCount = character.Traits.Count();

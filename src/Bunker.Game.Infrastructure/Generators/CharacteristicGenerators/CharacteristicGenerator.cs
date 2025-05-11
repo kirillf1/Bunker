@@ -109,6 +109,13 @@ public class CharacteristicGenerator : ICharacteristicGenerator
         {
             return new Sex(Random.Shared.NextDouble() >= 0.5 ? "Мужчина" : "Женщина");
         }
+        else if (characteristicType == typeof(Size))
+        {
+            return new Size(
+                Random.Shared.Next(Size.MIN_CHARACTER_HEIGHT, Size.MAX_CHARACTER_HEIGHT + 1),
+                Random.Shared.Next(Size.MIN_CHARACTER_WEIGHT, Size.MAX_CHARACTER_WEIGHT + 1)
+            );
+        }
         throw new NotSupportedException($"Type {characteristicType.Name} is not supported as a characteristic.");
     }
 
@@ -210,6 +217,13 @@ public class CharacteristicGenerator : ICharacteristicGenerator
             else if (characteristicType == typeof(Sex))
             {
                 return new Sex(Random.Shared.NextDouble() >= 0.5 ? "Мужчина" : "Женщина");
+            }
+            else if (characteristicType == typeof(Size))
+            {
+                return new Size(
+                    Random.Shared.Next(Size.MIN_CHARACTER_HEIGHT, Size.MAX_CHARACTER_HEIGHT + 1),
+                    Random.Shared.Next(Size.MIN_CHARACTER_WEIGHT, Size.MAX_CHARACTER_WEIGHT + 1)
+                );
             }
 
             throw new NotSupportedException($"Type {characteristicType.Name} is not supported as a characteristic.");

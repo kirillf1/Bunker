@@ -76,6 +76,18 @@ public class ExchangeCharacteristicActionCommandHandler : ICardActionCommandHand
                 firstCharacter.ReplaceCards(secondCharacterCards);
                 secondCharacter.ReplaceCards(firstCharacterCards);
                 break;
+            case Type t when t == typeof(Age):
+                var firstAge = firstCharacter.Age;
+                var secondAge = secondCharacter.Age;
+                firstCharacter.UpdateAge(secondAge);
+                secondCharacter.UpdateAge(firstAge);
+                break;
+            case Type t when t == typeof(Size):
+                var firstSize = firstCharacter.Size;
+                var secondSize = secondCharacter.Size;
+                firstCharacter.UpdateSize(secondSize);
+                secondCharacter.UpdateSize(firstSize);
+                break;
             default:
                 throw new ArgumentException($"Unknown characteristic type: {characteristicType.Name}");
         }

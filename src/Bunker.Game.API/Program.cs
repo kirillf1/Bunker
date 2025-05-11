@@ -1,10 +1,20 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Bunker.Game.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
 
 builder.Services.AddOpenApi();
+
+builder.Services.AddDbContext<BunkerGameDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection"));
+    options.UseSnakeCaseNamingConvention();
+});
 
 var app = builder.Build();
 

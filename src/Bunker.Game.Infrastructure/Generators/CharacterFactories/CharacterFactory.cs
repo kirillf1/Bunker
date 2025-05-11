@@ -24,6 +24,7 @@ public class CharacterFactory : ICharacterFactory
         var phobia = await _characteristicGenerator.GenerateCharacteristic<Phobia>();
         var profession = await _characteristicGenerator.GenerateCharacteristic<Profession>();
         var sex = await _characteristicGenerator.GenerateCharacteristic<Sex>();
+        var size = await _characteristicGenerator.GenerateCharacteristic<Size>();
 
         var itemsCount = Random.Shared.Next(Character.MIN_ITEMS_IN_START_GAME, Character.MAX_ITEMS_IN_START_GAME + 1);
         var items = await _characteristicGenerator.GenerateCharacteristics<Item>(itemsCount);
@@ -48,6 +49,7 @@ public class CharacterFactory : ICharacterFactory
             phobia,
             profession,
             sex,
+            size,
             items,
             traits,
             cards

@@ -10,8 +10,13 @@ public class Profession : ValueObject, ICharacteristic
 
     public Profession(string description, byte experienceYears)
     {
-        if (experienceYears > 20)
-            throw new ArgumentException("Experience must be less then 20");
+        if (experienceYears < MIN_GAME_EXPERIENCE_YEARS || experienceYears > MAX_GAME_EXPERIENCE_YEARS)
+        {
+            throw new ArgumentException(
+                $"Experience must be between {MIN_GAME_EXPERIENCE_YEARS} and {MAX_GAME_EXPERIENCE_YEARS} years."
+            );
+        }
+
         Description = description;
         ExperienceYears = experienceYears;
     }

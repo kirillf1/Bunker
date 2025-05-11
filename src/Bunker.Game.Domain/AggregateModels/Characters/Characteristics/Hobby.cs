@@ -10,8 +10,12 @@ public class Hobby : ValueObject, ICharacteristic
 
     public Hobby(string description, byte hobbyExperience)
     {
-        if (hobbyExperience > 10)
-            throw new ArgumentException("Hobby Experience must be less then 10");
+        if (hobbyExperience < MIN_GAME_EXPERIENCE_YEARS || hobbyExperience > MAX_GAME_EXPERIENCE_YEARS)
+        {
+            throw new ArgumentException(
+                $"Hobby experience must be between {MIN_GAME_EXPERIENCE_YEARS} and {MAX_GAME_EXPERIENCE_YEARS} years."
+            );
+        }
 
         Description = description;
         Experience = hobbyExperience;

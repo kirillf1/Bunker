@@ -122,6 +122,12 @@ public class RerollCharacteristicActionCommandHandler : ICardActionCommandHandle
             case Type t when t == typeof(Card):
                 character.ReplaceCard(character.Cards.First(), (Card)characteristic);
                 break;
+            case Type t when t == typeof(Age):
+                character.UpdateAge((Age)characteristic);
+                break;
+            case Type t when t == typeof(Size):
+                character.UpdateSize((Size)characteristic);
+                break;
             default:
                 throw new ArgumentException($"Unknown characteristic type: {characteristic.GetType().Name}");
         }

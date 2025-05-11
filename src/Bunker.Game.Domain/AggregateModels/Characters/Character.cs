@@ -36,6 +36,8 @@ public class Character : Entity<Guid>, IAggregateRoot
 
     public Sex Sex { get; private set; }
 
+    public Size Size { get; private set; }
+
     public bool IsKicked { get; private set; }
 
     public IReadOnlyCollection<Trait> Traits => _traits;
@@ -55,6 +57,7 @@ public class Character : Entity<Guid>, IAggregateRoot
         Phobia phobia,
         Profession profession,
         Sex sex,
+        Size size,
         IEnumerable<Item> items,
         IEnumerable<Trait> traits,
         IEnumerable<Card> cards
@@ -70,6 +73,7 @@ public class Character : Entity<Guid>, IAggregateRoot
         Phobia = phobia;
         Profession = profession;
         Sex = sex;
+        Size = size;
         IsKicked = false;
 
         var itemsCount = items.Count();
@@ -162,6 +166,13 @@ public class Character : Entity<Guid>, IAggregateRoot
         Age = age ?? throw new ArgumentNullException(nameof(age));
 
         AddDomainEvent(new CharacteristicUpdatedDomainEvent(Id, Age));
+    }
+
+    public void UpdateSize(Size size)
+    {
+        Size = size ?? throw new ArgumentNullException(nameof(size));
+
+        AddDomainEvent(new CharacteristicUpdatedDomainEvent(Id, size));
     }
 
     public void UpdateChildbearing(Childbearing childbearing)
@@ -379,6 +390,8 @@ public class Character : Entity<Guid>, IAggregateRoot
             CharacteristicType.Profession => [Profession],
             CharacteristicType.Trait => Traits,
             CharacteristicType.Card => Cards,
+            CharacteristicType.Age => [Age],
+            CharacteristicType.Size => [Size],
             _ => throw new NotImplementedException("Unknown characteristic"),
         };
 

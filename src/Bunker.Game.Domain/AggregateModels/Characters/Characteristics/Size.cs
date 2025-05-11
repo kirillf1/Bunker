@@ -2,6 +2,12 @@
 
 public class Size : ValueObject, ICharacteristic
 {
+    public const int MAX_CHARACTER_HEIGHT = 210;
+    public const int MIN_CHARACTER_HEIGHT = 130;
+
+    public const int MAX_CHARACTER_WEIGHT = 150;
+    public const int MIN_CHARACTER_WEIGHT = 40;
+
     private double _height;
 
     private double _weight;
@@ -11,11 +17,15 @@ public class Size : ValueObject, ICharacteristic
         get => _height;
         private set
         {
+            if (value < MIN_CHARACTER_HEIGHT || value > MAX_CHARACTER_HEIGHT)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    $"Height must be between {MIN_CHARACTER_HEIGHT} and {MAX_CHARACTER_HEIGHT} cm."
+                );
+            }
+
             _height = value;
-            if (_height > 210)
-                _height = 210;
-            else if (_height < 130)
-                _height = 130;
         }
     }
 
@@ -24,11 +34,15 @@ public class Size : ValueObject, ICharacteristic
         get => _weight;
         private set
         {
+            if (value < MIN_CHARACTER_WEIGHT || value > MAX_CHARACTER_WEIGHT)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    $"Weight must be between {MIN_CHARACTER_WEIGHT} and {MAX_CHARACTER_WEIGHT} kg."
+                );
+            }
+
             _weight = value;
-            if (_weight > 230)
-                _weight = 230;
-            else if (_weight < 35)
-                _weight = 35;
         }
     }
 
@@ -38,11 +52,20 @@ public class Size : ValueObject, ICharacteristic
         Height = height;
     }
 
-    private Size() { }
+    private Size()
+    {
+        Weight = MIN_CHARACTER_WEIGHT;
+        Height = MIN_CHARACTER_HEIGHT;
+    }
+
+    public double GetAverageIndexBody()
+    {
+        return Weight / (Height / 100 * Height / 100);
+    }
 
     public string GetAverageIndexBodyDescription()
     {
-        var index = Weight / (Height / 100 * Height / 100);
+        var index = GetAverageIndexBody();
         return index switch
         {
             >= 18 and < 27 => "Нормальный вес",

@@ -11,4 +11,6 @@ public enum CharacteristicType
     Profession = 32,
     Trait = 64,
     Card = 128,
+    Age = 256,
+    Size = 512,
 }

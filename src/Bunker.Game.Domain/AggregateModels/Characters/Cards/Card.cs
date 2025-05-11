@@ -19,6 +19,11 @@ public class Card : Entity<Guid>, ICharacteristic
         IsActivated = false;
     }
 
+#pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Рассмотрите возможность добавления модификатора "required" или объявления значения, допускающего значение NULL.
+    private Card(Guid id)
+#pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Рассмотрите возможность добавления модификатора "required" или объявления значения, допускающего значение NULL.
+        : base(id) { }
+
     public CardActionCommand ActivateCard(ActivateCardParams activateCardParams, Guid gameSessionId)
     {
         if (IsActivated)
