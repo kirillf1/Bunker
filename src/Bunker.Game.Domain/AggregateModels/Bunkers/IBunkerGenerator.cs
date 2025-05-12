@@ -11,7 +11,7 @@ public interface IBunkerGenerator
     Task<T?> GetBunkerComponent<T>(Guid id)
         where T : IBunkerComponent;
 
-    Task<Bunker> GenerateBunker(Guid gameSessionId);
+    Task<BunkerAggregate> GenerateBunker(Guid gameSessionId);
 
     Task<string> GenerateBunkerDescription();
 }

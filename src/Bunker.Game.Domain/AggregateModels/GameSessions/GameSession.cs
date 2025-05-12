@@ -125,7 +125,7 @@ public class GameSession : Entity<Guid>, IAggregateRoot
 
     public void TerminateGame()
     {
-        if (GameState == (GameState.Terminated | GameState.Completed))
+        if (GameState == GameState.Terminated || GameState == GameState.Completed)
         {
             throw new InvalidGameOperationException("Game session has already been finished");
         }

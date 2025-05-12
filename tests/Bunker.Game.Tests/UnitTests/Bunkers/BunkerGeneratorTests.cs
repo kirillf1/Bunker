@@ -2,7 +2,7 @@
 using Bunker.Game.Infrastructure.Generators.BunkerGenerators;
 using Bunker.Game.Infrastructure.Http.GameComponents.Contracts;
 using Bunker.Game.Tests.Fakes;
-using BunkerAggregate = Bunker.Game.Domain.AggregateModels.Bunkers.Bunker;
+using BunkerAggregate = Bunker.Game.Domain.AggregateModels.Bunkers.BunkerAggregate;
 using Environment = Bunker.Game.Domain.AggregateModels.Bunkers.Environment;
 
 namespace Bunker.Game.Tests.UnitTests.Bunkers

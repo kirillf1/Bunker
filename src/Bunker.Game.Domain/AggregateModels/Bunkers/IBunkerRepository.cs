@@ -1,7 +1,7 @@
 ﻿namespace Bunker.Game.Domain.AggregateModels.Bunkers;
 
-public interface IBunkerRepository : IRepository<Bunker>
+public interface IBunkerRepository : IRepository<BunkerAggregate>
 {
-    Task<Bunker?> GetBunker(Guid id);
-    Task<Bunker?> GetBunkerByGameSessionId(Guid gameSessionId);
+    Task<BunkerAggregate?> GetBunker(Guid id);
+    Task<BunkerAggregate?> GetBunkerByGameSessionId(Guid gameSessionId);
 }

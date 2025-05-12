@@ -4,9 +4,9 @@ using BunkerAggregate = Bunker.Game.Domain.AggregateModels.Bunkers;
 
 namespace Bunker.Game.Infrastructure.Data.Configurations;
 
-public class BunkerConfiguration : IEntityTypeConfiguration<BunkerAggregate.Bunker>
+public class BunkerConfiguration : IEntityTypeConfiguration<BunkerAggregate.BunkerAggregate>
 {
-    public void Configure(EntityTypeBuilder<BunkerAggregate.Bunker> builder)
+    public void Configure(EntityTypeBuilder<BunkerAggregate.BunkerAggregate> builder)
     {
         builder.ToTable("bunkers").HasKey(b => b.Id);
 

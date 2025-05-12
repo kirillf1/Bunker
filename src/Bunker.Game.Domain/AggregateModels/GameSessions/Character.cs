@@ -6,7 +6,7 @@ public class Character : Entity<Guid>
 
     public bool IsOccupiedByPlayer
     {
-        get => Player is null;
+        get => Player is not null;
     }
 
     public bool IsKicked { get; private set; }

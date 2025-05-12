@@ -18,7 +18,7 @@ namespace Bunker.Game.Infrastructure.Data
         private readonly IDomainEventDispatcher _domainEventDispatcher;
 
         public DbSet<GameSession> GameSessions { get; set; }
-        public DbSet<BunkerAggregate.Bunker> Bunkers { get; set; }
+        public DbSet<BunkerAggregate.BunkerAggregate> Bunkers { get; set; }
         public DbSet<Catastrophe> Catastrophes { get; set; }
 
         public bool HasActiveTransaction => _currentTransaction != null;

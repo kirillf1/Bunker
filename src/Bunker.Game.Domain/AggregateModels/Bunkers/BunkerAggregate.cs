@@ -2,7 +2,7 @@
 
 namespace Bunker.Game.Domain.AggregateModels.Bunkers;
 
-public class Bunker : Entity<Guid>, IAggregateRoot
+public class BunkerAggregate : Entity<Guid>, IAggregateRoot
 {
     public const int MAX_ROOMS_COUNT = 3;
     public const int MIN_ROOMS_COUNT = 1;
@@ -29,7 +29,7 @@ public class Bunker : Entity<Guid>, IAggregateRoot
 
     public bool IsReadonly { get; private set; }
 
-    public Bunker(
+    public BunkerAggregate(
         Guid id,
         Guid gameSessionId,
         string description,
@@ -39,6 +39,8 @@ public class Bunker : Entity<Guid>, IAggregateRoot
     )
         : base(id)
     {
+        ValidateBunkerComponentCollections(items, environments, rooms);
+
         GameSessionId = gameSessionId;
         Description = description;
         _rooms = new List<Room>(rooms);
@@ -55,6 +57,7 @@ public class Bunker : Entity<Guid>, IAggregateRoot
     )
     {
         CheckCanUpdateBunkerComponent();
+        ValidateBunkerComponentCollections(items, environments, rooms);
 
         Description = description;
         _rooms = new List<Room>(rooms);
@@ -110,7 +113,7 @@ public class Bunker : Entity<Guid>, IAggregateRoot
         CheckCanUpdateBunkerComponent();
 
         var hiddenItem =
-            _items.Where(x => !x.IsHidden).OrderBy(x => x.Description).FirstOrDefault()
+            _items.Where(x => x.IsHidden).OrderBy(x => x.Description).FirstOrDefault()
             ?? throw new InvalidGameOperationException("All items are revealed");
 
         _items.Remove(hiddenItem);
@@ -149,7 +152,7 @@ public class Bunker : Entity<Guid>, IAggregateRoot
         CheckCanUpdateBunkerComponent();
 
         var hiddenRoom =
-            _rooms.Where(x => !x.IsHidden).OrderBy(x => x.Description).FirstOrDefault()
+            _rooms.Where(x => x.IsHidden).OrderBy(x => x.Description).FirstOrDefault()
             ?? throw new InvalidGameOperationException("All rooms are revealed");
 
         _rooms.Remove(hiddenRoom);
@@ -220,7 +223,7 @@ public class Bunker : Entity<Guid>, IAggregateRoot
         CheckCanUpdateBunkerComponent();
 
         var hiddenEnvironment =
-            _environments.Where(x => !x.IsHidden).OrderBy(x => x.Description).FirstOrDefault()
+            _environments.Where(x => x.IsHidden).OrderBy(x => x.Description).FirstOrDefault()
             ?? throw new InvalidGameOperationException("All environments are revealed");
 
         _environments.Remove(hiddenEnvironment);
@@ -238,9 +241,41 @@ public class Bunker : Entity<Guid>, IAggregateRoot
             throw new InvalidGameOperationException("Bunker in readonly state");
     }
 
+    private static void ValidateBunkerComponentCollections(
+        IEnumerable<Item> items,
+        IEnumerable<Environment> environments,
+        IEnumerable<Room> rooms
+    )
+    {
+        var itemsCount = items.Count();
+        var environmentsCount = environments.Count();
+        var roomsCount = rooms.Count();
+
+        if (itemsCount < MIN_BUNKER_ITEM_COUNT)
+            throw new ArgumentException($"Items count must be at least {MIN_BUNKER_ITEM_COUNT}.", nameof(items));
+        if (itemsCount > MAX_BUNKER_ITEM_COUNT)
+            throw new ArgumentException($"Items count cannot exceed {MAX_BUNKER_ITEM_COUNT}.", nameof(items));
+
+        if (environmentsCount < MIN_BUNKER_ENVIROMENT_COUNT)
+            throw new ArgumentException(
+                $"Environments count must be at least {MIN_BUNKER_ENVIROMENT_COUNT}.",
+                nameof(environments)
+            );
+        if (environmentsCount > MAX_BUNKER_ENVIROMENT_COUNT)
+            throw new ArgumentException(
+                $"Environments count cannot exceed {MAX_BUNKER_ENVIROMENT_COUNT}.",
+                nameof(environments)
+            );
+
+        if (roomsCount < MIN_ROOMS_COUNT)
+            throw new ArgumentException($"Rooms count must be at least {MIN_ROOMS_COUNT}.", nameof(rooms));
+        if (roomsCount > MAX_ROOMS_COUNT)
+            throw new ArgumentException($"Rooms count cannot exceed {MAX_ROOMS_COUNT}.", nameof(rooms));
+    }
+
 #pragma warning disable CS8618
 #pragma warning disable T0008
-    private Bunker(Guid id)
+    private BunkerAggregate(Guid id)
 #pragma warning restore T0008
 #pragma warning restore CS8618
         : base(id) { }
