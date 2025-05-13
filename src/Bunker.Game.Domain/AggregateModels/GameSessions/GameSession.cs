@@ -29,7 +29,7 @@ public class GameSession : Entity<Guid>, IAggregateRoot
 #pragma warning restore CS8618
         : base(id) { }
 
-    private GameSession(Guid id, string name, IEnumerable<Character> characters)
+    private GameSession(Guid id, string name, IEnumerable<Character> characters, Player creator)
         : base(id)
     {
         ValidateName(name);
@@ -44,7 +44,10 @@ public class GameSession : Entity<Guid>, IAggregateRoot
                 $"Characters must be more than {MinCharactersInGame - 1} and less {MaxCharactersInGame + 1}"
             );
         }
+
         _characters = new List<Character>(characters);
+        var gameCreator = characters.First();
+        gameCreator.OccupyCharacter(creator, true);
 
         FreeSeatsCount = CalculateFreeSeats(characters);
 
@@ -58,9 +61,7 @@ public class GameSession : Entity<Guid>, IAggregateRoot
             throw new ArgumentException($"Characters more than {MinCharactersInGame - 1}");
         }
 
-        characters.First().OccupyCharacter(creator);
-
-        return new GameSession(id, name, characters);
+        return new GameSession(id, name, characters, creator);
     }
 
     public Character OccupyCharacter(Player player)
@@ -133,6 +134,11 @@ public class GameSession : Entity<Guid>, IAggregateRoot
         GameState = GameState.Terminated;
 
         AddDomainEvent(new GameSessionCompletedDomainEvent(Id, CompleteReason.ForcedTermination));
+    }
+
+    public Character GetGameCreator()
+    {
+        return Characters.First(x => x.IsGameCreator);
     }
 
     private static void ValidateName(string name)

@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ardalis.Result" />
+    <PackageReference Include="Ardalis.Result.AspNetCore" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
@@ -18,10 +20,12 @@
   <ItemGroup>
     <Folder Include="Application\Commands\Bunkers\" />
     <Folder Include="Application\Commands\Catastrophes\" />
+    <Folder Include="Application\DomainEvents\Characters\" />
     <Folder Include="Controllers\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Bunker.Application.Shared\Bunker.Application.Shared.csproj" />
     <ProjectReference Include="..\Bunker.Game.Domain\Bunker.Game.Domain.csproj" />
     <ProjectReference Include="..\Bunker.Game.Infrastructure\Bunker.Game.Infrastructure.csproj" />
   </ItemGroup>
