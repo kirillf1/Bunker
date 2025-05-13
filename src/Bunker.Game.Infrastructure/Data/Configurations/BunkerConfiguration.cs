@@ -13,6 +13,7 @@ public class BunkerConfiguration : IEntityTypeConfiguration<BunkerAggregate.Bunk
         builder.Property(b => b.GameSessionId).IsRequired();
         builder.Property(b => b.Description).IsRequired().HasMaxLength(1000);
         builder.Property(b => b.IsReadonly).IsRequired();
+        builder.HasIndex(b => b.GameSessionId);
 
         builder.OwnsMany(
             b => b.Rooms,

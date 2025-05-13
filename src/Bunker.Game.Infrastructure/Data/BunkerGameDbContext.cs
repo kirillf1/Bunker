@@ -1,99 +1,95 @@
 ﻿using System.Data;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Bunker.Domain.Shared.DomainEvents;
 using Bunker.Domain.Shared.DomainModels;
 using Bunker.Game.Domain.AggregateModels.Catastrophes;
 using Bunker.Game.Domain.AggregateModels.GameSessions;
-using Bunker.Game.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using BunkerAggregate = Bunker.Game.Domain.AggregateModels.Bunkers;
 
-namespace Bunker.Game.Infrastructure.Data
+namespace Bunker.Game.Infrastructure.Data;
+
+public class BunkerGameDbContext : DbContext, IUnitOfWork
 {
-    public class BunkerGameDbContext : DbContext, IUnitOfWork
+    private IDbContextTransaction? _currentTransaction;
+    private readonly IDomainEventDispatcher _domainEventDispatcher;
+
+    public DbSet<GameSession> GameSessions { get; set; }
+    public DbSet<BunkerAggregate.BunkerAggregate> Bunkers { get; set; }
+    public DbSet<Catastrophe> Catastrophes { get; set; }
+
+    public bool HasActiveTransaction => _currentTransaction != null;
+
+    public BunkerGameDbContext(
+        DbContextOptions<BunkerGameDbContext> options,
+        IDomainEventDispatcher domainEventDispatcher
+    )
+        : base(options)
     {
-        private IDbContextTransaction? _currentTransaction;
-        private readonly IDomainEventDispatcher _domainEventDispatcher;
+        _domainEventDispatcher = domainEventDispatcher;
+    }
 
-        public DbSet<GameSession> GameSessions { get; set; }
-        public DbSet<BunkerAggregate.BunkerAggregate> Bunkers { get; set; }
-        public DbSet<Catastrophe> Catastrophes { get; set; }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(BunkerGameDbContext).Assembly);
+    }
 
-        public bool HasActiveTransaction => _currentTransaction != null;
+    public async Task<IDbContextTransaction?> BeginTransactionAsync()
+    {
+        if (_currentTransaction != null)
+            return null;
 
-        public BunkerGameDbContext(
-            DbContextOptions<BunkerGameDbContext> options,
-            IDomainEventDispatcher domainEventDispatcher
-        )
-            : base(options)
+        _currentTransaction = await Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+
+        return _currentTransaction;
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        await _domainEventDispatcher.DispatchDomainEvents(this);
+
+        return await base.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task CommitTransactionAsync(IDbContextTransaction transaction)
+    {
+        if (transaction == null)
+            throw new ArgumentNullException(nameof(transaction));
+        if (transaction != _currentTransaction)
+            throw new InvalidOperationException($"Transaction {transaction.TransactionId} is not current");
+
+        try
         {
-            _domainEventDispatcher = domainEventDispatcher;
+            await SaveChangesAsync();
+            await transaction.CommitAsync();
         }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        catch
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(BunkerGameDbContext).Assembly);
+            RollbackTransaction();
+            throw;
         }
-
-        public async Task<IDbContextTransaction?> BeginTransactionAsync()
+        finally
         {
-            if (_currentTransaction != null)
-                return null;
-
-            _currentTransaction = await Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
-
-            return _currentTransaction;
-        }
-
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            await _domainEventDispatcher.DispatchDomainEvents(this);
-
-            return await base.SaveChangesAsync(cancellationToken);
-        }
-
-        public async Task CommitTransactionAsync(IDbContextTransaction transaction)
-        {
-            if (transaction == null)
-                throw new ArgumentNullException(nameof(transaction));
-            if (transaction != _currentTransaction)
-                throw new InvalidOperationException($"Transaction {transaction.TransactionId} is not current");
-
-            try
+            if (HasActiveTransaction)
             {
-                await SaveChangesAsync();
-                await transaction.CommitAsync();
-            }
-            catch
-            {
-                RollbackTransaction();
-                throw;
-            }
-            finally
-            {
-                if (HasActiveTransaction)
-                {
-                    _currentTransaction.Dispose();
-                    _currentTransaction = null;
-                }
+                _currentTransaction.Dispose();
+                _currentTransaction = null;
             }
         }
+    }
 
-        public void RollbackTransaction()
+    public void RollbackTransaction()
+    {
+        try
         {
-            try
+            _currentTransaction?.Rollback();
+        }
+        finally
+        {
+            if (HasActiveTransaction)
             {
-                _currentTransaction?.Rollback();
-            }
-            finally
-            {
-                if (HasActiveTransaction)
-                {
-                    _currentTransaction?.Dispose();
-                    _currentTransaction = null;
-                }
+                _currentTransaction?.Dispose();
+                _currentTransaction = null;
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Bunker.Game.Infrastructure.Data;
+﻿using Bunker.Domain.Shared.DomainEvents;
+using Bunker.Game.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -9,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddOpenApi();
+
+builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
 builder.Services.AddDbContext<BunkerGameDbContext>(options =>
 {

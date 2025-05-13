@@ -13,5 +13,6 @@ public class CatastropheConfiguration : IEntityTypeConfiguration<Catastrophe>
         builder.Property(c => c.GameSessionId).IsRequired();
         builder.Property(c => c.Description).IsRequired().HasMaxLength(1000);
         builder.Property(c => c.IsReadOnly).IsRequired();
+        builder.HasIndex(b => b.GameSessionId);
     }
 }

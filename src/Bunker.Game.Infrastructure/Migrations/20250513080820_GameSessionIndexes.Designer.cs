@@ -3,6 +3,7 @@ using System;
 using Bunker.Game.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bunker.Game.Infrastructure.Migrations
 {
     [DbContext(typeof(BunkerGameDbContext))]
-    partial class BunkerGameDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250513080820_GameSessionIndexes")]
+    partial class GameSessionIndexes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
