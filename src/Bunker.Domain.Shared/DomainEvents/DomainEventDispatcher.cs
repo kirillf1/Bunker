@@ -26,7 +26,7 @@ public class DomainEventDispatcher : IDomainEventDispatcher
 
         foreach (var handler in handlers)
         {
-            await handler.Handle(domainEvent);
+            await handler.Handle(domainEvent, cancel);
         }
     }
 }

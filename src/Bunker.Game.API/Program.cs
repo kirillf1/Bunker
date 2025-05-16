@@ -1,6 +1,4 @@
-﻿using Bunker.Domain.Shared.DomainEvents;
-using Bunker.Game.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Bunker.Game.API.Extensions;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,13 +9,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
-
-builder.Services.AddDbContext<BunkerGameDbContext>(options =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection"));
-    options.UseSnakeCaseNamingConvention();
-});
+builder.Services.AddApplicationServices(builder.Configuration);
 
 var app = builder.Build();
 

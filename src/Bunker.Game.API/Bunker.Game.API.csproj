@@ -15,16 +15,15 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Scrutor" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Commands\Bunkers\" />
-    <Folder Include="Application\Commands\Catastrophes\" />
-    <Folder Include="Application\DomainEvents\Characters\" />
     <Folder Include="Controllers\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Bunker.Game.Application\Bunker.Game.Application.csproj" />
     <ProjectReference Include="..\Bunker.Application.Shared\Bunker.Application.Shared.csproj" />
     <ProjectReference Include="..\Bunker.Game.Domain\Bunker.Game.Domain.csproj" />
     <ProjectReference Include="..\Bunker.Game.Infrastructure\Bunker.Game.Infrastructure.csproj" />
