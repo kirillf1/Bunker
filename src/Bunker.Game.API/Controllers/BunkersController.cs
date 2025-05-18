@@ -11,18 +11,28 @@ namespace Bunker.Game.API.Controllers;
 public class BunkersController : ControllerBase
 {
     private readonly IQueryHandler<GetBunkerQuery, Result<BunkerDto>> _getBunkerQueryHandler;
+    private readonly ILogger<BunkersController> _logger;
 
-    public BunkersController(IQueryHandler<GetBunkerQuery, Result<BunkerDto>> getBunkerQueryHandler)
+    public BunkersController(
+        IQueryHandler<GetBunkerQuery, Result<BunkerDto>> getBunkerQueryHandler,
+        ILogger<BunkersController> logger
+    )
     {
         _getBunkerQueryHandler = getBunkerQueryHandler;
+        _logger = logger;
     }
 
     [HttpGet("{gameSessionId:guid}/bunker")]
     [TranslateResultToActionResult]
-    public async Task<Result<BunkerDto>> GetBunker(Guid gameSessionId)
+    public async Task<Result<BunkerDto>> GetBunker(Guid gameSessionId, CancellationToken cancellationToken)
     {
-        var query = new GetBunkerQuery { GameSessionId = gameSessionId };
+        using (_logger.BeginScope(new Dictionary<string, object> { ["GameSessionId"] = gameSessionId }))
+        {
+            var query = new GetBunkerQuery { GameSessionId = gameSessionId };
 
-        return await _getBunkerQueryHandler.Handle(query, CancellationToken.None);
+            var result = await _getBunkerQueryHandler.Handle(query, cancellationToken);
+
+            return result;
+        }
     }
 }

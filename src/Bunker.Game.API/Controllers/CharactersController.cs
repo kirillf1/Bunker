@@ -16,32 +16,50 @@ public class CharactersController : ControllerBase
         GetCharactersByGameSessionQuery,
         Result<IEnumerable<CharacterDto>>
     > _getCharactersByGameSessionQueryHandler;
+    private readonly ILogger<CharactersController> _logger;
 
     public CharactersController(
         IQueryHandler<GetCharacterQuery, Result<CharacterDto>> getCharacterQueryHandler,
         IQueryHandler<
             GetCharactersByGameSessionQuery,
             Result<IEnumerable<CharacterDto>>
-        > getCharactersByGameSessionQueryHandler
+        > getCharactersByGameSessionQueryHandler,
+        ILogger<CharactersController> logger
     )
     {
         _getCharacterQueryHandler = getCharacterQueryHandler;
         _getCharactersByGameSessionQueryHandler = getCharactersByGameSessionQueryHandler;
+        _logger = logger;
     }
 
     [HttpGet("characters/{characterId:guid}")]
     [TranslateResultToActionResult]
-    public async Task<Result<CharacterDto>> GetCharacter(Guid characterId)
+    public async Task<Result<CharacterDto>> GetCharacter(Guid characterId, CancellationToken cancellationToken)
     {
-        var query = new GetCharacterQuery { CharacterId = characterId };
-        return await _getCharacterQueryHandler.Handle(query, CancellationToken.None);
+        using (_logger.BeginScope(new Dictionary<string, object> { ["CharacterId"] = characterId }))
+        {
+            var query = new GetCharacterQuery { CharacterId = characterId };
+
+            var result = await _getCharacterQueryHandler.Handle(query, cancellationToken);
+
+            return result;
+        }
     }
 
     [HttpGet("game-sessions/{gameSessionId:guid}/characters")]
     [TranslateResultToActionResult]
-    public async Task<Result<IEnumerable<CharacterDto>>> GetCharactersByGameSession(Guid gameSessionId)
+    public async Task<Result<IEnumerable<CharacterDto>>> GetCharactersByGameSession(
+        Guid gameSessionId,
+        CancellationToken cancellationToken
+    )
     {
-        var query = new GetCharactersByGameSessionQuery { GameSessionId = gameSessionId };
-        return await _getCharactersByGameSessionQueryHandler.Handle(query, CancellationToken.None);
+        using (_logger.BeginScope(new Dictionary<string, object> { ["GameSessionId"] = gameSessionId }))
+        {
+            var query = new GetCharactersByGameSessionQuery { GameSessionId = gameSessionId };
+
+            var result = await _getCharactersByGameSessionQueryHandler.Handle(query, cancellationToken);
+
+            return result;
+        }
     }
 }

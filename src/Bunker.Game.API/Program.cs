@@ -1,4 +1,7 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Net;
+using System.Text.Json.Serialization;
+using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
 using Bunker.Game.API.Extensions;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -13,7 +16,19 @@ builder.Services.AddOpenApi();
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder
-    .Services.AddControllers()
+    .Services.AddControllers(opt =>
+    {
+        opt.AddResultConvention(resultStatusMap =>
+            resultStatusMap
+                .AddDefaultMap()
+                .For(
+                    ResultStatus.Ok,
+                    HttpStatusCode.OK,
+                    resultStatusOptions =>
+                        resultStatusOptions.For("POST", HttpStatusCode.Created).For("DELETE", HttpStatusCode.NoContent)
+                )
+        );
+    })
     .AddJsonOptions(opts =>
     {
         opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());

@@ -6,7 +6,7 @@ namespace Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
 // For cards that cannot be implemented through code.
 // That is, what the players must do, for example, not say anything next circle
 /// </summary>
-public partial class EmptyAction : CardAction
+public class EmptyAction : CardAction
 {
     public EmptyAction() { }
 

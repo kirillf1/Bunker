@@ -3,6 +3,7 @@ using Bunker.GameComponents.API.Infrastructure.Database;
 using Bunker.GameComponents.API.Models.CharacterComponents.Profession;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Bunker.GameComponents.API.Controllers.CharacterComponents;
 
@@ -12,10 +13,14 @@ namespace Bunker.GameComponents.API.Controllers.CharacterComponents;
 public class ProfessionController : ControllerBase
 {
     private readonly GameComponentsContext _context;
+    private readonly ILogger<ProfessionController> _logger;
 
-    public ProfessionController(GameComponentsContext context)
+    public ProfessionController(
+        GameComponentsContext context,
+        ILogger<ProfessionController> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -23,13 +28,23 @@ public class ProfessionController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<ProfessionDto>>> GetAll()
+    public async Task<ActionResult<IEnumerable<ProfessionDto>>> GetAll(CancellationToken cancellationToken)
     {
-        var professions = await _context
-            .Professions.Select(p => new ProfessionDto { Id = p.Id, Description = p.Description })
-            .ToListAsync();
-
-        return Ok(professions);
+        using (_logger.BeginScope(new Dictionary<string, object>
+        {
+            ["Operation"] = "GetAllProfessions"
+        }))
+        {
+            _logger.LogInformation("Получение списка всех профессий");
+            
+            var professions = await _context
+                .Professions.Select(p => new ProfessionDto { Id = p.Id, Description = p.Description })
+                .ToListAsync(cancellationToken);
+            
+            _logger.LogInformation("Получено {Count} профессий", professions.Count);
+            
+            return Ok(professions);
+        }
     }
 
     [HttpGet("{id}")]
@@ -38,16 +53,28 @@ public class ProfessionController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ProfessionDto>> GetById(Guid id)
+    public async Task<ActionResult<ProfessionDto>> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var profession = await _context.Professions.FirstOrDefaultAsync(p => p.Id == id);
-        if (profession is null)
+        using (_logger.BeginScope(new Dictionary<string, object>
         {
-            return NotFound();
+            ["ProfessionId"] = id
+        }))
+        {
+            _logger.LogInformation("Получение профессии по ID");
+            
+            var profession = await _context.Professions.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+            if (profession is null)
+            {
+                _logger.LogWarning("Профессия не найдена");
+                return NotFound();
+            }
+            
+            var dto = new ProfessionDto { Id = profession.Id, Description = profession.Description };
+            
+            _logger.LogInformation("Профессия найдена: {Description}", profession.Description);
+            
+            return Ok(dto);
         }
-
-        var dto = new ProfessionDto { Id = profession.Id, Description = profession.Description };
-        return Ok(dto);
     }
 
     [HttpPost]
@@ -56,14 +83,24 @@ public class ProfessionController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ProfessionDto>> Create([FromBody] CreateProfessionDto dto)
+    public async Task<ActionResult<ProfessionDto>> Create([FromBody] CreateProfessionDto dto, CancellationToken cancellationToken)
     {
-        var profession = new ProfessionEntity(dto.Description);
-        _context.Professions.Add(profession);
-        await _context.SaveChangesAsync();
-
-        var resultDto = new ProfessionDto { Id = profession.Id, Description = profession.Description };
-        return CreatedAtAction(nameof(GetById), new { id = profession.Id }, resultDto);
+        using (_logger.BeginScope(new Dictionary<string, object>
+        {
+            ["Operation"] = "CreateProfession"
+        }))
+        {
+            _logger.LogInformation("Создание новой профессии с описанием: {Description}", dto.Description);
+            
+            var profession = new ProfessionEntity(dto.Description);
+            _context.Professions.Add(profession);
+            await _context.SaveChangesAsync(cancellationToken);
+            
+            _logger.LogInformation("Создана новая профессия с ID: {ProfessionId}", profession.Id);
+            
+            var resultDto = new ProfessionDto { Id = profession.Id, Description = profession.Description };
+            return CreatedAtAction(nameof(GetById), new { id = profession.Id }, resultDto);
+        }
     }
 
     [HttpPut("{id}")]
@@ -73,19 +110,33 @@ public class ProfessionController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProfessionDto dto)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProfessionDto dto, CancellationToken cancellationToken)
     {
-        var profession = await _context.Professions.FirstOrDefaultAsync(p => p.Id == id);
-        if (profession is null)
+        using (_logger.BeginScope(new Dictionary<string, object>
         {
-            return NotFound();
+            ["ProfessionId"] = id
+        }))
+        {
+            _logger.LogInformation("Обновление профессии");
+            
+            var profession = await _context.Professions.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+            if (profession is null)
+            {
+                _logger.LogWarning("Профессия не найдена");
+                return NotFound();
+            }
+            
+            _logger.LogInformation("Обновление описания с '{OldDescription}' на '{NewDescription}'", 
+                profession.Description, dto.Description);
+            
+            profession.Description = dto.Description;
+            _context.Update(profession);
+            await _context.SaveChangesAsync(cancellationToken);
+            
+            _logger.LogInformation("Профессия успешно обновлена");
+            
+            return NoContent();
         }
-
-        profession.Description = dto.Description;
-        _context.Update(profession);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
     }
 
     [HttpDelete("{id}")]
@@ -94,17 +145,30 @@ public class ProfessionController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        var profession = await _context.Professions.FirstOrDefaultAsync(p => p.Id == id);
-        if (profession is null)
+        using (_logger.BeginScope(new Dictionary<string, object>
         {
-            return NotFound();
+            ["ProfessionId"] = id
+        }))
+        {
+            _logger.LogInformation("Удаление профессии");
+            
+            var profession = await _context.Professions.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+            if (profession is null)
+            {
+                _logger.LogWarning("Профессия не найдена");
+                return NotFound();
+            }
+            
+            _logger.LogInformation("Удаление профессии с описанием: {Description}", profession.Description);
+            
+            _context.Professions.Remove(profession);
+            await _context.SaveChangesAsync(cancellationToken);
+            
+            _logger.LogInformation("Профессия успешно удалена");
+            
+            return NoContent();
         }
-
-        _context.Professions.Remove(profession);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
     }
 }
