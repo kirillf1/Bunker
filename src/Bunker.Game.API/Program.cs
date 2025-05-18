@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 using Bunker.Game.API.Extensions;
-using Microsoft.EntityFrameworkCore.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,4 +54,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();
+
+public partial class Program { }

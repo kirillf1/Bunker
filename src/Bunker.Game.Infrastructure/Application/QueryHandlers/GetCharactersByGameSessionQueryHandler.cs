@@ -30,7 +30,7 @@ public class GetCharactersByGameSessionQueryHandler
             c.is_kicked AS {nameof(CharacterData.IsKicked)},
             c.additional_information_description AS {nameof(CharacterData.AdditionalInformation)},
             c.age_years AS {nameof(CharacterData.Age)},
-            c.can_give_birth AS {nameof(CharacterData.CanGiveBirth)},
+            c.childbearing_can_give_birth AS {nameof(CharacterData.CanGiveBirth)},
             c.health_description AS {nameof(CharacterData.Health)},
             c.phobia_description AS {nameof(CharacterData.Phobia)},
             c.sex_description AS {nameof(CharacterData.Sex)},
@@ -112,7 +112,7 @@ public class GetCharactersByGameSessionQueryHandler
         {
             if (characterDict.TryGetValue(item.CharacterId, out var characterItem))
             {
-                characterItem.Items.Add(new CharacterItemDto { Id = item.Id, Description = item.Description });
+                characterItem.Items.Add(new CharacterItemDto { Description = item.Description });
             }
         }
 
@@ -121,7 +121,7 @@ public class GetCharactersByGameSessionQueryHandler
         {
             if (characterDict.TryGetValue(trait.CharacterId, out var characterTrait))
             {
-                characterTrait.Traits.Add(new TraitDto { Id = trait.Id, Description = trait.Description });
+                characterTrait.Traits.Add(new TraitDto { Description = trait.Description });
             }
         }
 
@@ -166,14 +166,14 @@ public class GetCharactersByGameSessionQueryHandler
     private class CharacterItemData
     {
         public Guid CharacterId { get; set; }
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string Description { get; set; } = string.Empty;
     }
 
     private class CharacterTraitData
     {
         public Guid CharacterId { get; set; }
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string Description { get; set; } = string.Empty;
     }
 

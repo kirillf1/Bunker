@@ -98,6 +98,8 @@ public class CreateGameSessionCommandHandler
         foreach (var character in characters)
         {
             gameSessionCharacters.Add(new Domain.AggregateModels.GameSessions.Character(character.Id));
+
+            await _characterRepository.Add(character);
         }
 
         await _characterRepository.UnitOfWork.SaveChangesAsync();

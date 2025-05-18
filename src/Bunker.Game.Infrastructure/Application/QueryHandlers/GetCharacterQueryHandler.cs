@@ -52,13 +52,11 @@ public class GetCharacterQueryHandler : IQueryHandler<GetCharacterQuery, Result<
     WHERE id = @id;
 
     SELECT 
-        id AS {nameof(CharacterItemDto.Id)},
         description AS {nameof(CharacterItemDto.Description)}
     FROM character_items
     WHERE character_id = @id;
 
     SELECT 
-        id AS {nameof(TraitDto.Id)},
         description AS {nameof(TraitDto.Description)}
     FROM character_traits
     WHERE character_id = @id;
