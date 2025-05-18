@@ -3,6 +3,7 @@ using System;
 using Bunker.Game.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bunker.Game.Infrastructure.Migrations
 {
     [DbContext(typeof(BunkerGameDbContext))]
-    partial class BunkerGameDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250518072653_GameStateString")]
+    partial class GameStateString
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -478,9 +481,6 @@ namespace Bunker.Game.Infrastructure.Migrations
                             b1.HasKey("character_id", "Id")
                                 .HasName("pk_character_cards");
 
-                            b1.HasIndex("character_id")
-                                .HasDatabaseName("ix_character_cards_character_id");
-
                             b1.ToTable("character_cards", (string)null);
 
                             b1.WithOwner()
@@ -510,9 +510,6 @@ namespace Bunker.Game.Infrastructure.Migrations
                             b1.HasKey("character_id", "Id")
                                 .HasName("pk_character_items");
 
-                            b1.HasIndex("character_id")
-                                .HasDatabaseName("ix_character_items_character_id");
-
                             b1.ToTable("character_items", (string)null);
 
                             b1.WithOwner()
@@ -541,9 +538,6 @@ namespace Bunker.Game.Infrastructure.Migrations
 
                             b1.HasKey("character_id", "Id")
                                 .HasName("pk_character_traits");
-
-                            b1.HasIndex("character_id")
-                                .HasDatabaseName("ix_character_traits_character_id");
 
                             b1.ToTable("character_traits", (string)null);
 

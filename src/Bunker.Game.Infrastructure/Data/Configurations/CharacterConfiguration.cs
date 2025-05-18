@@ -117,6 +117,7 @@ public class CharacterConfiguration : IEntityTypeConfiguration<Character>
             {
                 i.ToTable("character_items");
                 i.WithOwner().HasForeignKey("character_id");
+                i.HasIndex("character_id");
                 i.Property("Id").HasColumnName("id").ValueGeneratedOnAdd();
                 i.Property(item => item.Description).IsRequired().HasMaxLength(500);
             }
@@ -128,6 +129,7 @@ public class CharacterConfiguration : IEntityTypeConfiguration<Character>
             {
                 t.ToTable("character_traits");
                 t.WithOwner().HasForeignKey("character_id");
+                t.HasIndex("character_id");
                 t.Property("Id").HasColumnName("id").ValueGeneratedOnAdd();
                 t.Property(trait => trait.Description).IsRequired().HasMaxLength(500);
             }
@@ -142,6 +144,7 @@ public class CharacterConfiguration : IEntityTypeConfiguration<Character>
             {
                 c.ToTable("character_cards");
                 c.WithOwner().HasForeignKey("character_id");
+                c.HasIndex("character_id");
                 c.Property(card => card.Id).HasColumnName("id");
                 c.Property(card => card.Description).IsRequired().HasMaxLength(500);
                 c.Property(card => card.IsActivated).IsRequired();

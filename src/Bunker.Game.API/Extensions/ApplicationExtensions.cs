@@ -1,4 +1,5 @@
-﻿using Bunker.Application.Shared.CQRS;
+﻿using System.Data;
+using Bunker.Application.Shared.CQRS;
 using Bunker.Domain.Shared.Cards.CardActionCommands;
 using Bunker.Domain.Shared.DomainEvents;
 using Bunker.Game.Application.Commands.GameSessions.UpdateGameSessionState;
@@ -9,6 +10,7 @@ using Bunker.Game.Domain.AggregateModels.Characters;
 using Bunker.Game.Domain.AggregateModels.Characters.Cards;
 using Bunker.Game.Domain.AggregateModels.GameSessions;
 using Bunker.Game.Infrastructure.Application;
+using Bunker.Game.Infrastructure.Application.QueryHandlers;
 using Bunker.Game.Infrastructure.Data;
 using Bunker.Game.Infrastructure.Data.Repositories;
 using Bunker.Game.Infrastructure.Generators.BunkerGenerators;
@@ -18,7 +20,6 @@ using Bunker.Game.Infrastructure.Generators.CharacteristicGenerators;
 using Bunker.Game.Infrastructure.Http.GameComponents;
 using Bunker.Game.Infrastructure.Http.GameComponents.Contracts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Bunker.Game.API.Extensions
 {
@@ -69,7 +70,7 @@ namespace Bunker.Game.API.Extensions
             );
 
             services.Scan(scan =>
-                scan.FromAssemblyOf<EndGameSessionCommandHandler>()
+                scan.FromAssemblyOf<GetBunkerQueryHandler>()
                     .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)))
                     .AsImplementedInterfaces()
                     .WithScopedLifetime()
@@ -84,6 +85,11 @@ namespace Bunker.Game.API.Extensions
             {
                 options.UseNpgsql(configuration.GetConnectionString("PostgresConnection"));
                 options.UseSnakeCaseNamingConvention();
+            });
+
+            services.AddScoped<IDbConnection>(x =>
+            {
+                return x.GetRequiredService<BunkerGameDbContext>().Database.GetDbConnection();
             });
 
             services.AddScoped<IGameSessionRepository, GameSessionRepository>();

@@ -1,7 +1,4 @@
-﻿using Bunker.Domain.Shared.DomainEvents;
-using Bunker.Domain.Shared.DomainModels;
-
-namespace Bunker.Game.Infrastructure.Data;
+﻿namespace Bunker.Game.Infrastructure.Data;
 
 internal static class DomainEventsExtension
 {

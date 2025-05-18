@@ -1,4 +1,5 @@
-﻿using Bunker.Game.API.Extensions;
+﻿using System.Text.Json.Serialization;
+using Bunker.Game.API.Extensions;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,12 +12,26 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddApplicationServices(builder.Configuration);
 
+builder
+    .Services.AddControllers()
+    .AddJsonOptions(opts =>
+    {
+        opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
+builder.Services.ConfigureSwaggerGen(opt =>
+{
+    opt.UseOneOfForPolymorphism();
+});
+builder.Services.AddSwaggerGen(c => { });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

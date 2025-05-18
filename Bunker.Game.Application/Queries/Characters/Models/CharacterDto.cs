@@ -16,7 +16,7 @@ public record CharacterDto
     public string Sex { get; set; } = string.Empty;
     public SizeDto Size { get; set; } = null!;
 
-    public List<ItemDto> Items { get; set; } = new();
+    public List<CharacterItemDto> Items { get; set; } = new();
     public List<TraitDto> Traits { get; set; } = new();
     public List<CardDto> Cards { get; set; } = new();
 }
