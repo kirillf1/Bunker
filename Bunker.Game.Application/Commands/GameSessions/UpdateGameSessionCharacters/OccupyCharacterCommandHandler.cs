@@ -34,7 +34,11 @@ public class OccupyCharacterCommandHandler : ICommandHandler<OccupyCharacterComm
         }
         catch (InvalidGameOperationException ex)
         {
-            return Result<Guid>.Error(ex.Message);
+            return Result<Guid>.Invalid(new ValidationError(ex.Message));
+        }
+        catch (ArgumentException ex)
+        {
+            return Result<Guid>.Invalid(new ValidationError(ex.Message));
         }
     }
 }

@@ -26,7 +26,7 @@ public class GetCharacterQueryHandler : IQueryHandler<GetCharacterQuery, Result<
         is_kicked AS {nameof(CharacterDto.IsKicked)},
         additional_information_description AS {nameof(CharacterDto.AdditionalInformation)},
         age_years AS {nameof(CharacterDto.Age)},
-        can_give_birth AS {nameof(CharacterDto.CanGiveBirth)},
+        childbearing_can_give_birth AS {nameof(CharacterDto.CanGiveBirth)},
         health_description AS {nameof(CharacterDto.Health)},
         phobia_description AS {nameof(CharacterDto.Phobia)},
         sex_description AS {nameof(CharacterDto.Sex)}

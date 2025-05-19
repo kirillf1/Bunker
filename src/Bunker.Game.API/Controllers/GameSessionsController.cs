@@ -105,8 +105,6 @@ public class GameSessionsController : ControllerBase
             )
         )
         {
-            _logger.LogInformation("Начало захвата персонажа");
-
             var command = new OccupyCharacterCommand(gameSessionId, request.PlayerId, request.PlayerName);
 
             var result = await _occupyCharacterCommandHandler.Handle(command, cancellationToken);
@@ -125,13 +123,9 @@ public class GameSessionsController : ControllerBase
             )
         )
         {
-            _logger.LogInformation("Начало исключения персонажа");
-
             var command = new KickCharacterCommand(gameSessionId, characterId);
 
             var result = await _kickCharacterCommandHandler.Handle(command, cancellationToken);
-
-            _logger.LogInformation("Завершено исключение персонажа");
 
             return result;
         }

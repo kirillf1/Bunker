@@ -26,7 +26,7 @@ public class CardCommandExecutor : ICardCommandExecutor
         if (method is null)
             throw new InvalidOperationException($"Method Handle not found in handler {handlerType.Name}");
 
-        var task = (Task)method.Invoke(handler, new object[] { command, CancellationToken.None })!;
+        var task = (Task)method.Invoke(handler, new object[] { command })!;
 
         await task;
     }

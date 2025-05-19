@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 using Bunker.Game.API.Extensions;
+using Bunker.Game.Domain.AggregateModels.Characters.Cards;
 
 var builder = WebApplication.CreateBuilder(args);
 

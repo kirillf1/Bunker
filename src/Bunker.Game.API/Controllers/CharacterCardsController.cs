@@ -14,7 +14,7 @@ namespace Bunker.Game.API.Controllers;
 [Route("api/characters")]
 public class CharacterCardsController : ControllerBase
 {
-    private readonly ICommandHandler<UseCardCommand, Result> _useCardCommandHandler;
+    private readonly ICommandHandler<UseCardCommand, Result<Guid>> _useCardCommandHandler;
     private readonly IQueryHandler<
         GetCardRequirementsQuery,
         Result<CardActionRequirements>
@@ -22,7 +22,7 @@ public class CharacterCardsController : ControllerBase
     private readonly ILogger<CharacterCardsController> _logger;
 
     public CharacterCardsController(
-        ICommandHandler<UseCardCommand, Result> useCardCommandHandler,
+        ICommandHandler<UseCardCommand, Result<Guid>> useCardCommandHandler,
         IQueryHandler<GetCardRequirementsQuery, Result<CardActionRequirements>> getCardRequirementsQueryHandler,
         ILogger<CharacterCardsController> logger
     )
@@ -34,7 +34,7 @@ public class CharacterCardsController : ControllerBase
 
     [HttpPost("{characterId:guid}/cards/{cardId:guid}/use")]
     [TranslateResultToActionResult]
-    public async Task<Result> UseCard(
+    public async Task<Result<Guid>> UseCard(
         Guid characterId,
         Guid cardId,
         [FromBody] UseCardRequest useCardRequest,
