@@ -10,6 +10,7 @@ using Bunker.Game.Domain.AggregateModels.Characters;
 using Bunker.Game.Domain.AggregateModels.Characters.Cards;
 using Bunker.Game.Domain.AggregateModels.GameSessions;
 using Bunker.Game.Infrastructure.Application;
+using Bunker.Game.Infrastructure.Application.Decorators;
 using Bunker.Game.Infrastructure.Application.QueryHandlers;
 using Bunker.Game.Infrastructure.Data;
 using Bunker.Game.Infrastructure.Data.Repositories;
@@ -75,6 +76,8 @@ public static class ApplicationExtensions
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
         );
+
+        services.Decorate(typeof(ICommandHandler<,>), typeof(TransactionCommandDecorator<,>));
 
         return services;
     }

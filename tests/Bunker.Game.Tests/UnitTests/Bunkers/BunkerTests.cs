@@ -211,8 +211,7 @@ public class BunkerTests
         bunker.RevealRandomItem();
 
         // Assert
-        var revealedItem = bunker.Items.First(i => i.Description == hiddenItem.Description);
-        Assert.False(revealedItem.IsHidden);
+        Assert.Contains(bunker.Items, r => !r.IsHidden);
     }
 
     [Fact]
@@ -274,14 +273,12 @@ public class BunkerTests
     public void RevealRandomEnvironment_HiddenEnvironmentExists_RevealsEnvironment()
     {
         var bunker = CreateBunker();
-        var hiddenEnvironment = _environments.First();
 
         // Act
         bunker.RevealRandomEnvironment();
 
         // Assert
-        var revealedEnvironment = bunker.Environments.First(e => e.Description == hiddenEnvironment.Description);
-        Assert.False(revealedEnvironment.IsHidden);
+        Assert.Contains(bunker.Environments, r => !r.IsHidden);
     }
 
     [Fact]

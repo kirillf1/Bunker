@@ -39,7 +39,7 @@ public class BunkerGameDbContext : DbContext, IUnitOfWork
         if (_currentTransaction != null)
             return null;
 
-        _currentTransaction = await Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+        _currentTransaction = await Database.BeginTransactionAsync(IsolationLevel.RepeatableRead);
 
         return _currentTransaction;
     }
