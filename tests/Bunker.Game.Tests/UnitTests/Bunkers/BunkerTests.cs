@@ -246,14 +246,13 @@ public class BunkerTests
     {
         // Arrange
         var bunker = CreateBunker();
-        var hiddenRoom = _rooms.First();
 
         // Act
         bunker.RevealRandomRoom();
 
         // Assert
-        var revealedRoom = bunker.Rooms.First(r => r.Description == hiddenRoom.Description);
-        Assert.False(revealedRoom.IsHidden);
+
+        Assert.Contains(bunker.Rooms, r => !r.IsHidden);
     }
 
     [Fact]
@@ -274,8 +273,6 @@ public class BunkerTests
     [Fact]
     public void RevealRandomEnvironment_HiddenEnvironmentExists_RevealsEnvironment()
     {
-        // WIP: this test fails because Environment is a ValueObject and comparison is based on Description only
-        // Arrange
         var bunker = CreateBunker();
         var hiddenEnvironment = _environments.First();
 

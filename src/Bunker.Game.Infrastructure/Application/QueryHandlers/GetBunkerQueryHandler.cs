@@ -63,6 +63,6 @@ public class GetBunkerQueryHandler : IQueryHandler<GetBunkerQuery, Result<Bunker
         bunker.Items = items;
         bunker.Environments = environments;
 
-        return Result.Success();
+        return bunker;
     }
 }
