@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Bunker.Game.Application\Bunker.Game.Application.csproj" />
+        <ProjectReference Include="..\Bunker.Game.Application\Bunker.Game.Application.csproj" />
         <ProjectReference Include="..\Bunker.Game.Domain\Bunker.Game.Domain.csproj" />
     </ItemGroup>
 

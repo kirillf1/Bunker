@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bunker.Domain.Shared\Bunker.Domain.Shared.csproj" />
+    <ProjectReference Include="..\Bunker.Infrastructure.Shared\Bunker.Infrastructure.Shared.csproj" />
   </ItemGroup>
 
 </Project>

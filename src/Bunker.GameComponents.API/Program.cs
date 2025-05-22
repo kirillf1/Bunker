@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json.Serialization;
 using Bunker.GameComponents.API.Infrastructure.Database;
+using Bunker.Infrastructure.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Serilog;
@@ -23,14 +24,14 @@ try
             opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
 
-    builder.Services.AddSerilog(
-        (services, lc) =>
-            lc
-                .ReadFrom.Configuration(builder.Configuration)
-                .ReadFrom.Services(services)
-                .Enrich.FromLogContext()
-                .WriteTo.Async(c => c.Console())
-    );
+    // Add services to the container.
+    var appName = "Bunker.GameComponents.API";
+
+    // Telemetry
+    builder.AddBaseMetricsConfiguration(appName);
+    builder.AddBaseTracingConfiguration(appName);
+    builder.AddSerilogLogging(appName);
+
     builder.Services.ConfigureSwaggerGen(opt =>
     {
         opt.UseOneOfForPolymorphism();

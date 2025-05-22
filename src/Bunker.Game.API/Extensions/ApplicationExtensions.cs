@@ -77,7 +77,10 @@ public static class ApplicationExtensions
                 .WithScopedLifetime()
         );
 
+        services.Decorate(typeof(ICommandHandler<,>), typeof(ActivityCommandDecorator<,>));
         services.Decorate(typeof(ICommandHandler<,>), typeof(TransactionCommandDecorator<,>));
+
+        services.Decorate(typeof(IQueryHandler<,>), typeof(ActivityQueryDecorator<,>));
 
         return services;
     }
