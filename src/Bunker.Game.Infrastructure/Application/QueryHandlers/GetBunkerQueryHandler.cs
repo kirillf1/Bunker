@@ -19,34 +19,34 @@ public class GetBunkerQueryHandler : IQueryHandler<GetBunkerQuery, Result<Bunker
     {
         var sql =
             $@"
-    SELECT 
-        id AS {nameof(BunkerDto.Id)},
-        game_session_id AS {nameof(BunkerDto.GameSessionId)},
-        description AS {nameof(BunkerDto.Description)}
-    FROM bunkers
-    WHERE game_session_id = @id;
+            SELECT 
+                id AS {nameof(BunkerDto.Id)},
+                game_session_id AS {nameof(BunkerDto.GameSessionId)},
+                description AS {nameof(BunkerDto.Description)}
+            FROM bunkers
+            WHERE game_session_id = @id;
 
-    SELECT 
-        bunker_id,
-        description AS {nameof(RoomDto.Description)},
-        is_hidden AS {nameof(RoomDto.IsHidden)}
-    FROM bunker_rooms
-    WHERE bunker_id IN (SELECT id FROM bunkers WHERE game_session_id = @id);
+            SELECT 
+                bunker_id,
+                description AS {nameof(RoomDto.Description)},
+                is_hidden AS {nameof(RoomDto.IsHidden)}
+            FROM bunker_rooms
+            WHERE bunker_id IN (SELECT id FROM bunkers WHERE game_session_id = @id);
 
-    SELECT 
-        bunker_id,
-        description AS {nameof(BunkerItemDto.Description)},
-        is_hidden AS {nameof(BunkerItemDto.IsHidden)}
-    FROM bunker_items
-    WHERE bunker_id IN (SELECT id FROM bunkers WHERE game_session_id = @id);
+            SELECT 
+                bunker_id,
+                description AS {nameof(BunkerItemDto.Description)},
+                is_hidden AS {nameof(BunkerItemDto.IsHidden)}
+            FROM bunker_items
+            WHERE bunker_id IN (SELECT id FROM bunkers WHERE game_session_id = @id);
 
-    SELECT 
-        bunker_id,
-        description AS {nameof(EnvironmentDto.Description)},
-        is_hidden AS {nameof(EnvironmentDto.IsHidden)}
-    FROM bunker_environments
-    WHERE bunker_id IN (SELECT id FROM bunkers WHERE game_session_id = @id);
-";
+            SELECT 
+                bunker_id,
+                description AS {nameof(EnvironmentDto.Description)},
+                is_hidden AS {nameof(EnvironmentDto.IsHidden)}
+            FROM bunker_environments
+            WHERE bunker_id IN (SELECT id FROM bunkers WHERE game_session_id = @id);
+            ";
         using var multi = await _dbConnection.QueryMultipleAsync(sql, new { id = query.GameSessionId });
 
         var bunker = await multi.ReadSingleOrDefaultAsync<BunkerDto>();
