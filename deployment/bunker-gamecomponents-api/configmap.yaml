@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bunker-gamecomponents-api-config
+  labels:
+    app: bunker-gamecomponents-api
+data:
+  # ASP.NET Core настройки
+  ASPNETCORE_ENVIRONMENT: "Production"
+  ASPNETCORE_URLS: "http://+:80"
+  AllowedHosts: "*"
+  
+  # Serilog настройки
+  Serilog__MinimumLevel__Default: "Information"
+  Serilog__MinimumLevel__Override__Microsoft: "Warning"
+  Serilog__MinimumLevel__Override__Microsoft.AspNetCore.Hosting.Diagnostics: "Error"
+  Serilog__MinimumLevel__Override__Microsoft.Hosting.Lifetime: "Information"
+  
+  # OpenTelemetry настройки (указываем на collector в namespace monitoring)
+  OpenTelemetry__Logging__CollectorAddress: "http://otel-collector-opentelemetry-collector.monitoring.svc.cluster.local:4317"
+  OpenTelemetry__Metrics__CollectorAddress: "http://otel-collector-opentelemetry-collector.monitoring.svc.cluster.local:4317"
+  OpenTelemetry__Tracing__CollectorAddress: "http://otel-collector-opentelemetry-collector.monitoring.svc.cluster.local:4317" 

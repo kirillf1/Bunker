@@ -4,6 +4,7 @@ using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 using Bunker.Game.API.Extensions;
 using Bunker.Game.Infrastructure.Application.Decorators;
+using Bunker.Game.Infrastructure.Data;
 using Bunker.Infrastructure.Shared.Extensions;
 using Serilog;
 using Serilog.Events;
@@ -18,7 +19,6 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    // Add services to the container.
     var appName = "Bunker.Game.API";
 
     // Telemetry
@@ -80,6 +80,11 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
+
+    await using var scope = app.Services.CreateAsyncScope();
+    var dbInitializer = scope.ServiceProvider.GetRequiredService<GameComponentsDatabaseInitializer>();
+
+    await dbInitializer.InitializeAsync();
 
     await app.RunAsync();
 }

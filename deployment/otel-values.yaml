@@ -1,0 +1,134 @@
+mode: deployment
+presets:
+  logsCollection:
+    enabled: false
+    includeCollectorLogs: false
+    storeCheckpoints: false
+    maxRecombineLogSize: 102400
+  hostMetrics:
+    enabled: false
+  kubernetesAttributes:
+    enabled: true
+    extractAllPodLabels: false
+    extractAllPodAnnotations: false
+  kubeletMetrics:
+    enabled: false
+  kubernetesEvents:
+    enabled: false
+  clusterMetrics:
+    enabled: false
+config:
+  exporters:
+    otlp:
+      endpoint: "jaeger-collector.monitoring.svc.cluster.local:4317"
+      tls:
+        insecure: true
+    prometheus:
+      endpoint: 0.0.0.0:8889
+      add_metric_suffixes: false
+      resource_to_telemetry_conversion:
+        enabled: true
+    loki:
+      endpoint: "http://loki:3100/loki/api/v1/push"
+      tls:
+        insecure: true
+  receivers:
+    prometheus:
+      config:
+        scrape_configs:
+          - job_name: opentelemetry-collector
+            scrape_interval: 10s
+            static_configs:
+              - targets:
+                  - 0.0.0.0:8889
+                  - 0.0.0.0:8888
+  processors:
+    batch: {}
+    memory_limiter:
+      check_interval: 5s
+      limit_percentage: 80
+      spike_limit_percentage: 25
+  service:
+    telemetry:
+      metrics:
+        address: "0.0.0.0:8888" 
+    pipelines:
+      traces:
+        exporters:
+          - otlp
+        processors:
+          - batch
+        receivers:
+          - otlp
+          - jaeger
+      metrics:
+        exporters:
+          - prometheus
+        processors:
+          - batch
+          - memory_limiter
+        receivers:
+          - otlp
+      logs:
+        receivers:
+          - otlp
+        processors:
+          - batch
+          - memory_limiter
+        exporters:
+          - loki
+image:
+  repository: otel/opentelemetry-collector-contrib
+service:
+  type: NodePort
+
+
+ports:
+  otlp:
+    enabled: true
+    containerPort: 4317
+    servicePort: 4317
+    hostPort: 4317
+    protocol: TCP
+    nodePort: 30317
+    appProtocol: grpc
+  otlp-http:
+    enabled: true
+    containerPort: 4318
+    servicePort: 4318
+    hostPort: 4318
+    protocol: TCP
+  jaeger-compact:
+    enabled: true
+    containerPort: 6831
+    servicePort: 6831
+    hostPort: 6831
+    protocol: UDP
+  jaeger-thrift:
+    enabled: true
+    containerPort: 14268
+    servicePort: 14268
+    hostPort: 14268
+    protocol: TCP
+  jaeger-grpc:
+    enabled: true
+    containerPort: 14250
+    servicePort: 14250
+    hostPort: 14250
+    protocol: TCP
+  zipkin:
+    enabled: false
+    containerPort: 9411
+    servicePort: 9411
+    hostPort: 9411
+    protocol: TCP
+  metrics:
+    enabled: true
+    containerPort: 8888
+    servicePort: 8888
+    protocol: TCP
+  app-metrics:
+    enabled: true
+    containerPort: 8889
+    servicePort: 8889
+    protocol: TCP

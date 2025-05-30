@@ -1,0 +1,20 @@
+
+auth:
+  existingSecret: postgresql-secret
+  secretKeys:
+    adminPasswordKey: postgres-password
+    userPasswordKey: password
+  
+
+architecture: standalone
+resourcesPreset: "small"
+primary:
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: ""
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: false

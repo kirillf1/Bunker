@@ -97,6 +97,7 @@ public static class ApplicationExtensions
         {
             return x.GetRequiredService<BunkerGameDbContext>().Database.GetDbConnection();
         });
+        services.AddScoped<GameComponentsDatabaseInitializer>();
 
         services.AddScoped<IGameSessionRepository, GameSessionRepository>();
         services.AddScoped<IBunkerRepository, BunkerRepository>();

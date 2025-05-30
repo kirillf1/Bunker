@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bunker-gamecomponents-api
+  labels:
+    app: bunker-gamecomponents-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bunker-gamecomponents-api
+  template:
+    metadata:
+      labels:
+        app: bunker-gamecomponents-api
+    spec:
+      containers:
+      - name: bunker-gamecomponents-api
+        image: kirillf1/bunkergamecomponets-api:1.0
+        ports:
+        - containerPort: 80
+        env:
+        - name: instance
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: ConnectionStrings__PostgresConnection
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secret
+              key: bunker-gamecomponents-api-postgres
+        envFrom:
+        - configMapRef:
+            name: bunker-gamecomponents-api-config
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        # livenessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 80
+        #   initialDelaySeconds: 30
+        #   periodSeconds: 10
+        # readinessProbe:
+        #   httpGet:
+        #     path: /health/ready
+        #     port: 80
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 5 

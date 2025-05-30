@@ -1,0 +1,78 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bunker-gamecomponents-api-config
+  labels:
+    app: bunker-gamecomponents-api
+data:
+  # Здесь можно добавить конфигурационные данные
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bunker-gamecomponents-api-service
+  labels:
+    app: bunker-gamecomponents-api
+spec:
+  type: NodePort
+  selector:
+    app: bunker-gamecomponents-api
+  ports:
+    - port: 80
+      targetPort: 8080
+      nodePort: 30080
+      protocol: TCP
+      name: http
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bunker-gamecomponents-api
+  labels:
+    app: bunker-gamecomponents-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: bunker-gamecomponents-api
+  template:
+    metadata:
+      labels:
+        app: bunker-gamecomponents-api
+    spec:
+      containers:
+      - name: bunker-gamecomponents-api
+        image: kirillf1/bunkergamecomponets-api:1.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: instance
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: ASPNETCORE_URLS
+          value: "http://+:8080"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5 
