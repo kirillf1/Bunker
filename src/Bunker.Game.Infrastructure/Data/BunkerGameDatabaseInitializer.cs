@@ -3,13 +3,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Bunker.Game.Infrastructure.Data;
 
-public class GameComponentsDatabaseInitializer
+public class BunkerGameDatabaseInitializer
 {
-    private readonly ILogger<GameComponentsDatabaseInitializer> _logger;
+    private readonly ILogger<BunkerGameDatabaseInitializer> _logger;
     private readonly BunkerGameDbContext _context;
 
-    public GameComponentsDatabaseInitializer(
-        ILogger<GameComponentsDatabaseInitializer> logger,
+    public BunkerGameDatabaseInitializer(
+        ILogger<BunkerGameDatabaseInitializer> logger,
         BunkerGameDbContext context
     )
     {

@@ -8,6 +8,7 @@ using Bunker.Game.Infrastructure.Data;
 using Bunker.Infrastructure.Shared.Extensions;
 using Serilog;
 using Serilog.Events;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -66,6 +67,11 @@ try
 
     var app = builder.Build();
 
+    await using var scope = app.Services.CreateAsyncScope();
+    var dbInitializer = scope.ServiceProvider.GetRequiredService<BunkerGameDatabaseInitializer>();
+
+    await dbInitializer.InitializeAsync();
+
     app.UseSerilogRequestLogging();
 
     // Configure the HTTP request pipeline.
@@ -75,16 +81,24 @@ try
         app.UseSwaggerUI();
     }
 
-    app.UseHttpsRedirection();
-
     app.UseAuthorization();
 
+    app.MapHealthChecks("/health/live", new HealthCheckOptions
+    {
+        Predicate = check => check.Tags.Contains("live")
+    });
+
+    app.MapHealthChecks("/health/ready", new HealthCheckOptions
+    {
+        Predicate = check => check.Tags.Contains("ready")
+    });
+
+    app.MapHealthChecks("/health/startup", new HealthCheckOptions
+    {
+        Predicate = check => check.Tags.Contains("startup")
+    });
+
     app.MapControllers();
-
-    await using var scope = app.Services.CreateAsyncScope();
-    var dbInitializer = scope.ServiceProvider.GetRequiredService<GameComponentsDatabaseInitializer>();
-
-    await dbInitializer.InitializeAsync();
 
     await app.RunAsync();
 }

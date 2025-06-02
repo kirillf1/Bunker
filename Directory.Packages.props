@@ -5,6 +5,7 @@
   <ItemGroup>
     <PackageVersion Include="Ardalis.Result" Version="10.1.0" />
     <PackageVersion Include="Ardalis.Result.AspNetCore" Version="10.1.0" />
+    <PackageVersion Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
     <PackageVersion Include="Bogus" Version="35.6.3" />
     <PackageVersion Include="Bunker.Shared.Analyzers" Version="1.0.1" />
     <PackageVersion Include="Dapper" Version="2.1.66" />

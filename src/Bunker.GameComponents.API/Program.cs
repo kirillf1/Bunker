@@ -2,8 +2,11 @@
 using System.Text.Json.Serialization;
 using Bunker.GameComponents.API.Infrastructure.Database;
 using Bunker.Infrastructure.Shared.Extensions;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 using Serilog.Events;
 
@@ -31,6 +34,10 @@ try
     builder.AddBaseMetricsConfiguration(appName);
     builder.AddBaseTracingConfiguration(appName);
     builder.AddSerilogLogging(appName);
+    builder
+        .Services.AddHealthChecks()
+        .AddNpgSql(builder.Configuration.GetConnectionString("PostgresConnection")!, tags: new[] { "ready", "startup" })
+        .AddCheck("self", () => HealthCheckResult.Healthy(), tags: new[] { "live" });
 
     builder.Services.ConfigureSwaggerGen(opt =>
     {
@@ -56,6 +63,10 @@ try
     builder.Services.AddScoped<GameComponentsDatabaseInitializer>();
 
     var app = builder.Build();
+    await using var scope = app.Services.CreateAsyncScope();
+    var dbInitializer = scope.ServiceProvider.GetRequiredService<GameComponentsDatabaseInitializer>();
+
+    await dbInitializer.InitializeAsync();
 
     app.UseSerilogRequestLogging();
 
@@ -67,12 +78,16 @@ try
 
     app.UseAuthorization();
 
+    app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = check => check.Tags.Contains("live") });
+
+    app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") });
+
+    app.MapHealthChecks(
+        "/health/startup",
+        new HealthCheckOptions { Predicate = check => check.Tags.Contains("startup") }
+    );
+
     app.MapControllers();
-
-    await using var scope = app.Services.CreateAsyncScope();
-    var dbInitializer = scope.ServiceProvider.GetRequiredService<GameComponentsDatabaseInitializer>();
-
-    await dbInitializer.InitializeAsync();
 
     await app.RunAsync();
 }

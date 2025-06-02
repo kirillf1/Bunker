@@ -21,6 +21,7 @@ using Bunker.Game.Infrastructure.Generators.CharacteristicGenerators;
 using Bunker.Game.Infrastructure.Http.GameComponents;
 using Bunker.Game.Infrastructure.Http.GameComponents.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Bunker.Game.API.Extensions;
 
@@ -93,11 +94,16 @@ public static class ApplicationExtensions
             options.UseSnakeCaseNamingConvention();
         });
 
+        services
+            .AddHealthChecks()
+            .AddNpgSql(configuration.GetConnectionString("PostgresConnection")!, tags: new[] { "ready", "startup" })
+            .AddCheck("self", () => HealthCheckResult.Healthy(), tags: new[] { "live" });
+
         services.AddScoped<IDbConnection>(x =>
         {
             return x.GetRequiredService<BunkerGameDbContext>().Database.GetDbConnection();
         });
-        services.AddScoped<GameComponentsDatabaseInitializer>();
+        services.AddScoped<BunkerGameDatabaseInitializer>();
 
         services.AddScoped<IGameSessionRepository, GameSessionRepository>();
         services.AddScoped<IBunkerRepository, BunkerRepository>();
