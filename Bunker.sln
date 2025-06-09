@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunker.Game.Application", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunker.Infrastructure.Shared", "src\Bunker.Infrastructure.Shared\Bunker.Infrastructure.Shared.csproj", "{3C889945-0B47-483B-B73E-29D9918A5395}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunker.ResultCreator.API", "src\Bunker.ResultCreator.API\Bunker.ResultCreator.API.csproj", "{4FF8C8FA-A678-4298-B6A7-2F77EE3359B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{3C889945-0B47-483B-B73E-29D9918A5395}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C889945-0B47-483B-B73E-29D9918A5395}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C889945-0B47-483B-B73E-29D9918A5395}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FF8C8FA-A678-4298-B6A7-2F77EE3359B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FF8C8FA-A678-4298-B6A7-2F77EE3359B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FF8C8FA-A678-4298-B6A7-2F77EE3359B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FF8C8FA-A678-4298-B6A7-2F77EE3359B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -96,5 +102,6 @@ Global
 		{6C366C53-CF72-484F-8223-B533E6488BA2} = {2BE0C0AC-3794-4A75-8C81-E58A9021AEA8}
 		{E5D9BDE6-D89D-4461-8544-36472ACA9C15} = {760DE308-11F0-46EF-BAFF-92D31554A202}
 		{3C889945-0B47-483B-B73E-29D9918A5395} = {760DE308-11F0-46EF-BAFF-92D31554A202}
+		{4FF8C8FA-A678-4298-B6A7-2F77EE3359B3} = {760DE308-11F0-46EF-BAFF-92D31554A202}
 	EndGlobalSection
 EndGlobal

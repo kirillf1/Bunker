@@ -339,6 +339,12 @@ csharp_style_prefer_switch_expression = true:suggestion
 # BunkerSharedAnalyzers: Type name contains lowercase letters
 dotnet_diagnostic.BunkerSharedAnalyzers.severity = none
 
+# T0000: Internal Styling Rule T0000
+dotnet_diagnostic.T0000.severity = none
+
+# T0017: Internal Styling Rule T0017
+dotnet_diagnostic.T0017.severity = suggestion
+
 [src/{Compilers,ExpressionEvaluator,Scripting}/**Test**/*.{cs,vb}]
 
 # IDE0060: Remove unused parameter

@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>a6708e4c-f09a-4a63-9ab9-1a00a1be2aa5</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+        <PackageReference Include="Microsoft.Extensions.AI" />
+        <PackageReference Include="Microsoft.Extensions.AI.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
+        <PackageReference Include="Swashbuckle.AspNetCore" />
+        <PackageReference Include="OllamaSharp" />
+        <PackageReference Include="SonarAnalyzer.CSharp">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Controllers\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="Infrastructure/PromptStorage/default_prompts.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Bunker.Application.Shared\Bunker.Application.Shared.csproj" />
+        <ProjectReference Include="..\Bunker.Domain.Shared\Bunker.Domain.Shared.csproj" />
+        <ProjectReference Include="..\Bunker.Infrastructure.Shared\Bunker.Infrastructure.Shared.csproj" />
+    </ItemGroup>
+
+</Project>
