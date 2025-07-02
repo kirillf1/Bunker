@@ -1,11 +1,12 @@
 ﻿using System.Net;
+using Bunker.ResultCreator.API.Application.GameSessionResults;
+using Bunker.ResultCreator.API.Application.SurvivalScenarioGenerators;
 using Bunker.ResultCreator.API.Domain.GameResultPrompts;
 using Bunker.ResultCreator.API.Infrastructure.AI.GigachatModelClient;
 using Bunker.ResultCreator.API.Infrastructure.AI.GigachatModelClient.Interfaces;
 using Bunker.ResultCreator.API.Infrastructure.AI.GigachatModelClient.Options;
 using Bunker.ResultCreator.API.Infrastructure.AI.Options;
 using Bunker.ResultCreator.API.Infrastructure.PromptStorage;
-using Bunker.ResultCreator.API.Services;
 using Bunker.ResultCreator.API.SurvivalScenarioGenerators;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Options;

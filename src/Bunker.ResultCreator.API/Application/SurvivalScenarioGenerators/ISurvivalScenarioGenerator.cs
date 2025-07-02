@@ -1,6 +1,6 @@
 ﻿using Bunker.ResultCreator.API.Domain.SurvivalPredictor;
 
-namespace Bunker.ResultCreator.API.SurvivalScenarioGenerators;
+namespace Bunker.ResultCreator.API.Application.SurvivalScenarioGenerators;
 
 public interface ISurvivalScenarioGenerator
 {

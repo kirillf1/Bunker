@@ -1,8 +1,8 @@
 ﻿using System.Text;
+using Bunker.ResultCreator.API.Application.SurvivalScenarioGenerators;
 using Bunker.ResultCreator.API.Domain.SurvivalPredictor;
-using Bunker.ResultCreator.API.SurvivalScenarioGenerators;
 
-namespace Bunker.ResultCreator.API.Services;
+namespace Bunker.ResultCreator.API.Application.GameSessionResults;
 
 public class GameSessionResultService : IGameSessionResultService
 {
@@ -115,9 +115,7 @@ public class GameSessionResultService : IGameSessionResultService
         stringBuilder.AppendLine("Смогут ли выжить в бункере:");
         stringBuilder.AppendLine($"Ответ: {(survivalResult.CanSurvive ? "Да" : "Нет")}");
         if (survivalResult.Reason is not null)
-        {
             stringBuilder.AppendLine($"Причина: {survivalResult.Reason}");
-        }
 
         _logger.LogDebug(
             "Successfully predicted survival capability for GameSession {GameSessionId}. CanSurvive: {CanSurvive}",
@@ -146,9 +144,7 @@ public class GameSessionResultService : IGameSessionResultService
         stringBuilder.AppendLine("Могут ли дать потомство в бункере:");
         stringBuilder.AppendLine($"Ответ: {(reproductionResult.CanGiveBirth ? "Да" : "Нет")}");
         if (reproductionResult.Reason is not null)
-        {
             stringBuilder.AppendLine($"Причина: {reproductionResult.Reason}");
-        }
 
         _logger.LogDebug(
             "Successfully predicted reproduction capability for GameSession {GameSessionId}. CanGiveBirth: {CanGiveBirth}",

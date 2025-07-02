@@ -1,6 +1,6 @@
 ﻿using Bunker.ResultCreator.API.Domain.SurvivalPredictor;
 
-namespace Bunker.ResultCreator.API.Services;
+namespace Bunker.ResultCreator.API.Application.GameSessionResults;
 
 public interface IGameSessionResultService
 {

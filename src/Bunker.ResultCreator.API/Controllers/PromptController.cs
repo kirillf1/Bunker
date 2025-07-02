@@ -1,6 +1,6 @@
-﻿using Bunker.ResultCreator.API.Domain.GameResultPrompts;
+﻿using Bunker.ResultCreator.API.Application.SurvivalScenarioGenerators;
+using Bunker.ResultCreator.API.Domain.GameResultPrompts;
 using Bunker.ResultCreator.API.Domain.SurvivalPredictor;
-using Bunker.ResultCreator.API.SurvivalScenarioGenerators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bunker.ResultCreator.API.Controllers;
@@ -16,7 +16,8 @@ public class PromptController : ControllerBase
     public PromptController(
         IPromptStorage promptStorage,
         ISurvivalScenarioGenerator survivalScenarioGenerator,
-        ILogger<PromptController> logger)
+        ILogger<PromptController> logger
+    )
     {
         _promptStorage = promptStorage;
         _survivalScenarioGenerator = survivalScenarioGenerator;
@@ -41,13 +42,15 @@ public class PromptController : ControllerBase
     [HttpPost("predict-reproduction")]
     public async Task<ActionResult<BunkerReproductionCapabilityResult>> PredictReproduction(
         [FromBody] GameAnalysisContext gameContext,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         try
         {
             var result = await _survivalScenarioGenerator.PredictBunkerReproductionCapability(
-                gameContext, 
-                cancellationToken);
+                gameContext,
+                cancellationToken
+            );
             return Ok(result);
         }
         catch (Exception ex)
@@ -60,13 +63,15 @@ public class PromptController : ControllerBase
     [HttpPost("predict-survival")]
     public async Task<ActionResult<BunkerSurvivalCapabilityResult>> PredictSurvival(
         [FromBody] GameAnalysisContext gameContext,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         try
         {
             var result = await _survivalScenarioGenerator.PredictSurvivalCapabilityResult(
-                gameContext, 
-                cancellationToken);
+                gameContext,
+                cancellationToken
+            );
             return Ok(result);
         }
         catch (Exception ex)
@@ -79,7 +84,8 @@ public class PromptController : ControllerBase
     [HttpPost("generate-history")]
     public async Task<ActionResult<BunkerLifeHistory>> GenerateHistory(
         [FromBody] GenerateHistoryRequest request,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         try
         {
@@ -87,7 +93,8 @@ public class PromptController : ControllerBase
                 request.GameContext,
                 request.ReproductionCapability,
                 request.SurvivalCapability,
-                cancellationToken);
+                cancellationToken
+            );
             return Ok(result);
         }
         catch (Exception ex)
