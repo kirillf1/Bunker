@@ -1,0 +1,31 @@
+{{- if .Values.gameApi.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "bunker-helm.fullname" . }}-game-api-config
+  labels:
+    {{- include "bunker-helm.labels" . | nindent 4 }}
+    app.kubernetes.io/component: game-api
+data:
+  # Общие настройки ASP.NET Core
+  ASPNETCORE_ENVIRONMENT: {{ .Values.gameApi.app.environment | quote }}
+  ASPNETCORE_URLS: {{ .Values.gameApi.app.aspnetCoreUrls | quote }}
+  AllowedHosts: {{ .Values.gameApi.app.allowedHosts | quote }}
+  
+  # GameComponents настройки
+  GameComponents__Address: "http://{{ include "bunker-helm.fullname" . }}-gamecomponents-api-service.{{ .Release.Namespace }}.svc.cluster.local"
+  
+  # Настройки логирования
+  # Serilog настройки
+  Serilog__MinimumLevel__Default: {{ .Values.gameApi.app.logging.level | quote }}
+  Serilog__MinimumLevel__Override__Microsoft: {{ .Values.gameApi.app.logging.microsoftLevel | quote }}
+  Serilog__MinimumLevel__Override__Microsoft.AspNetCore.Hosting.Diagnostics: {{ .Values.gameApi.app.logging.aspnetCoreLevel | quote }}
+  Serilog__MinimumLevel__Override__Microsoft.Hosting.Lifetime: {{ .Values.gameApi.app.logging.hostingLevel | quote }}
+  
+  {{- if .Values.gameApi.app.telemetry.enabled }}
+  # OpenTelemetry настройки
+  OpenTelemetry__Logging__CollectorAddress: "http://{{ .Values.gameApi.app.telemetry.collectorService }}.{{ .Values.gameApi.app.telemetry.namespace }}.svc.cluster.local:{{ .Values.gameApi.app.telemetry.collectorPort }}"
+  OpenTelemetry__Metrics__CollectorAddress: "http://{{ .Values.gameApi.app.telemetry.collectorService }}.{{ .Values.gameApi.app.telemetry.namespace }}.svc.cluster.local:{{ .Values.gameApi.app.telemetry.collectorPort }}"
+  OpenTelemetry__Tracing__CollectorAddress: "http://{{ .Values.gameApi.app.telemetry.collectorService }}.{{ .Values.gameApi.app.telemetry.namespace }}.svc.cluster.local:{{ .Values.gameApi.app.telemetry.collectorPort }}"
+  {{- end }}
+{{- end }} 

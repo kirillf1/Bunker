@@ -1,0 +1,14 @@
+apiVersion: v2
+name: bunker-helm
+description: A Bunker Helm chart for Kubernetes
+type: application
+version: 0.1.0
+appVersion: "0.9.0"
+maintainers:
+  - name: Kirill Tarasov
+    email: kirillf2412@gmail.com
+dependencies:
+  - name: postgresql
+    version: 16.7.15
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.buildin

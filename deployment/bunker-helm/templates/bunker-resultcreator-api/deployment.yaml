@@ -1,0 +1,71 @@
+{{- if .Values.resultCreatorApi.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bunker-helm.fullname" . }}-resultcreator-api
+  labels:
+    {{- include "bunker-helm.labels" . | nindent 4 }}
+    app.kubernetes.io/component: resultcreator-api
+spec:
+  replicas: {{ .Values.resultCreatorApi.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "bunker-helm.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: resultcreator-api
+  template:
+    metadata:
+      annotations:
+        confChecksumm: "{{ include (print $.Template.BasePath "/bunker-resultcreator-api/configmap.yaml") . | sha256sum }}"
+      labels:
+        {{- include "bunker-helm.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: resultcreator-api
+    spec:
+      serviceAccountName: {{ include "bunker-helm.serviceAccountName" . }}
+      containers:
+      - name: resultcreator-api
+        image: "{{ .Values.resultCreatorApi.image.repository }}:{{ .Values.resultCreatorApi.image.tag }}"
+        imagePullPolicy: {{ .Values.resultCreatorApi.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.resultCreatorApi.service.targetPort }}
+          protocol: TCP
+        env:
+        - name: INSTANCE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        envFrom:
+        - configMapRef:
+            name: {{ include "bunker-helm.fullname" . }}-resultcreator-api-config
+        resources:
+          {{- toYaml .Values.resultCreatorApi.resources | nindent 10 }}
+        {{- if .Values.resultCreatorApi.healthChecks.startup.enabled }}
+        startupProbe:
+          httpGet:
+            path: {{ .Values.resultCreatorApi.healthChecks.startup.path }}
+            port: http
+          initialDelaySeconds: {{ .Values.resultCreatorApi.healthChecks.startup.initialDelaySeconds }}
+          periodSeconds: {{ .Values.resultCreatorApi.healthChecks.startup.periodSeconds }}
+          failureThreshold: {{ .Values.resultCreatorApi.healthChecks.startup.failureThreshold }}
+        {{- end }}
+        {{- if .Values.resultCreatorApi.healthChecks.liveness.enabled }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.resultCreatorApi.healthChecks.liveness.path }}
+            port: http
+          initialDelaySeconds: {{ .Values.resultCreatorApi.healthChecks.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.resultCreatorApi.healthChecks.liveness.periodSeconds }}
+          timeoutSeconds: {{ .Values.resultCreatorApi.healthChecks.liveness.timeoutSeconds }}
+          failureThreshold: {{ .Values.resultCreatorApi.healthChecks.liveness.failureThreshold }}
+        {{- end }}
+        {{- if .Values.resultCreatorApi.healthChecks.readiness.enabled }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.resultCreatorApi.healthChecks.readiness.path }}
+            port: http
+          initialDelaySeconds: {{ .Values.resultCreatorApi.healthChecks.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.resultCreatorApi.healthChecks.readiness.periodSeconds }}
+          timeoutSeconds: {{ .Values.resultCreatorApi.healthChecks.readiness.timeoutSeconds }}
+          failureThreshold: {{ .Values.resultCreatorApi.healthChecks.readiness.failureThreshold }}
+        {{- end }}
+{{- end }} 

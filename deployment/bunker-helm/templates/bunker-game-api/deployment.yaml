@@ -1,0 +1,81 @@
+{{- if .Values.gameApi.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bunker-helm.fullname" . }}-game-api
+  labels:
+    {{- include "bunker-helm.labels" . | nindent 4 }}
+    app.kubernetes.io/component: game-api
+spec:
+  replicas: {{ .Values.gameApi.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "bunker-helm.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: game-api
+  template:
+    metadata:
+      annotations:
+        confChecksumm: "{{ include (print $.Template.BasePath "/bunker-game-api/configmap.yaml") . | sha256sum }}"
+      labels:
+        {{- include "bunker-helm.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: game-api
+    spec:
+      serviceAccountName: {{ include "bunker-helm.serviceAccountName" . }}
+      containers:
+      - name: game-api
+        image: "{{ .Values.gameApi.image.repository }}:{{ .Values.gameApi.image.tag }}"
+        imagePullPolicy: {{ .Values.gameApi.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.gameApi.service.targetPort }}
+          protocol: TCP
+        env:
+        - name: INSTANCE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: ConnectionStrings__PostgresConnection
+          valueFrom:
+            secretKeyRef:
+              name: {{ if .Values.gameApi.secrets.existingSecret }}{{ .Values.gameApi.secrets.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-game-api-secret{{ end }}
+              key: {{ .Values.gameApi.secrets.connectionStringKey }}
+        - name: ConnectionStrings__PostgresReadOnlyConnection
+          valueFrom:
+            secretKeyRef:
+              name: {{ if .Values.gameApi.secrets.existingSecret }}{{ .Values.gameApi.secrets.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-game-api-secret{{ end }}
+              key: {{ .Values.gameApi.secrets.readReplicaConnectionKey }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "bunker-helm.fullname" . }}-game-api-config
+        resources:
+          {{- toYaml .Values.gameApi.resources | nindent 10 }}
+        {{- if .Values.gameApi.healthChecks.startup.enabled }}
+        startupProbe:
+          httpGet:
+            path: {{ .Values.gameApi.healthChecks.startup.path }}
+            port: http
+          initialDelaySeconds: {{ .Values.gameApi.healthChecks.startup.initialDelaySeconds }}
+          periodSeconds: {{ .Values.gameApi.healthChecks.startup.periodSeconds }}
+          failureThreshold: {{ .Values.gameApi.healthChecks.startup.failureThreshold }}
+        {{- end }}
+        {{- if .Values.gameApi.healthChecks.liveness.enabled }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.gameApi.healthChecks.liveness.path }}
+            port: http
+          initialDelaySeconds: {{ .Values.gameApi.healthChecks.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.gameApi.healthChecks.liveness.periodSeconds }}
+          timeoutSeconds: {{ .Values.gameApi.healthChecks.liveness.timeoutSeconds }}
+          failureThreshold: {{ .Values.gameApi.healthChecks.liveness.failureThreshold }}
+        {{- end }}
+        {{- if .Values.gameApi.healthChecks.readiness.enabled }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.gameApi.healthChecks.readiness.path }}
+            port: http
+          initialDelaySeconds: {{ .Values.gameApi.healthChecks.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.gameApi.healthChecks.readiness.periodSeconds }}
+          timeoutSeconds: {{ .Values.gameApi.healthChecks.readiness.timeoutSeconds }}
+          failureThreshold: {{ .Values.gameApi.healthChecks.readiness.failureThreshold }}
+        {{- end }}
+{{- end }}

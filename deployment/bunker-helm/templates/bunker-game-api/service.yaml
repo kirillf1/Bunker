@@ -1,0 +1,19 @@
+{{- if .Values.gameApi.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bunker-helm.fullname" . }}-game-api-service
+  labels:
+    {{- include "bunker-helm.labels" . | nindent 4 }}
+    app.kubernetes.io/component: game-api
+spec:
+  type: {{ .Values.gameApi.service.type }}
+  ports:
+    - port: {{ .Values.gameApi.service.port }}
+      targetPort: {{ .Values.gameApi.service.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "bunker-helm.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: game-api
+{{- end }} 

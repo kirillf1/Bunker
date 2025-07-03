@@ -1,0 +1,27 @@
+{{- if .Values.resultCreatorApi.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "bunker-helm.fullname" . }}-resultcreator-api-config
+  labels:
+    {{- include "bunker-helm.labels" . | nindent 4 }}
+    app.kubernetes.io/component: resultcreator-api
+data:
+  # Общие настройки ASP.NET Core
+  ASPNETCORE_ENVIRONMENT: {{ .Values.resultCreatorApi.app.environment | quote }}
+  ASPNETCORE_URLS: {{ .Values.resultCreatorApi.app.aspnetCoreUrls | quote }}
+  AllowedHosts: {{ .Values.resultCreatorApi.app.allowedHosts | quote }}
+  
+  # Настройки логирования
+  Serilog__MinimumLevel__Default: {{ .Values.resultCreatorApi.app.logging.level | quote }}
+  Serilog__MinimumLevel__Override__Microsoft: {{ .Values.resultCreatorApi.app.logging.microsoftLevel | quote }}
+  Serilog__MinimumLevel__Override__Microsoft.AspNetCore.Hosting.Diagnostics: {{ .Values.resultCreatorApi.app.logging.aspnetCoreLevel | quote }}
+  Serilog__MinimumLevel__Override__Microsoft.Hosting.Lifetime: {{ .Values.resultCreatorApi.app.logging.hostingLevel | quote }}
+  
+  {{- if .Values.resultCreatorApi.app.telemetry.enabled }}
+  # OpenTelemetry настройки
+  OpenTelemetry__Logging__CollectorAddress: "http://{{ .Values.resultCreatorApi.app.telemetry.collectorService }}.{{ .Values.resultCreatorApi.app.telemetry.namespace }}.svc.cluster.local:{{ .Values.resultCreatorApi.app.telemetry.collectorPort }}"
+  OpenTelemetry__Metrics__CollectorAddress: "http://{{ .Values.resultCreatorApi.app.telemetry.collectorService }}.{{ .Values.resultCreatorApi.app.telemetry.namespace }}.svc.cluster.local:{{ .Values.resultCreatorApi.app.telemetry.collectorPort }}"
+  OpenTelemetry__Tracing__CollectorAddress: "http://{{ .Values.resultCreatorApi.app.telemetry.collectorService }}.{{ .Values.resultCreatorApi.app.telemetry.namespace }}.svc.cluster.local:{{ .Values.resultCreatorApi.app.telemetry.collectorPort }}"
+  {{- end }}
+{{- end }} 

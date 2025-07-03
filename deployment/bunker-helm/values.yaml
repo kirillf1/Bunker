@@ -1,0 +1,318 @@
+# Глобальные настройки
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  storageClass: ""
+
+# Настройки общих компонентов
+nameOverride: ""
+fullnameOverride: ""
+
+# ServiceAccount
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# PostgreSQL настройки
+postgresql:
+  # Включить встроенную PostgreSQL (bitnami chart)
+  enabled: true
+  # Настройки секретов PostgreSQL
+  secrets:
+    # Имя существующего секрета (оставить пустым для автосоздания)
+    existingSecret: ""
+    # Ключи для отдельных компонентов БД (используются при existingSecret)
+    secretKeys:
+      usernameKey: "postgres-user"
+      passwordKey: "postgres-password"
+      replicationPasswordKey: "replication-password"
+    # Пароли (используются при автосоздании секретов)
+    adminPassword: "admin_password"
+    replicationPassword: "replicapassword"
+    userPassword: "user_password"
+  
+  # Настройки базы данных
+  database:
+    # Настройки для встроенной PostgreSQL (используется когда postgresql.enabled: true)
+    internal:
+      # Имя сервиса будет сформировано автоматически по шаблону
+      port: 5432
+      gameApiDatabase: bunker_game_db
+      gameComponentsDatabase: bunker_game_components_db
+      username: postgres
+    
+    # Настройки для внешней PostgreSQL (используется когда postgresql.enabled: false)
+    external:
+      host: "external-postgres.example.com"
+      port: 5432
+      gameApiDatabase: bunker_game_db
+      gameComponentsDatabase: bunker_game_components_db
+      username: postgres
+      # Для внешней БД также нужно настроить postgresql.secrets.adminPassword
+  
+  # Настройки bitnami PostgreSQL chart
+  auth:
+    existingSecret: "postgresql-secret"
+    secretKeys:
+      adminPasswordKey: "postgres-password"
+      replicationPasswordKey: "replication-password"
+
+  architecture: replication
+  resourcesPreset: "small"
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: ""
+  readReplicas:
+    replicaCount: 1
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: ""
+    resourcesPreset: "small"
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: false
+
+# Bunker Game API
+gameApi:
+  enabled: true
+  replicaCount: 1
+  
+  secrets:
+    # Имя существующего секрета с connection string (оставить пустым для автосоздания)
+    existingSecret: ""
+    # Ключ в секрете для connection string (используется при existingSecret)
+    connectionStringKey: "postgres-connection"
+    # Ключ в секрете для read replica connection string (используется при existingSecret)
+    readReplicaConnectionKey: "postgres-readonly-connection"
+  
+  # Настройки приложения Game API
+  app:
+    environment: Production
+    aspnetCoreUrls: "http://+:80"
+    allowedHosts: "*"
+    
+    # Serilog настройки
+    logging:
+      level: Information
+      microsoftLevel: Warning
+      aspnetCoreLevel: Error
+      hostingLevel: Information
+    
+    # OpenTelemetry настройки
+    telemetry:
+      enabled: true
+      namespace: monitoring
+      collectorService: otel-collector-opentelemetry-collector
+      collectorPort: 4317
+  
+  image:
+    repository: kirillf1/bunker-game-api
+    tag: "1.0"
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 80
+  
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts:
+      - host: bunker-game-api.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+  
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  
+  healthChecks:
+    startup:
+      enabled: true
+      path: /health/startup
+      initialDelaySeconds: 1
+      periodSeconds: 10
+      failureThreshold: 10
+    liveness:
+      enabled: true
+      path: /health/live
+      initialDelaySeconds: 15
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      enabled: true
+      path: /health/ready
+      initialDelaySeconds: 3
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 2
+
+# Bunker GameComponents API  
+gameComponentsApi:
+  enabled: true
+  replicaCount: 1
+  
+  secrets:
+    # Имя существующего секрета с connection string (оставить пустым для автосоздания)
+    existingSecret: ""
+    # Ключ в секрете для connection string (используется при existingSecret)
+    connectionStringKey: "postgres-connection"
+    # Ключ в секрете для read replica connection string (используется при existingSecret)
+    readReplicaConnectionKey: "postgres-readonly-connection"
+  
+  app:
+    environment: Production
+    aspnetCoreUrls: "http://+:80"
+    allowedHosts: "*"
+    
+    # Serilog настройки
+    logging:
+      level: Information
+      microsoftLevel: Warning
+      aspnetCoreLevel: Error
+      hostingLevel: Information
+    
+    # OpenTelemetry настройки
+    telemetry:
+      enabled: true
+      namespace: monitoring
+      collectorService: otel-collector-opentelemetry-collector
+      collectorPort: 4317
+  
+  image:
+    repository: kirillf1/bunkergamecomponets-api
+    tag: "1.0"
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 80
+  
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts:
+      - host: bunker-gamecomponents-api.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+  
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  
+  healthChecks:
+    startup:
+      enabled: true
+      path: /health/startup
+      initialDelaySeconds: 1
+      periodSeconds: 10
+      failureThreshold: 10
+    liveness:
+      enabled: true
+      path: /health/live
+      initialDelaySeconds: 3
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      enabled: true
+      path: /health/ready
+      initialDelaySeconds: 0
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 2
+
+# Bunker ResultCreator API
+resultCreatorApi:
+  enabled: false
+  replicaCount: 1
+
+  app:
+    environment: Production
+    aspnetCoreUrls: "http://+:80"
+    allowedHosts: "*"
+    
+    logging:
+      level: Information
+      microsoftLevel: Warning
+      aspnetCoreLevel: Error
+      hostingLevel: Information
+    
+    telemetry:
+      enabled: true
+      namespace: monitoring
+      collectorService: otel-collector-opentelemetry-collector
+      collectorPort: 4317
+  
+  image:
+    repository: kirillf1/bunker-resultcreator-api
+    tag: "1.0"
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 80
+  
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts:
+      - host: bunker-resultcreator-api.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+  
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  
+  healthChecks:
+    startup:
+      enabled: true
+      path: /health/startup
+      initialDelaySeconds: 1
+      periodSeconds: 10
+      failureThreshold: 10
+    liveness:
+      enabled: true
+      path: /health/live
+      initialDelaySeconds: 3
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      enabled: true
+      path: /health/ready
+      initialDelaySeconds: 0
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 2

@@ -1,0 +1,81 @@
+{{- if .Values.gameComponentsApi.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bunker-helm.fullname" . }}-gamecomponents-api
+  labels:
+    {{- include "bunker-helm.labels" . | nindent 4 }}
+    app.kubernetes.io/component: gamecomponents-api
+spec:
+  replicas: {{ .Values.gameComponentsApi.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "bunker-helm.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: gamecomponents-api
+  template:
+    metadata:
+      annotations:
+        confChecksumm: "{{ include (print $.Template.BasePath "/bunker-gamecomponents-api/configmap.yaml") . | sha256sum }}"
+      labels:
+        {{- include "bunker-helm.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: gamecomponents-api
+    spec:
+      serviceAccountName: {{ include "bunker-helm.serviceAccountName" . }}
+      containers:
+      - name: gamecomponents-api
+        image: "{{ .Values.gameComponentsApi.image.repository }}:{{ .Values.gameComponentsApi.image.tag }}"
+        imagePullPolicy: {{ .Values.gameComponentsApi.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.gameComponentsApi.service.targetPort }}
+          protocol: TCP
+        env:
+        - name: INSTANCE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: ConnectionStrings__PostgresConnection
+          valueFrom:
+            secretKeyRef:
+              name: {{ if .Values.gameComponentsApi.secrets.existingSecret }}{{ .Values.gameComponentsApi.secrets.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-gamecomponents-api-secret{{ end }}
+              key: {{ .Values.gameComponentsApi.secrets.connectionStringKey }}
+        - name: ConnectionStrings__PostgresReadOnlyConnection
+          valueFrom:
+            secretKeyRef:
+              name: {{ if .Values.gameComponentsApi.secrets.existingSecret }}{{ .Values.gameComponentsApi.secrets.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-gamecomponents-api-secret{{ end }}
+              key: {{ .Values.gameComponentsApi.secrets.readReplicaConnectionKey }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "bunker-helm.fullname" . }}-gamecomponents-api-config
+        resources:
+          {{- toYaml .Values.gameComponentsApi.resources | nindent 10 }}
+        {{- if .Values.gameComponentsApi.healthChecks.startup.enabled }}
+        startupProbe:
+          httpGet:
+            path: {{ .Values.gameComponentsApi.healthChecks.startup.path }}
+            port: http
+          initialDelaySeconds: {{ .Values.gameComponentsApi.healthChecks.startup.initialDelaySeconds }}
+          periodSeconds: {{ .Values.gameComponentsApi.healthChecks.startup.periodSeconds }}
+          failureThreshold: {{ .Values.gameComponentsApi.healthChecks.startup.failureThreshold }}
+        {{- end }}
+        {{- if .Values.gameComponentsApi.healthChecks.liveness.enabled }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.gameComponentsApi.healthChecks.liveness.path }}
+            port: http
+          initialDelaySeconds: {{ .Values.gameComponentsApi.healthChecks.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.gameComponentsApi.healthChecks.liveness.periodSeconds }}
+          timeoutSeconds: {{ .Values.gameComponentsApi.healthChecks.liveness.timeoutSeconds }}
+          failureThreshold: {{ .Values.gameComponentsApi.healthChecks.liveness.failureThreshold }}
+        {{- end }}
+        {{- if .Values.gameComponentsApi.healthChecks.readiness.enabled }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.gameComponentsApi.healthChecks.readiness.path }}
+            port: http
+          initialDelaySeconds: {{ .Values.gameComponentsApi.healthChecks.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.gameComponentsApi.healthChecks.readiness.periodSeconds }}
+          timeoutSeconds: {{ .Values.gameComponentsApi.healthChecks.readiness.timeoutSeconds }}
+          failureThreshold: {{ .Values.gameComponentsApi.healthChecks.readiness.failureThreshold }}
+        {{- end }}
+{{- end }}

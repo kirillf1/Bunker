@@ -1,0 +1,19 @@
+{{- if .Values.resultCreatorApi.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bunker-helm.fullname" . }}-resultcreator-api-service
+  labels:
+    {{- include "bunker-helm.labels" . | nindent 4 }}
+    app.kubernetes.io/component: resultcreator-api
+spec:
+  type: {{ .Values.resultCreatorApi.service.type }}
+  ports:
+    - port: {{ .Values.resultCreatorApi.service.port }}
+      targetPort: {{ .Values.resultCreatorApi.service.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "bunker-helm.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: resultcreator-api
+{{- end }} 
