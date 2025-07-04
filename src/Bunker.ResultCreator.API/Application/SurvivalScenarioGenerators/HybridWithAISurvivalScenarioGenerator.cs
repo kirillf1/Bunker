@@ -41,8 +41,9 @@ public partial class HybridWithAISurvivalScenarioGenerator : ISurvivalScenarioGe
         _logger = logger;
         _jsonSerializerOptions = new JsonSerializerOptions
         {
-            Converters = { new AISurvivalCapabilityResponseJsonConverter() },
             PropertyNameCaseInsensitive = true,
+            ReadCommentHandling = JsonCommentHandling.Skip,
+            AllowTrailingCommas = true,
         };
     }
 
@@ -102,6 +103,7 @@ public partial class HybridWithAISurvivalScenarioGenerator : ISurvivalScenarioGe
         CancellationToken cancellationToken = default
     )
     {
+        const int maxRetries = 3;
         var prompts = await _promptStorage.GetSurvivalScenarioPrompt();
         var gameDescription = gameContext.ToString();
 
@@ -111,32 +113,133 @@ public partial class HybridWithAISurvivalScenarioGenerator : ISurvivalScenarioGe
             new ChatMessage(ChatRole.User, [new TextContent(gameDescription)]),
         };
 
-        var chatResponse = await _chatClient
-            .GetStreamingResponseAsync(messages, _chatOptions, cancellationToken)
-            .ToChatResponseAsync(cancellationToken);
+        for (int attempt = 1; attempt <= maxRetries; attempt++)
+        {
+            var result = await TryGetSurvivalCapabilityResult(messages, attempt, maxRetries, cancellationToken);
+
+            if (result.IsSuccess)
+            {
+                return result.Value!;
+            }
+
+            if (!result.ShouldRetry)
+            {
+                break;
+            }
+        }
+
+        return new BunkerSurvivalCapabilityResult(false);
+    }
+
+    private async Task<AIAttemptResult> TryGetSurvivalCapabilityResult(
+        ChatMessage[] messages,
+        int attempt,
+        int maxRetries,
+        CancellationToken cancellationToken
+    )
+    {
+        var json = string.Empty;
 
         try
         {
-            var chatResult = chatResponse.ToString();
-            var jsonMatch = JsonRegex().Match(chatResult);
+            var chatResponse = await _chatClient
+                .GetStreamingResponseAsync(messages, _chatOptions, cancellationToken)
+                .ToChatResponseAsync(cancellationToken);
 
-            return JsonSerializer.Deserialize<BunkerSurvivalCapabilityResult>(
-                jsonMatch.ValueSpan,
-                _jsonSerializerOptions
-            )!;
+            json = RetriveJsonMessageFromAIChat(chatResponse);
+
+            var result = JsonSerializer.Deserialize<BunkerSurvivalCapabilityResult>(json, _jsonSerializerOptions);
+
+            if (result != null)
+            {
+                return AIAttemptResult.Success(result);
+            }
+
+            _logger.LogWarning("Deserialized result is null on attempt {Attempt}", attempt);
+            return AIAttemptResult.RetryableFailure();
+        }
+        catch (JsonException jsonEx)
+        {
+            _logger.LogWarning(
+                jsonEx,
+                "JSON parsing failed on attempt {Attempt}/{MaxRetries}. Will retry if attempts remain. Invalid json: {InvalidJson}",
+                attempt,
+                maxRetries,
+                json
+            );
+
+            if (attempt == maxRetries)
+            {
+                _logger.LogError(
+                    jsonEx,
+                    "All {MaxRetries} attempts failed to parse JSON. Returning negative survival capability.",
+                    maxRetries
+                );
+            }
+
+            return AIAttemptResult.RetryableFailure();
         }
         catch (Exception ex)
         {
             _logger.LogError(
                 ex,
-                "Failed deserialize chat result. Return negative survival capability. Chat response: {ChatResponse}",
-                chatResponse.ToString()
+                "Unexpected error on attempt {Attempt}/{MaxRetries}. Returning negative survival capability.",
+                attempt,
+                maxRetries
             );
 
-            return new BunkerSurvivalCapabilityResult(false);
+            return AIAttemptResult.FatalFailure();
         }
     }
 
-    [GeneratedRegex(@"\{[\s\S]*?\}")]
+    private static string RetriveJsonMessageFromAIChat(ChatResponse chatResponse)
+    {
+        var chatResult = chatResponse.ToString();
+
+        var jsonMatch = JsonRegex().Match(chatResult);
+
+        // Chat can return invalid character for deserialization
+        var json = JsonInvalidCharacterReplacer()
+            .Replace(
+                jsonMatch.Value,
+                m =>
+                {
+                    var cleaned = m.Groups[1]
+                        .Value.Replace("\\\\n", "\\n")
+                        .Replace("\\\\r", "\\n")
+                        .Replace("\\\\t", "\\t")
+                        .Replace("\\\\\"", "\\\"")
+                        .Replace("\\\\/", "/")
+                        .Replace("\\", "\\\\")
+                        .Replace("\"", "\\\"")
+                        .Replace("\r\n", "\\n")
+                        .Replace("\r", "\\n")
+                        .Replace("\n", "\\n")
+                        .Replace("\t", "\\t")
+                        .TrimEnd('\\', '/');
+
+                    return $"\"Reason\": \"{cleaned}\"";
+                }
+            );
+        return json;
+    }
+
+    [GeneratedRegex(@"\{[\s\S]*?\}", RegexOptions.Singleline)]
     private static partial Regex JsonRegex();
+
+    [GeneratedRegex("\"Reason\"\\s*:\\s*\"([^\"]*(?:\\\\.[^\"]*)*)\"")]
+    private static partial Regex JsonInvalidCharacterReplacer();
+
+    private readonly record struct AIAttemptResult(
+        bool IsSuccess,
+        bool ShouldRetry,
+        BunkerSurvivalCapabilityResult? Value
+    )
+    {
+        public static AIAttemptResult Success(BunkerSurvivalCapabilityResult result) => new(true, false, result);
+
+        public static AIAttemptResult RetryableFailure() => new(false, true, null);
+
+        public static AIAttemptResult FatalFailure() => new(false, false, null);
+    }
 }
