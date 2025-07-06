@@ -82,19 +82,19 @@ gameApi:
   enabled: true
   replicaCount: 1
   
-  secrets:
-    # Имя существующего секрета с connection string (оставить пустым для автосоздания)
-    existingSecret: ""
-    # Ключ в секрете для connection string (используется при existingSecret)
-    connectionStringKey: "postgres-connection"
-    # Ключ в секрете для read replica connection string (используется при existingSecret)
-    readReplicaConnectionKey: "postgres-readonly-connection"
-  
   # Настройки приложения Game API
   app:
     environment: Production
     aspnetCoreUrls: "http://+:80"
     allowedHosts: "*"
+    
+    # PostgreSQL настройки
+    postgres:
+      # Настройки секрета для PostgreSQL
+      existingSecret: ""
+      secretKeys:
+        connectionStringKey: "postgres-connection"
+        readReplicaConnectionKey: "postgres-readonly-connection"
     
     # Serilog настройки
     logging:
@@ -109,6 +109,26 @@ gameApi:
       namespace: monitoring
       collectorService: otel-collector-opentelemetry-collector
       collectorPort: 4317
+    
+    # Kafka настройки
+    kafka:
+      # Настройки секрета для Kafka
+      existingSecret: ""
+      secretKeys:
+        loginKey: "kafka-login"
+        passwordKey: "kafka-password"
+      
+      servers: "localhost:9092"
+      # Логин и пароль (используются если existingSecret пуст)
+      # ВАЖНО: Эти данные чувствительные и будут сохранены в секрете
+      login: ""
+      password: ""
+      createGameResultRequestsTopicName: "create-game-result-requests-test-topic"
+      createGameResultResponsesTopicName: "create-game-result-responses-test-topic"
+    
+    # GameComponents настройки
+    gameComponents:
+      address: ""  # Адрес GameComponents API (например, http://gamecomponents-service:80)
   
   image:
     repository: kirillf1/bunker-game-api
@@ -166,18 +186,18 @@ gameComponentsApi:
   enabled: true
   replicaCount: 1
   
-  secrets:
-    # Имя существующего секрета с connection string (оставить пустым для автосоздания)
-    existingSecret: ""
-    # Ключ в секрете для connection string (используется при existingSecret)
-    connectionStringKey: "postgres-connection"
-    # Ключ в секрете для read replica connection string (используется при existingSecret)
-    readReplicaConnectionKey: "postgres-readonly-connection"
-  
   app:
     environment: Production
     aspnetCoreUrls: "http://+:80"
     allowedHosts: "*"
+    
+    # PostgreSQL настройки
+    postgres:
+      # Настройки секрета для PostgreSQL
+      existingSecret: ""
+      secretKeys:
+        connectionStringKey: "postgres-connection"
+        readReplicaConnectionKey: "postgres-readonly-connection"
     
     # Serilog настройки
     logging:
@@ -245,26 +265,93 @@ gameComponentsApi:
       failureThreshold: 2
 
 # Bunker ResultCreator API
+# Сервис для создания результатов игры с использованием AI
 resultCreatorApi:
   enabled: false
   replicaCount: 1
 
+  # Настройки секретов только для чувствительных данных
+  # Секреты создаются только для блоков, которые содержат пароли, API ключи и другие чувствительные данные
+  
   app:
     environment: Production
     aspnetCoreUrls: "http://+:80"
     allowedHosts: "*"
     
+    # Serilog настройки
     logging:
       level: Information
       microsoftLevel: Warning
       aspnetCoreLevel: Error
       hostingLevel: Information
     
+    # OpenTelemetry настройки
     telemetry:
       enabled: true
       namespace: monitoring
       collectorService: otel-collector-opentelemetry-collector
       collectorPort: 4317
+    
+    # Kafka настройки
+    kafka:
+      # Настройки секрета для Kafka
+      existingSecret: ""
+      secretKeys:
+        loginKey: "kafka-login"
+        passwordKey: "kafka-password"
+      
+      servers: "localhost:9092"
+      # Логин и пароль (используются если existingSecret пуст)
+      # ВАЖНО: Эти данные чувствительные и будут сохранены в секрете
+      login: ""
+      password: ""
+      createGameResultRequestsTopicName: "create-game-result-requests-test-topic"
+      createGameResultResponsesTopicName: "create-game-result-responses-test-topic"
+    
+    # AI настройки
+    ai:
+      provider: "Ollama"  # Выберите провайдера: "Ollama" или "GigaChat"
+      parallelAgentWorkers: 2  # Количество параллельных воркеров для обработки
+      chat:
+        temperature: 0.9      # Креативность (0.0-1.0)
+        maxOutputTokens: 1012 # Максимальное количество токенов в ответе
+        topK: 30              # Параметр для контроля разнообразия
+        topP: 1               # Параметр для контроля разнообразия
+    
+    # Ollama настройки (используются если ai.provider = "Ollama")
+    ollama:
+      baseUrl: "http://localhost:11434"  # URL сервера Ollama
+      model: "owl/t-lite"               # Модель для генерации
+    
+    # PromptStorage настройки
+    promptStorage:
+      filePath: ""  # Путь к файлам с промптами (оставить пустым для значений по умолчанию)
+    
+    # GigaChat настройки (используются если ai.provider = "GigaChat")
+    gigaChat:
+      # Настройки секрета для GigaChat
+      existingSecret: ""
+      secretKeys:
+        secretKey: "gigachat-secret"
+        clientIdKey: "gigachat-client-id"
+        clientSecretKey: "gigachat-client-secret"
+      
+      # SecretKey (используется если existingSecret пуст)
+      # ВАЖНО: Этот ключ чувствительный и будет сохранён в секрете
+      secretKey: ""
+      clientId: ""
+      clientSecret: ""
+      isCommercial: false      # Коммерческое использование
+      ignoreTLS: true          # Игнорировать SSL сертификаты
+      baseUrl: "https://gigachat.devices.sberbank.ru/api/v1/"
+      authUrl: "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
+      defaultModel: "GigaChat-2"  # Модель по умолчанию
+      defaultRequestOptions:
+        temperature: 0.87  # Креативность
+        topP: 0.47         # Контроль разнообразия
+        maxTokens: 512     # Максимальное количество токенов
+        n: 1               # Количество генерируемых вариантов
+        stream: false      # Потоковый режим
   
   image:
     repository: kirillf1/bunker-resultcreator-api
@@ -289,10 +376,10 @@ resultCreatorApi:
   
   resources:
     requests:
-      memory: "256Mi"
+      memory: "512Mi"
       cpu: "250m"
     limits:
-      memory: "512Mi"
+      memory: "1Gi"
       cpu: "500m"
   
   healthChecks:

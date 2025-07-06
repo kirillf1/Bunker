@@ -37,13 +37,13 @@ spec:
         - name: ConnectionStrings__PostgresConnection
           valueFrom:
             secretKeyRef:
-              name: {{ if .Values.gameComponentsApi.secrets.existingSecret }}{{ .Values.gameComponentsApi.secrets.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-gamecomponents-api-secret{{ end }}
-              key: {{ .Values.gameComponentsApi.secrets.connectionStringKey }}
+              name: {{ if .Values.gameComponentsApi.app.postgres.existingSecret }}{{ .Values.gameComponentsApi.app.postgres.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-gamecomponents-api-secret{{ end }}
+              key: {{ if .Values.gameComponentsApi.app.postgres.existingSecret }}{{ .Values.gameComponentsApi.app.postgres.secretKeys.connectionStringKey }}{{ else }}postgres-connection{{ end }}
         - name: ConnectionStrings__PostgresReadOnlyConnection
           valueFrom:
             secretKeyRef:
-              name: {{ if .Values.gameComponentsApi.secrets.existingSecret }}{{ .Values.gameComponentsApi.secrets.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-gamecomponents-api-secret{{ end }}
-              key: {{ .Values.gameComponentsApi.secrets.readReplicaConnectionKey }}
+              name: {{ if .Values.gameComponentsApi.app.postgres.existingSecret }}{{ .Values.gameComponentsApi.app.postgres.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-gamecomponents-api-secret{{ end }}
+              key: {{ if .Values.gameComponentsApi.app.postgres.existingSecret }}{{ .Values.gameComponentsApi.app.postgres.secretKeys.readReplicaConnectionKey }}{{ else }}postgres-readonly-connection{{ end }}
         envFrom:
         - configMapRef:
             name: {{ include "bunker-helm.fullname" . }}-gamecomponents-api-config

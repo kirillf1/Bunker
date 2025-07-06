@@ -16,6 +16,7 @@ spec:
     metadata:
       annotations:
         confChecksumm: "{{ include (print $.Template.BasePath "/bunker-resultcreator-api/configmap.yaml") . | sha256sum }}"
+        secretChecksum: "{{ include (print $.Template.BasePath "/bunker-resultcreator-api/secret.yaml") . | sha256sum }}"
       labels:
         {{- include "bunker-helm.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: resultcreator-api
@@ -34,6 +35,36 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+        # Чувствительные данные из секретов
+        
+        # Kafka секреты
+        - name: Kafka__Login
+          valueFrom:
+            secretKeyRef:
+              name: {{ if .Values.resultCreatorApi.app.kafka.existingSecret }}{{ .Values.resultCreatorApi.app.kafka.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-resultcreator-api-kafka-secret{{ end }}
+              key: {{ if .Values.resultCreatorApi.app.kafka.existingSecret }}{{ .Values.resultCreatorApi.app.kafka.secretKeys.loginKey }}{{ else }}kafka-login{{ end }}
+        - name: Kafka__Password
+          valueFrom:
+            secretKeyRef:
+              name: {{ if .Values.resultCreatorApi.app.kafka.existingSecret }}{{ .Values.resultCreatorApi.app.kafka.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-resultcreator-api-kafka-secret{{ end }}
+              key: {{ if .Values.resultCreatorApi.app.kafka.existingSecret }}{{ .Values.resultCreatorApi.app.kafka.secretKeys.passwordKey }}{{ else }}kafka-password{{ end }}
+        
+        # GigaChat секреты
+        - name: GigaChat__SecretKey
+          valueFrom:
+            secretKeyRef:
+              name: {{ if .Values.resultCreatorApi.app.gigaChat.existingSecret }}{{ .Values.resultCreatorApi.app.gigaChat.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-resultcreator-api-gigachat-secret{{ end }}
+              key: {{ if .Values.resultCreatorApi.app.gigaChat.existingSecret }}{{ .Values.resultCreatorApi.app.gigaChat.secretKeys.secretKey }}{{ else }}gigachat-secret{{ end }}
+        - name: GigaChat__ClientId
+          valueFrom:
+            secretKeyRef:
+              name: {{ if .Values.resultCreatorApi.app.gigaChat.existingSecret }}{{ .Values.resultCreatorApi.app.gigaChat.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-resultcreator-api-gigachat-secret{{ end }}
+              key: {{ if .Values.resultCreatorApi.app.gigaChat.existingSecret }}{{ .Values.resultCreatorApi.app.gigaChat.secretKeys.clientIdKey }}{{ else }}gigachat-client-id{{ end }}
+        - name: GigaChat__ClientSecret
+          valueFrom:
+            secretKeyRef:
+              name: {{ if .Values.resultCreatorApi.app.gigaChat.existingSecret }}{{ .Values.resultCreatorApi.app.gigaChat.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-resultcreator-api-gigachat-secret{{ end }}
+              key: {{ if .Values.resultCreatorApi.app.gigaChat.existingSecret }}{{ .Values.resultCreatorApi.app.gigaChat.secretKeys.clientSecretKey }}{{ else }}gigachat-client-secret{{ end }}
         envFrom:
         - configMapRef:
             name: {{ include "bunker-helm.fullname" . }}-resultcreator-api-config

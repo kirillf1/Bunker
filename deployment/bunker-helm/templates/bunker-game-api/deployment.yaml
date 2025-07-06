@@ -37,13 +37,24 @@ spec:
         - name: ConnectionStrings__PostgresConnection
           valueFrom:
             secretKeyRef:
-              name: {{ if .Values.gameApi.secrets.existingSecret }}{{ .Values.gameApi.secrets.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-game-api-secret{{ end }}
-              key: {{ .Values.gameApi.secrets.connectionStringKey }}
+              name: {{ if .Values.gameApi.app.postgres.existingSecret }}{{ .Values.gameApi.app.postgres.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-game-api-secret{{ end }}
+              key: {{ if .Values.gameApi.app.postgres.existingSecret }}{{ .Values.gameApi.app.postgres.secretKeys.connectionStringKey }}{{ else }}postgres-connection{{ end }}
         - name: ConnectionStrings__PostgresReadOnlyConnection
           valueFrom:
             secretKeyRef:
-              name: {{ if .Values.gameApi.secrets.existingSecret }}{{ .Values.gameApi.secrets.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-game-api-secret{{ end }}
-              key: {{ .Values.gameApi.secrets.readReplicaConnectionKey }}
+              name: {{ if .Values.gameApi.app.postgres.existingSecret }}{{ .Values.gameApi.app.postgres.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-game-api-secret{{ end }}
+              key: {{ if .Values.gameApi.app.postgres.existingSecret }}{{ .Values.gameApi.app.postgres.secretKeys.readReplicaConnectionKey }}{{ else }}postgres-readonly-connection{{ end }}
+        # Kafka секреты
+        - name: Kafka__Login
+          valueFrom:
+            secretKeyRef:
+              name: {{ if .Values.gameApi.app.kafka.existingSecret }}{{ .Values.gameApi.app.kafka.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-game-api-kafka-secret{{ end }}
+              key: {{ if .Values.gameApi.app.kafka.existingSecret }}{{ .Values.gameApi.app.kafka.secretKeys.loginKey }}{{ else }}kafka-login{{ end }}
+        - name: Kafka__Password
+          valueFrom:
+            secretKeyRef:
+              name: {{ if .Values.gameApi.app.kafka.existingSecret }}{{ .Values.gameApi.app.kafka.existingSecret }}{{ else }}{{ include "bunker-helm.fullname" . }}-game-api-kafka-secret{{ end }}
+              key: {{ if .Values.gameApi.app.kafka.existingSecret }}{{ .Values.gameApi.app.kafka.secretKeys.passwordKey }}{{ else }}kafka-password{{ end }}
         envFrom:
         - configMapRef:
             name: {{ include "bunker-helm.fullname" . }}-game-api-config

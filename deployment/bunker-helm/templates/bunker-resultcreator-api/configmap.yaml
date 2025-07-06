@@ -24,4 +24,36 @@ data:
   OpenTelemetry__Metrics__CollectorAddress: "http://{{ .Values.resultCreatorApi.app.telemetry.collectorService }}.{{ .Values.resultCreatorApi.app.telemetry.namespace }}.svc.cluster.local:{{ .Values.resultCreatorApi.app.telemetry.collectorPort }}"
   OpenTelemetry__Tracing__CollectorAddress: "http://{{ .Values.resultCreatorApi.app.telemetry.collectorService }}.{{ .Values.resultCreatorApi.app.telemetry.namespace }}.svc.cluster.local:{{ .Values.resultCreatorApi.app.telemetry.collectorPort }}"
   {{- end }}
+  
+  # Kafka настройки (не чувствительные данные)
+  Kafka__Servers: {{ .Values.resultCreatorApi.app.kafka.servers | quote }}
+  Kafka__CreateGameResultRequestsTopicName: {{ .Values.resultCreatorApi.app.kafka.createGameResultRequestsTopicName | quote }}
+  Kafka__CreateGameResultResponsesTopicName: {{ .Values.resultCreatorApi.app.kafka.createGameResultResponsesTopicName | quote }}
+  
+  # AI настройки
+  AI__Provider: {{ .Values.resultCreatorApi.app.ai.provider | quote }}
+  AI__ParallelAgentWorkers: {{ .Values.resultCreatorApi.app.ai.parallelAgentWorkers | quote }}
+  AI__Chat__Temperature: {{ .Values.resultCreatorApi.app.ai.chat.temperature | quote }}
+  AI__Chat__MaxOutputTokens: {{ .Values.resultCreatorApi.app.ai.chat.maxOutputTokens | quote }}
+  AI__Chat__TopK: {{ .Values.resultCreatorApi.app.ai.chat.topK | quote }}
+  AI__Chat__TopP: {{ .Values.resultCreatorApi.app.ai.chat.topP | quote }}
+  
+  # Ollama настройки
+  Ollama__BaseUrl: {{ .Values.resultCreatorApi.app.ollama.baseUrl | quote }}
+  Ollama__Model: {{ .Values.resultCreatorApi.app.ollama.model | quote }}
+  
+  # PromptStorage настройки
+  PromptStorage__FilePath: {{ .Values.resultCreatorApi.app.promptStorage.filePath | quote }}
+  
+  # GigaChat настройки (не чувствительные данные)
+  GigaChat__IsCommercial: {{ .Values.resultCreatorApi.app.gigaChat.isCommercial | quote }}
+  GigaChat__IgnoreTLS: {{ .Values.resultCreatorApi.app.gigaChat.ignoreTLS | quote }}
+  GigaChat__BaseUrl: {{ .Values.resultCreatorApi.app.gigaChat.baseUrl | quote }}
+  GigaChat__AuthUrl: {{ .Values.resultCreatorApi.app.gigaChat.authUrl | quote }}
+  GigaChat__DefaultModel: {{ .Values.resultCreatorApi.app.gigaChat.defaultModel | quote }}
+  GigaChat__DefaultRequestOptions__Temperature: {{ .Values.resultCreatorApi.app.gigaChat.defaultRequestOptions.temperature | quote }}
+  GigaChat__DefaultRequestOptions__TopP: {{ .Values.resultCreatorApi.app.gigaChat.defaultRequestOptions.topP | quote }}
+  GigaChat__DefaultRequestOptions__MaxTokens: {{ .Values.resultCreatorApi.app.gigaChat.defaultRequestOptions.maxTokens | quote }}
+  GigaChat__DefaultRequestOptions__N: {{ .Values.resultCreatorApi.app.gigaChat.defaultRequestOptions.n | quote }}
+  GigaChat__DefaultRequestOptions__Stream: {{ .Values.resultCreatorApi.app.gigaChat.defaultRequestOptions.stream | quote }}
 {{- end }} 

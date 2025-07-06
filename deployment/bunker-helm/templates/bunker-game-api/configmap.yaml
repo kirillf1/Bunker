@@ -13,7 +13,7 @@ data:
   AllowedHosts: {{ .Values.gameApi.app.allowedHosts | quote }}
   
   # GameComponents настройки
-  GameComponents__Address: "http://{{ include "bunker-helm.fullname" . }}-gamecomponents-api-service.{{ .Release.Namespace }}.svc.cluster.local"
+  GameComponents__Address: {{ if .Values.gameApi.app.gameComponents.address }}{{ .Values.gameApi.app.gameComponents.address | quote }}{{ else }}"http://{{ include "bunker-helm.fullname" . }}-gamecomponents-api:{{ .Values.gameComponentsApi.service.port }}"{{ end }}
   
   # Настройки логирования
   # Serilog настройки
@@ -28,4 +28,9 @@ data:
   OpenTelemetry__Metrics__CollectorAddress: "http://{{ .Values.gameApi.app.telemetry.collectorService }}.{{ .Values.gameApi.app.telemetry.namespace }}.svc.cluster.local:{{ .Values.gameApi.app.telemetry.collectorPort }}"
   OpenTelemetry__Tracing__CollectorAddress: "http://{{ .Values.gameApi.app.telemetry.collectorService }}.{{ .Values.gameApi.app.telemetry.namespace }}.svc.cluster.local:{{ .Values.gameApi.app.telemetry.collectorPort }}"
   {{- end }}
+  
+  # Kafka настройки (не чувствительные данные)
+  Kafka__Servers: {{ .Values.gameApi.app.kafka.servers | quote }}
+  Kafka__CreateGameResultRequestsTopicName: {{ .Values.gameApi.app.kafka.createGameResultRequestsTopicName | quote }}
+  Kafka__CreateGameResultResponsesTopicName: {{ .Values.gameApi.app.kafka.createGameResultResponsesTopicName | quote }}
 {{- end }} 
