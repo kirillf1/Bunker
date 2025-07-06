@@ -14,7 +14,7 @@ public class GameSessionConfiguration : IEntityTypeConfiguration<GameSession>
         builder.Property(g => g.GameState).IsRequired();
         builder.Property(g => g.GameState).HasConversion(v => v.ToString(), v => Enum.Parse<GameState>(v));
         builder.Property(g => g.FreeSeatsCount).IsRequired();
-        builder.Property(g => g.GameResultDescription).HasMaxLength(1000);
+        builder.Property(g => g.GameResultDescription).HasMaxLength(20000);
 
         builder.OwnsMany(
             g => g.Characters,

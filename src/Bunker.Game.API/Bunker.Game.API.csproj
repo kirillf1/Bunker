@@ -12,6 +12,7 @@
     <ItemGroup>
         <PackageReference Include="Ardalis.Result" />
         <PackageReference Include="Ardalis.Result.AspNetCore" />
+        <PackageReference Include="AspNetCore.HealthChecks.Kafka" />
         <PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
@@ -33,6 +34,7 @@
         <ProjectReference Include="..\Bunker.Game.Domain\Bunker.Game.Domain.csproj" />
         <ProjectReference Include="..\Bunker.Game.Infrastructure\Bunker.Game.Infrastructure.csproj" />
         <ProjectReference Include="..\Bunker.Infrastructure.Shared\Bunker.Infrastructure.Shared.csproj" />
+        <ProjectReference Include="..\Bunker.MessageBus.Kafka\Bunker.MessageBus.Kafka.csproj" />
     </ItemGroup>
 
 </Project>

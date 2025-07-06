@@ -1,7 +1,6 @@
 ﻿using Ardalis.Result;
 using Bunker.Application.Shared.CQRS;
 using Bunker.Game.Domain.AggregateModels.Characters;
-using Microsoft.Extensions.Logging;
 
 namespace Bunker.Game.Application.Commands.Characters;
 

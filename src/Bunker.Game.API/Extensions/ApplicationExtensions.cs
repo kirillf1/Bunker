@@ -1,9 +1,12 @@
 ﻿using System.Data;
+using Bunker.Application.Shared.Contracts.IntegrationEvents.GameResults;
 using Bunker.Application.Shared.CQRS;
 using Bunker.Domain.Shared.Cards.CardActionCommands;
 using Bunker.Domain.Shared.DomainEvents;
 using Bunker.Game.Application.Commands.GameSessions.UpdateGameSessionState;
 using Bunker.Game.Application.DomainEvents.GameSessions;
+using Bunker.Game.Application.IntegrationEvents;
+using Bunker.Game.Application.IntegrationEvents.GameSessionResultResponded;
 using Bunker.Game.Domain.AggregateModels.Bunkers;
 using Bunker.Game.Domain.AggregateModels.Catastrophes;
 using Bunker.Game.Domain.AggregateModels.Characters;
@@ -11,6 +14,7 @@ using Bunker.Game.Domain.AggregateModels.Characters.Cards;
 using Bunker.Game.Domain.AggregateModels.GameSessions;
 using Bunker.Game.Infrastructure.Application;
 using Bunker.Game.Infrastructure.Application.Decorators;
+using Bunker.Game.Infrastructure.Application.IntegrationEvents;
 using Bunker.Game.Infrastructure.Application.QueryHandlers;
 using Bunker.Game.Infrastructure.Data;
 using Bunker.Game.Infrastructure.Data.Repositories;
@@ -20,8 +24,17 @@ using Bunker.Game.Infrastructure.Generators.CharacterFactories;
 using Bunker.Game.Infrastructure.Generators.CharacteristicGenerators;
 using Bunker.Game.Infrastructure.Http.GameComponents;
 using Bunker.Game.Infrastructure.Http.GameComponents.Contracts;
+using Bunker.Infrastructure.Shared.ApplicationDecorators;
+using Bunker.MessageBus.Abstractions;
+using Bunker.MessageBus.Abstractions.Extensions;
+using Bunker.MessageBus.Abstractions.IntegrationEventLogs;
+using Bunker.MessageBus.Kafka;
+using Bunker.MessageBus.Kafka.Configuration;
+using Bunker.MessageBus.Kafka.Consumers;
+using Bunker.MessageBus.Kafka.Consumers.ConsumeStrategies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 
 namespace Bunker.Game.API.Extensions;
 
@@ -44,7 +57,75 @@ public static class ApplicationExtensions
 
         services.AddGenerators(configuration);
 
+        services.AddMessageBus(configuration);
+
         return services;
+    }
+
+    private static IMessageBusBuilder AddMessageBus(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<KafkaOptions>(configuration.GetSection(KafkaOptions.Section));
+
+        var kafkaOptions = configuration.GetSection(KafkaOptions.Section).Get<KafkaOptions>();
+
+        services
+            .AddHealthChecks()
+            .AddKafka(
+                new Confluent.Kafka.ProducerConfig
+                {
+                    BootstrapServers = kafkaOptions!.Servers,
+                    RequestTimeoutMs = 2000,
+                    MessageSendMaxRetries = 10,
+                    MessageTimeoutMs = 20000,
+                },
+                tags: ["ready", "startup"]
+            );
+
+        services.AddSingleton<IMessageBus>(c =>
+        {
+            var groupId = "bunker-game-api";
+            var kafkaOptions = c.GetRequiredService<IOptions<KafkaOptions>>().Value;
+
+            var builder = new KafkaBusBuilder(
+                new KafkaConnectionSettings
+                {
+                    BootstrapServers = kafkaOptions.Servers,
+                    SaslPassword = kafkaOptions.Password,
+                    SaslUsername = kafkaOptions.Login,
+                },
+                c,
+                c.GetRequiredService<IOptions<EventBusSubscriptionInfo>>()
+            );
+
+            builder = builder.AddEventConsumer(
+                kafkaOptions.CreateGameResultResponsesTopicName,
+                new ConsumerSettings(groupId, new MultiThreadForEventStrategy(5))
+            );
+
+            builder.BindEventToProducer<GameResultRequestedIntegrationEvent>(
+                new MessageBus.Kafka.Producers.BindEventToProducerSettings
+                {
+                    TargetTopic = kafkaOptions.CreateGameResultRequestsTopicName,
+                }
+            );
+
+            return builder.Build();
+        });
+
+        services.Configure<EventBusSubscriptionInfo>(c => c.JsonSerializerOptions.PropertyNameCaseInsensitive = true);
+
+        services.AddSingleton<IHostedService>(sp => (KafkaMessageBus)sp.GetRequiredService<IMessageBus>());
+
+        var messageBusBuilder = new MessageBusBuilder(services);
+
+        messageBusBuilder.AddSubscription<
+            GameResultRespondedIntegrationEvent,
+            GameResultRespondedIntegrationEventHandler
+        >();
+
+        services.AddScoped<IBunkerGameIntegrationEventService, BunkerGameIntegrationEventService>();
+
+        return messageBusBuilder;
     }
 
     private static IServiceCollection AddDomainServices(this IServiceCollection services)
@@ -88,16 +169,19 @@ public static class ApplicationExtensions
 
     private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<BunkerGameDbContext>(options =>
-        {
-            options.UseNpgsql(configuration.GetConnectionString("PostgresConnection"));
-            options.UseSnakeCaseNamingConvention();
-        });
+        services.AddDbContext<BunkerGameDbContext>(
+            options =>
+            {
+                options.UseNpgsql(configuration.GetConnectionString("PostgresConnection"));
+                options.UseSnakeCaseNamingConvention();
+            },
+            ServiceLifetime.Scoped
+        );
 
         services
             .AddHealthChecks()
-            .AddNpgSql(configuration.GetConnectionString("PostgresConnection")!, tags: new[] { "ready", "startup" })
-            .AddCheck("self", () => HealthCheckResult.Healthy(), tags: new[] { "live" });
+            .AddNpgSql(configuration.GetConnectionString("PostgresConnection")!, tags: ["ready", "startup"])
+            .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"]);
 
         services.AddScoped<IDbConnection>(x =>
         {
@@ -109,6 +193,8 @@ public static class ApplicationExtensions
         services.AddScoped<IBunkerRepository, BunkerRepository>();
         services.AddScoped<ICatastropheRepository, CatastropheRepository>();
         services.AddScoped<ICharacterRepository, CharacterRepository>();
+
+        services.AddScoped<IIntegrationEventLogService, IntegrationEventLogService>();
 
         return services;
     }

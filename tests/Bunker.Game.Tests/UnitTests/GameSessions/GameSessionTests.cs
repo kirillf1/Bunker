@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Bunker.Domain.Shared.Exceptions;
+﻿using Bunker.Domain.Shared.Exceptions;
 using Bunker.Game.Domain.AggregateModels.GameSessions;
 using Bunker.Game.Domain.AggregateModels.GameSessions.Events;
 

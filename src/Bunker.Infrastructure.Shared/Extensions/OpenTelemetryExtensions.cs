@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Bunker.Infrastructure.Shared.Options;
+﻿using Bunker.Infrastructure.Shared.Options;
 using HealthChecks.OpenTelemetry.Instrumentation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

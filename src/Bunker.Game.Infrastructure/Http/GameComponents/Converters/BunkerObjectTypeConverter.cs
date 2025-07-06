@@ -1,6 +1,4 @@
-﻿using Bunker.Game.Infrastructure.Http.GameComponents.Contracts;
-
-namespace Bunker.Game.Infrastructure.Http.GameComponents.Converters;
+﻿namespace Bunker.Game.Infrastructure.Http.GameComponents.Converters;
 
 public static class BunkerObjectTypeConverter
 {

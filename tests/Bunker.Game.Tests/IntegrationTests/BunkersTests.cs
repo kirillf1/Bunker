@@ -5,7 +5,6 @@ using System.Text.Json.Serialization;
 using Bunker.Game.API.Models.GameSessions;
 using Bunker.Game.Application.Commands.GameSessions.CreateGameSession;
 using Bunker.Game.Application.Queries.Bunkers;
-using Bunker.Game.Application.Queries.GameSessions;
 using Bunker.Game.Domain.AggregateModels.GameSessions;
 using Bunker.Game.Tests.Fixtures;
 

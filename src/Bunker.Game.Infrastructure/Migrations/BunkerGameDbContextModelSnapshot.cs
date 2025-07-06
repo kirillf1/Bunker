@@ -118,8 +118,8 @@ namespace Bunker.Game.Infrastructure.Migrations
                         .HasColumnName("free_seats_count");
 
                     b.Property<string>("GameResultDescription")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)")
+                        .HasMaxLength(20000)
+                        .HasColumnType("character varying(20000)")
                         .HasColumnName("game_result_description");
 
                     b.Property<string>("GameState")
@@ -137,6 +137,52 @@ namespace Bunker.Game.Infrastructure.Migrations
                         .HasName("pk_game_sessions");
 
                     b.ToTable("game_sessions", (string)null);
+                });
+
+            modelBuilder.Entity("Bunker.MessageBus.Abstractions.IntegrationEventLogs.IntegrationEventLogEntry", b =>
+                {
+                    b.Property<Guid>("EventId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("event_id");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("creation_time");
+
+                    b.Property<string>("EventTypeName")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("event_type_name");
+
+                    b.Property<int>("State")
+                        .HasColumnType("integer")
+                        .HasColumnName("state");
+
+                    b.Property<int>("TimesSent")
+                        .HasColumnType("integer")
+                        .HasColumnName("times_sent");
+
+                    b.Property<Guid>("TransactionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("transaction_id");
+
+                    b.HasKey("EventId")
+                        .HasName("pk_integration_event_log");
+
+                    b.HasIndex("TransactionId")
+                        .HasDatabaseName("ix_integration_event_log_transaction_id");
+
+                    b.HasIndex("State", "CreationTime")
+                        .HasDatabaseName("ix_integration_event_log_state_creation_time");
+
+                    b.ToTable("integration_event_log", (string)null);
                 });
 
             modelBuilder.Entity("Bunker.Game.Domain.AggregateModels.Bunkers.BunkerAggregate", b =>

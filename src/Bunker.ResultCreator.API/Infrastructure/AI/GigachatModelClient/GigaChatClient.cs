@@ -1,7 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using Bunker.ResultCreator.API.Infrastructure.AI.GigachatModelClient.Interfaces;
 using Bunker.ResultCreator.API.Infrastructure.AI.GigachatModelClient.Models;
 using Bunker.ResultCreator.API.Infrastructure.AI.GigachatModelClient.Options;
@@ -84,7 +83,10 @@ namespace Bunker.ResultCreator.API.Infrastructure.AI.GigachatModelClient
             }
             catch (Exception ex)
             {
-                throw new ApplicationException($"Error occurred while getting response from GigaChat: {ex.Message}", ex);
+                throw new ApplicationException(
+                    $"Error occurred while getting response from GigaChat: {ex.Message}",
+                    ex
+                );
             }
         }
 
@@ -107,9 +109,9 @@ namespace Bunker.ResultCreator.API.Infrastructure.AI.GigachatModelClient
 
             var messageQuery = new MessageQuery(
                 messages: messageContents,
-                model: chatOptions?.ModelId ?? this.options.DefaultModel,
-                temperature: chatOptions?.Temperature ?? this.options.DefaultRequestOptions.Temperature,
-                max_tokens: chatOptions?.MaxOutputTokens ?? this.options.DefaultRequestOptions.MaxTokens
+                model: chatOptions?.ModelId ?? options.DefaultModel,
+                temperature: chatOptions?.Temperature ?? options.DefaultRequestOptions.Temperature,
+                max_tokens: chatOptions?.MaxOutputTokens ?? options.DefaultRequestOptions.MaxTokens
             );
 
             var response = await CompletionsAsync(messageQuery);

@@ -1,5 +1,16 @@
 ﻿using System.Net;
-using Bunker.ResultCreator.API.Application.GameSessionResults;
+using Ardalis.Result;
+using Bunker.Application.Shared.Contracts.IntegrationEvents.GameResults;
+using Bunker.Application.Shared.CQRS;
+using Bunker.Infrastructure.Shared.ApplicationDecorators;
+using Bunker.MessageBus.Abstractions;
+using Bunker.MessageBus.Abstractions.Extensions;
+using Bunker.MessageBus.Kafka;
+using Bunker.MessageBus.Kafka.Configuration;
+using Bunker.MessageBus.Kafka.Consumers;
+using Bunker.MessageBus.Kafka.Consumers.ConsumeStrategies;
+using Bunker.ResultCreator.API.Application.Commands.CreateGameResult;
+using Bunker.ResultCreator.API.Application.IntegrationEvents.GameResultRequested;
 using Bunker.ResultCreator.API.Application.SurvivalScenarioGenerators;
 using Bunker.ResultCreator.API.Domain.GameResultPrompts;
 using Bunker.ResultCreator.API.Infrastructure.AI.GigachatModelClient;
@@ -22,8 +33,14 @@ public static class ApplicationExtensions
     )
     {
         services.AddAIChatClient(configuration);
+
         services.AddPromptStorage(configuration);
+
         services.AddSurvivalScenarios();
+
+        services.AddCommandHandlers();
+
+        services.AddMessageBus(configuration);
 
         return services;
     }
@@ -100,7 +117,84 @@ public static class ApplicationExtensions
     private static IServiceCollection AddSurvivalScenarios(this IServiceCollection services)
     {
         services.AddScoped<ISurvivalScenarioGenerator, HybridWithAISurvivalScenarioGenerator>();
-        services.AddScoped<IGameSessionResultService, GameSessionResultService>();
+
+        return services;
+    }
+
+    private static void AddMessageBus(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<KafkaOptions>(configuration.GetSection(KafkaOptions.Section));
+
+        var kafkaOptions = configuration.GetSection(KafkaOptions.Section).Get<KafkaOptions>();
+
+        services
+            .AddHealthChecks()
+            .AddKafka(
+                new Confluent.Kafka.ProducerConfig
+                {
+                    BootstrapServers = kafkaOptions!.Servers,
+                    RequestTimeoutMs = 2000,
+                    MessageSendMaxRetries = 10,
+                    MessageTimeoutMs = 20000,
+                },
+                tags: ["ready", "startup"]
+            );
+
+        services.AddSingleton<IMessageBus>(c =>
+        {
+            var groupId = "bunker-result-creator";
+            var kafkaOptions = c.GetRequiredService<IOptions<KafkaOptions>>().Value;
+
+            var builder = new KafkaBusBuilder(
+                new KafkaConnectionSettings
+                {
+                    BootstrapServers = kafkaOptions.Servers,
+                    SaslPassword = kafkaOptions.Password,
+                    SaslUsername = kafkaOptions.Login,
+                },
+                c,
+                c.GetRequiredService<IOptions<EventBusSubscriptionInfo>>()
+            );
+
+            var aiOptions = c.GetRequiredService<IOptions<AIProviderOptions>>().Value;
+
+            builder = builder.AddEventConsumer(
+                kafkaOptions.CreateGameResultRequestsTopicName,
+                new ConsumerSettings(groupId, new MultiThreadForEventStrategy(aiOptions.ParallelAgentWorkers))
+            );
+
+            builder.BindEventToProducer<GameResultRespondedIntegrationEvent>(
+                new MessageBus.Kafka.Producers.BindEventToProducerSettings
+                {
+                    TargetTopic = kafkaOptions.CreateGameResultResponsesTopicName,
+                }
+            );
+
+            return builder.Build();
+        });
+
+        services.Configure<EventBusSubscriptionInfo>(c => c.JsonSerializerOptions.PropertyNameCaseInsensitive = true);
+
+        services.AddSingleton<IHostedService>(sp => (KafkaMessageBus)sp.GetRequiredService<IMessageBus>());
+
+        var messageBusBuilder = new MessageBusBuilder(services);
+
+        messageBusBuilder.AddSubscription<
+            GameResultRequestedIntegrationEvent,
+            GameResultRequestedIntegrationEventHandler
+        >();
+    }
+
+    private static IServiceCollection AddCommandHandlers(this IServiceCollection services)
+    {
+        services.Scan(scan =>
+            scan.FromAssemblyOf<CreateGameResultCommandHandler>()
+                .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)))
+                .AsImplementedInterfaces()
+                .WithScopedLifetime()
+        );
+
+        services.Decorate(typeof(ICommandHandler<,>), typeof(ActivityCommandDecorator<,>));
 
         return services;
     }

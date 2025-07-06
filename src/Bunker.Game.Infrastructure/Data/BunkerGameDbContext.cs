@@ -1,8 +1,7 @@
 ﻿using System.Data;
-using Bunker.Domain.Shared.DomainEvents;
-using Bunker.Domain.Shared.DomainModels;
 using Bunker.Game.Domain.AggregateModels.Catastrophes;
 using Bunker.Game.Domain.AggregateModels.GameSessions;
+using Bunker.MessageBus.Abstractions.IntegrationEventLogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using BunkerAggregate = Bunker.Game.Domain.AggregateModels.Bunkers;
@@ -17,6 +16,7 @@ public class BunkerGameDbContext : DbContext, IUnitOfWork
     public DbSet<GameSession> GameSessions { get; set; }
     public DbSet<BunkerAggregate.BunkerAggregate> Bunkers { get; set; }
     public DbSet<Catastrophe> Catastrophes { get; set; }
+    public DbSet<IntegrationEventLogEntry> IntegrationEventLogEntries { get; set; }
 
     public bool HasActiveTransaction => _currentTransaction != null;
 
@@ -93,4 +93,6 @@ public class BunkerGameDbContext : DbContext, IUnitOfWork
             }
         }
     }
+
+    public IDbContextTransaction? GetCurrentTransaction() => _currentTransaction;
 }

@@ -17,4 +17,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Bunker.MessageBus.Abstractions\Bunker.MessageBus.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>

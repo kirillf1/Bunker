@@ -1,7 +1,6 @@
 ﻿using Ardalis.Result;
 using Bunker.Application.Shared.CQRS;
 using Bunker.Game.Domain.AggregateModels.GameSessions;
-using Microsoft.Extensions.Logging;
 
 namespace Bunker.Game.Application.Commands.GameSessions.UpdateGameSessionState;
 
@@ -40,11 +39,7 @@ public class EndGameSessionCommandHandler : ICommandHandler<EndGameSessionComman
 
             await _gameSessionRepository.UnitOfWork.SaveChangesAsync(cancellation);
 
-            _logger.LogInformation(
-                "Game session {GameSessionId} successfully ended with result: {GameResult}",
-                command.GameSessionId,
-                command.GameResultDescription
-            );
+            _logger.LogInformation("Game session {GameSessionId} successfully ended", command.GameSessionId);
 
             return Result.Success();
         }

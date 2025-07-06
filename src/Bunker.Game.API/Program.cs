@@ -3,12 +3,12 @@ using System.Text.Json.Serialization;
 using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 using Bunker.Game.API.Extensions;
-using Bunker.Game.Infrastructure.Application.Decorators;
 using Bunker.Game.Infrastructure.Data;
+using Bunker.Infrastructure.Shared.ApplicationDecorators;
 using Bunker.Infrastructure.Shared.Extensions;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 using Serilog.Events;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -83,20 +83,14 @@ try
 
     app.UseAuthorization();
 
-    app.MapHealthChecks("/health/live", new HealthCheckOptions
-    {
-        Predicate = check => check.Tags.Contains("live")
-    });
+    app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = check => check.Tags.Contains("live") });
 
-    app.MapHealthChecks("/health/ready", new HealthCheckOptions
-    {
-        Predicate = check => check.Tags.Contains("ready")
-    });
+    app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") });
 
-    app.MapHealthChecks("/health/startup", new HealthCheckOptions
-    {
-        Predicate = check => check.Tags.Contains("startup")
-    });
+    app.MapHealthChecks(
+        "/health/startup",
+        new HealthCheckOptions { Predicate = check => check.Tags.Contains("startup") }
+    );
 
     app.MapControllers();
 

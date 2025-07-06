@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Bunker.ResultCreator.API.Domain.SurvivalPredictor;
+﻿namespace Bunker.ResultCreator.API.Domain.SurvivalPredictor;
 
 public class BunkerSurvivalCapabilityResult
 {

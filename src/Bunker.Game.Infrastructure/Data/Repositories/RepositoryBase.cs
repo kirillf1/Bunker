@@ -1,6 +1,4 @@
-﻿using Bunker.Domain.Shared.DomainModels;
-
-namespace Bunker.Game.Infrastructure.Data.Repositories;
+﻿namespace Bunker.Game.Infrastructure.Data.Repositories;
 
 public class RepositoryBase<T> : IRepository<T>
     where T : class, IAggregateRoot

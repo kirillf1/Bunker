@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using Ardalis.Result;
-using Bunker.Application.Shared.CQRS;
 using Bunker.Game.Application.Queries.Bunkers;
 using Dapper;
 

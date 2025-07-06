@@ -6,7 +6,6 @@ using Bunker.Game.Application.Commands.Characters;
 using Bunker.Game.Application.Queries.Characters;
 using Bunker.Game.Domain.AggregateModels.Characters.Cards;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Bunker.Game.API.Controllers;
 

@@ -1,5 +1,7 @@
-﻿using Bunker.Game.Infrastructure.Data;
+﻿using Bunker.Game.Application.IntegrationEvents;
+using Bunker.Game.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 
 namespace Bunker.Game.Infrastructure.Application.Decorators;
@@ -9,19 +11,21 @@ public class TransactionCommandDecorator<TCommand, TCommandResult> : ICommandHan
     private readonly ICommandHandler<TCommand, TCommandResult> _decorated;
     private readonly BunkerGameDbContext _dbContext;
     private readonly ILogger<TransactionCommandDecorator<TCommand, TCommandResult>> _logger;
-
+    private readonly IBunkerGameIntegrationEventService _bunkerGameIntegrationEventService;
     private readonly int _maxRetryCount = 3;
     private readonly TimeSpan _initialRetryDelay = TimeSpan.FromMilliseconds(10);
 
     public TransactionCommandDecorator(
         ICommandHandler<TCommand, TCommandResult> decorated,
         BunkerGameDbContext dbContext,
-        ILogger<TransactionCommandDecorator<TCommand, TCommandResult>> logger
+        ILogger<TransactionCommandDecorator<TCommand, TCommandResult>> logger,
+        IBunkerGameIntegrationEventService bunkerGameIntegrationEventService
     )
     {
         _decorated = decorated;
         _dbContext = dbContext;
         _logger = logger;
+        _bunkerGameIntegrationEventService = bunkerGameIntegrationEventService;
     }
 
     public async Task<TCommandResult> Handle(TCommand command, CancellationToken cancellationToken)
@@ -36,21 +40,32 @@ public class TransactionCommandDecorator<TCommand, TCommandResult> : ICommandHan
                 if (_dbContext.HasActiveTransaction)
                     return await _decorated.Handle(command, cancellationToken);
 
-                var transaction = await _dbContext.BeginTransactionAsync();
+                await using var transaction = await _dbContext.BeginTransactionAsync();
 
-                try
+                using (
+                    _logger.BeginScope(
+                        new List<KeyValuePair<string, object>> { new("TransactionContext", transaction!.TransactionId) }
+                    )
+                )
                 {
-                    var result = await _decorated.Handle(command, cancellationToken);
+                    try
+                    {
+                        var result = await _decorated.Handle(command, cancellationToken);
 
-                    if (transaction != null)
-                        await _dbContext.CommitTransactionAsync(transaction);
+                        if (transaction is not null)
+                            await _dbContext.CommitTransactionAsync(transaction);
 
-                    return result;
-                }
-                catch
-                {
-                    _dbContext.RollbackTransaction();
-                    throw;
+                        await _bunkerGameIntegrationEventService.PublishEventsThroughEventBusAsync(
+                            transaction!.TransactionId
+                        );
+
+                        return result;
+                    }
+                    catch
+                    {
+                        _dbContext.RollbackTransaction();
+                        throw;
+                    }
                 }
             }
             catch (Exception ex) when (ShouldRetry(ex, retryCount))
@@ -76,7 +91,7 @@ public class TransactionCommandDecorator<TCommand, TCommandResult> : ICommandHan
         if (retryCount >= _maxRetryCount)
             return false;
 
-        return ex is DbUpdateConcurrencyException || ex is DbUpdateException || IsTransientException(ex);
+        return ex is DbUpdateConcurrencyException || IsTransientException(ex);
     }
 
     private bool IsTransientException(Exception ex)

@@ -1,7 +1,6 @@
 ﻿using Ardalis.Result;
 using Bunker.Application.Shared.CQRS;
 using Bunker.Game.Domain.AggregateModels.GameSessions;
-using Microsoft.Extensions.Logging;
 
 namespace Bunker.Game.Application.Commands.GameSessions.UpdateGameSessionCharacters;
 
@@ -52,7 +51,7 @@ public class KickCharacterCommandHandler : ICommandHandler<KickCharacterCommand,
                 "After kicking character {CharacterId}, game session {GameSessionId} has {RemainingCharacters} active characters",
                 command.CharacterId,
                 command.GameSessionId,
-                gameSession.Characters.Count(c => !c.IsKicked)
+                gameSession.Characters.Count(x => !x.IsKicked)
             );
 
             return Result.Success();

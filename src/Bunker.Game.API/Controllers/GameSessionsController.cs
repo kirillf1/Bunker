@@ -7,7 +7,6 @@ using Bunker.Game.Application.Commands.GameSessions.UpdateGameSessionCharacters;
 using Bunker.Game.Application.Commands.GameSessions.UpdateGameSessionState;
 using Bunker.Game.Application.Queries.GameSessions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Bunker.Game.API.Controllers;
 
@@ -22,7 +21,6 @@ public class GameSessionsController : ControllerBase
     private readonly IQueryHandler<GetGameSessionQuery, Result<GameSessionDto>> _getGameSessionQueryHandler;
     private readonly ICommandHandler<OccupyCharacterCommand, Result<Guid>> _occupyCharacterCommandHandler;
     private readonly ICommandHandler<KickCharacterCommand, Result> _kickCharacterCommandHandler;
-    private readonly ICommandHandler<EndGameSessionCommand, Result> _endGameSessionCommandHandler;
     private readonly ICommandHandler<TerminateGameSessionCommand, Result> _terminateGameSessionCommandHandler;
     private readonly ILogger<GameSessionsController> _logger;
 
@@ -31,7 +29,6 @@ public class GameSessionsController : ControllerBase
         IQueryHandler<GetGameSessionQuery, Result<GameSessionDto>> getGameSessionQueryHandler,
         ICommandHandler<OccupyCharacterCommand, Result<Guid>> occupyCharacterCommandHandler,
         ICommandHandler<KickCharacterCommand, Result> kickCharacterCommandHandler,
-        ICommandHandler<EndGameSessionCommand, Result> endGameSessionCommandHandler,
         ICommandHandler<TerminateGameSessionCommand, Result> terminateGameSessionCommandHandler,
         ILogger<GameSessionsController> logger
     )
@@ -40,7 +37,6 @@ public class GameSessionsController : ControllerBase
         _getGameSessionQueryHandler = getGameSessionQueryHandler;
         _occupyCharacterCommandHandler = occupyCharacterCommandHandler;
         _kickCharacterCommandHandler = kickCharacterCommandHandler;
-        _endGameSessionCommandHandler = endGameSessionCommandHandler;
         _terminateGameSessionCommandHandler = terminateGameSessionCommandHandler;
         _logger = logger;
     }

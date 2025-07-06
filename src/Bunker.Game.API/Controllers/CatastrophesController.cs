@@ -3,7 +3,6 @@ using Ardalis.Result.AspNetCore;
 using Bunker.Application.Shared.CQRS;
 using Bunker.Game.Application.Queries.Catastrophes;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Bunker.Game.API.Controllers;
 

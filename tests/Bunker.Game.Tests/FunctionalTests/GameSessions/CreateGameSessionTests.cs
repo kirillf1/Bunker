@@ -1,8 +1,6 @@
-﻿using System.Linq;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Ardalis.Result;
 using Bunker.Game.API.Models.GameSessions;
 using Bunker.Game.Application.Commands.GameSessions.CreateGameSession;
 using Bunker.Game.Application.Queries.Characters.Models;

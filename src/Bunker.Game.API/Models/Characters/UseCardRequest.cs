@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Bunker.Game.API.Models.Characters;
+﻿namespace Bunker.Game.API.Models.Characters;
 
 public class UseCardRequest
 {

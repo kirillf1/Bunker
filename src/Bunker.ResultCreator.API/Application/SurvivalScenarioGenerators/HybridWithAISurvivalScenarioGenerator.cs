@@ -4,7 +4,6 @@ using Bunker.ResultCreator.API.Application.SurvivalScenarioGenerators;
 using Bunker.ResultCreator.API.Domain.GameResultPrompts;
 using Bunker.ResultCreator.API.Domain.SurvivalPredictor;
 using Bunker.ResultCreator.API.Infrastructure.AI.Options;
-using Bunker.ResultCreator.API.Infrastructure.Json;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Options;
 using ChatRole = Microsoft.Extensions.AI.ChatRole;

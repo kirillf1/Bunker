@@ -345,6 +345,16 @@ dotnet_diagnostic.T0000.severity = none
 # T0017: Internal Styling Rule T0017
 dotnet_diagnostic.T0017.severity = suggestion
 
+# T0032: Internal Styling Rule T0032
+dotnet_diagnostic.T0032.severity = suggestion
+
+
+# S927: Parameter names should match base declaration and other partial definitions
+dotnet_diagnostic.S927.severity = suggestion
+
+# T0029: Internal Styling Rule T0029
+dotnet_diagnostic.T0029.severity = silent
+
 [src/{Compilers,ExpressionEvaluator,Scripting}/**Test**/*.{cs,vb}]
 
 # IDE0060: Remove unused parameter
