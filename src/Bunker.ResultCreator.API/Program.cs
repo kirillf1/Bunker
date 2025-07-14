@@ -1,4 +1,5 @@
 ﻿using Bunker.Infrastructure.Shared.Extensions;
+using Bunker.MessageBus.Kafka;
 using Bunker.ResultCreator.API.Extensions;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
@@ -17,7 +18,7 @@ try
     var appName = "Bunker.ResultCreator.API";
 
     // Telemetry
-    builder.AddBaseMetricsConfiguration(appName);
+    builder.AddBaseMetricsConfiguration(appName, extraMeters: KafkaMetrics.Name);
     builder.AddBaseTracingConfiguration(appName);
     builder.AddSerilogLogging(appName);
 

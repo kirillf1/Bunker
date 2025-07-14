@@ -1,4 +1,5 @@
-﻿using Bunker.Infrastructure.Shared.Options;
+﻿using Bunker.Infrastructure.Shared.ApplicationDecorators;
+using Bunker.Infrastructure.Shared.Options;
 using HealthChecks.OpenTelemetry.Instrumentation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,7 +51,12 @@ namespace Bunker.Infrastructure.Shared.Extensions
                     )
                     .AddSource(sources)
                     .AddNpgsql()
-                    .AddAspNetCoreInstrumentation();
+                    .AddAspNetCoreInstrumentation()
+                    .AddSource("Confluent.Kafka.Extensions.Diagnostics")
+                    .AddSource(
+                        ActivitySourceConstants.CommandsActivitySourceName,
+                        ActivitySourceConstants.QueriesActivitySourceName
+                    );
 
                 if (!string.IsNullOrEmpty(telemetryConfiguration.Tracing.CollectorAddress))
                 {

@@ -6,6 +6,7 @@ using Bunker.Game.API.Extensions;
 using Bunker.Game.Infrastructure.Data;
 using Bunker.Infrastructure.Shared.ApplicationDecorators;
 using Bunker.Infrastructure.Shared.Extensions;
+using Bunker.MessageBus.Kafka;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 using Serilog.Events;
@@ -23,13 +24,8 @@ try
     var appName = "Bunker.Game.API";
 
     // Telemetry
-    builder.AddBaseMetricsConfiguration(appName);
-    builder.AddBaseTracingConfiguration(
-        appName,
-        null,
-        ActivitySourceConstants.CommandsActivitySourceName,
-        ActivitySourceConstants.QueriesActivitySourceName
-    );
+    builder.AddBaseMetricsConfiguration(appName, extraMeters: KafkaMetrics.Name);
+    builder.AddBaseTracingConfiguration(appName);
     builder.AddSerilogLogging(appName);
 
     builder.Services.AddControllers();
