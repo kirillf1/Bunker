@@ -1,5 +1,6 @@
 ﻿using Bunker.Infrastructure.Shared.Extensions;
 using Bunker.ResultCreator.API.Extensions;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 using Serilog.Events;
 
@@ -40,6 +41,15 @@ try
     app.UseHttpsRedirection();
 
     app.UseAuthorization();
+
+    app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = check => check.Tags.Contains("live") });
+
+    app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") });
+
+    app.MapHealthChecks(
+        "/health/startup",
+        new HealthCheckOptions { Predicate = check => check.Tags.Contains("startup") }
+    );
 
     app.MapControllers();
 
