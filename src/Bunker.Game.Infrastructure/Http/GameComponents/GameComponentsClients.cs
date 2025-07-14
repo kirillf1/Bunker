@@ -140,7 +140,7 @@ public partial class CharacterComponentsClient : ICharacterComponentsClient
                     if (status_ == 500)
                     {
                         string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                        throw new ApiException("Internal Server Error", status_, responseText_, headers_, null);
+                      throw new ApiException("Internal Server Error", status_, responseText_, headers_, null);
                     }
                     else
                     {

@@ -152,7 +152,7 @@ public class MockCharacteristicGenerator : ICharacteristicGenerator
         {
             var cardAction = _faker.Random.Bool() ? (CardAction)new EmptyAction() : new RecreateBunkerAction();
 
-            return new Card(Guid.NewGuid(), _faker.Lorem.Sentence(), cardAction);
+            return new Card(Guid.NewGuid(), _faker.Lorem.Sentence(), cardAction, Guid.NewGuid());
         }
         else if (characteristicType == typeof(Hobby))
         {

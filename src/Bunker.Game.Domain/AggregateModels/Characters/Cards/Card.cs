@@ -10,12 +10,14 @@ public class Card : Entity<Guid>, ICharacteristic
     public string Description { get; private set; }
 
     public CardAction CardAction { get; private set; }
+    public Guid SourceCardId { get; private set; }
 
-    public Card(Guid cardId, string description, CardAction cardAction)
+    public Card(Guid cardId, string description, CardAction cardAction, Guid sourceCardId)
         : base(cardId)
     {
         Description = description;
         CardAction = cardAction;
+        SourceCardId = sourceCardId;
         IsActivated = false;
     }
 

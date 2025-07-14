@@ -45,17 +45,17 @@ public class RerollCharacteristicActionCommandHandler : ICardActionCommandHandle
             throw new InvalidGameOperationException("No available target characters for use card");
         }
 
-        if (command.CharacteristicId is not null)
+        if (command.CharacteristicId is null)
+        {
+            await RerollCharacteristicOnRandomCharacteristic(command.CharacteristicType, charactersForReroll);
+        }
+        else
         {
             await RerollCharacteristicByRequiredCharacteristic(
                 command.CharacteristicType,
                 command.CharacteristicId.Value,
                 charactersForReroll
             );
-        }
-        else
-        {
-            await RerollCharacteristicOnRandomCharacteristic(command.CharacteristicType, charactersForReroll);
         }
     }
 
@@ -96,7 +96,9 @@ public class RerollCharacteristicActionCommandHandler : ICardActionCommandHandle
 
     private static void ChangeCharacteristic(Character character, ICharacteristic characteristic)
     {
-        switch (characteristic)
+        var characteristicType = characteristic.GetType();
+
+        switch (characteristicType)
         {
             case Type t when t == typeof(AdditionalInformation):
                 character.UpdateAdditionalInformation((AdditionalInformation)characteristic);

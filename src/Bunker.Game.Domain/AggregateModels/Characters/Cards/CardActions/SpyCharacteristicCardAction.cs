@@ -25,7 +25,7 @@ public class SpyCharacteristicCardAction : CardAction
 
     public override CardActionRequirements GetCurrentCardActionRequirements()
     {
-        return new CardActionRequirements(ActivateCardTargetType.None, 0);
+        return new CardActionRequirements(ActivateCardTargetType.Character, TargetCharactersCount);
     }
 
     protected override IEnumerable<object> GetEqualityComponents()

@@ -1,4 +1,11 @@
-﻿using System.Text.Json;using System.Text.Json.Serialization;using Bunker.Game.Domain.AggregateModels.Characters;using Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;using Bunker.Game.Domain.AggregateModels.Characters.Characteristics;using Bunker.Game.Infrastructure.Data.Converters;using Microsoft.EntityFrameworkCore;using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using Bunker.Game.Domain.AggregateModels.Characters;
+using Bunker.Game.Domain.AggregateModels.Characters.Cards.CardActions;
+using Bunker.Game.Domain.AggregateModels.Characters.Characteristics;
+using Bunker.Game.Infrastructure.Data.Converters;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Bunker.Game.Infrastructure.Data.Configurations;
 

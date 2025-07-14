@@ -39,8 +39,8 @@ public class CharacterTests
         _traits = new List<Trait> { new(Guid.NewGuid().ToString()) };
         _cards = new List<Card>
         {
-            new(Guid.NewGuid(), "Test Card", new EmptyAction()),
-            new(Guid.NewGuid(), "Test Card 2", new EmptyAction()),
+            new(Guid.NewGuid(), "Test Card", new EmptyAction(), Guid.NewGuid()),
+            new(Guid.NewGuid(), "Test Card 2", new EmptyAction(), Guid.NewGuid()),
         };
     }
 
@@ -143,7 +143,7 @@ public class CharacterTests
     public void Constructor_InsufficientCards_ThrowsArgumentException()
     {
         // Arrange
-        var insufficientCards = new List<Card> { new(Guid.NewGuid(), "Test Card", new EmptyAction()) };
+        var insufficientCards = new List<Card> { new(Guid.NewGuid(), "Test Card", new EmptyAction(), Guid.NewGuid()) };
 
         // Act & Assert
         Assert.Throws<ArgumentException>(
@@ -200,8 +200,8 @@ public class CharacterTests
         var newTraits = new List<Trait> { new("New Trait") };
         var newCards = new List<Card>
         {
-            new(Guid.NewGuid(), "New Card", new EmptyAction()),
-            new(Guid.NewGuid(), "New Card 2", new EmptyAction()),
+            new(Guid.NewGuid(), "New Card", new EmptyAction(), Guid.NewGuid()),
+            new(Guid.NewGuid(), "New Card 2", new EmptyAction(), Guid.NewGuid()),
         };
 
         // Act
@@ -347,7 +347,7 @@ public class CharacterTests
             _cards
         );
         var oldCard = _cards[0];
-        var newCard = new Card(Guid.NewGuid(), "New Card", new EmptyAction());
+        var newCard = new Card(Guid.NewGuid(), "New Card", new EmptyAction(), Guid.NewGuid());
 
         // Act
         character.ReplaceCard(oldCard, newCard);

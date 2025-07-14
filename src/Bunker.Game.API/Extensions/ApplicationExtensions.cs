@@ -24,6 +24,7 @@ using Bunker.Game.Infrastructure.Generators.CharacterFactories;
 using Bunker.Game.Infrastructure.Generators.CharacteristicGenerators;
 using Bunker.Game.Infrastructure.Http.GameComponents;
 using Bunker.Game.Infrastructure.Http.GameComponents.Contracts;
+using Bunker.Game.Infrastructure.Http.GameComponents.Decorators;
 using Bunker.Infrastructure.Shared.ApplicationDecorators;
 using Bunker.MessageBus.Abstractions;
 using Bunker.MessageBus.Abstractions.Extensions;
@@ -33,6 +34,7 @@ using Bunker.MessageBus.Kafka.Configuration;
 using Bunker.MessageBus.Kafka.Consumers;
 using Bunker.MessageBus.Kafka.Consumers.ConsumeStrategies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
@@ -58,6 +60,8 @@ public static class ApplicationExtensions
         services.AddGenerators(configuration);
 
         services.AddMessageBus(configuration);
+
+        services.AddRedisCaching(configuration);
 
         return services;
     }
@@ -222,10 +226,33 @@ public static class ApplicationExtensions
             client.BaseAddress = new Uri(gameComponentsOptions.Address);
         });
 
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = configuration.GetConnectionString("RedisConnection");
+        });
+
         services.AddScoped<ICharacteristicGenerator, CharacteristicGenerator>();
         services.AddScoped<IBunkerGenerator, BunkerGenerator>();
         services.AddScoped<ICatastropheGenerator, CatastropheGenerator>();
         services.AddScoped<ICharacterFactory, CharacterFactory>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddRedisCaching(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = configuration.GetConnectionString("RedisConnection");
+        });
+
+        services
+            .AddHealthChecks()
+            .AddRedis(configuration.GetConnectionString("RedisConnection")!, tags: ["ready", "startup"]);
+
+        services.Decorate<ICharacterComponentsClient, CharacterComponentsClientCacheDecorator>();
+        services.Decorate<IBunkerComponentsClient, BunkerComponentsClientCacheDecorator>();
+        services.Decorate<ICatastropheComponentsClient, CatastropheComponentsClientCacheDecorator>();
 
         return services;
     }

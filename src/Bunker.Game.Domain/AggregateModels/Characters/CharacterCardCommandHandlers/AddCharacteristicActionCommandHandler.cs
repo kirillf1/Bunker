@@ -38,17 +38,17 @@ public class AddCharacteristicActionCommandHandler : ICardActionCommandHandler<A
             throw new InvalidGameOperationException("No available target characters for use card");
         }
 
-        if (command.CharacteristicId is not null)
+        if (command.CharacteristicId is null)
+        {
+            await AddCharacteristicOnRandomCharacteristic(command.CharacteristicType, charactersForReroll);
+        }
+        else
         {
             await AddCharacteristicByRequiredCharacteristic(
                 command.CharacteristicType,
                 command.CharacteristicId.Value,
                 charactersForReroll
             );
-        }
-        else
-        {
-            await AddCharacteristicOnRandomCharacteristic(command.CharacteristicType, charactersForReroll);
         }
     }
 
@@ -89,7 +89,9 @@ public class AddCharacteristicActionCommandHandler : ICardActionCommandHandler<A
 
     private static void AddCharacteristic(Character character, ICharacteristic characteristic)
     {
-        switch (characteristic)
+        var characteristicType = characteristic.GetType();
+
+        switch (characteristicType)
         {
             case Type t when t == typeof(Item):
                 character.AddItem((Item)characteristic);
@@ -101,7 +103,9 @@ public class AddCharacteristicActionCommandHandler : ICardActionCommandHandler<A
                 character.AddCard((Card)characteristic);
                 break;
             default:
-                throw new InvalidGameOperationException($"Selected invalid characteristic for add");
+                throw new InvalidGameOperationException(
+                    $"Selected invalid characteristic for add. Current characteristic: {characteristicType}"
+                );
         }
     }
 }

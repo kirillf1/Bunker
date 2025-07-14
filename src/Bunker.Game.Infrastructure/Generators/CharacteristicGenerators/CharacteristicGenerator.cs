@@ -94,7 +94,12 @@ public class CharacteristicGenerator : ICharacteristicGenerator
                 throw new InvalidOperationException($"No {characteristicType.Name} data available.");
 
             var randomCard = cardsDto.ElementAt(Random.Shared.Next(0, cardsDto.Count));
-            return new Card(randomCard.Id, randomCard.Description, randomCard.CardAction.ToCardAction());
+            return new Card(
+                Guid.CreateVersion7(),
+                randomCard.Description,
+                randomCard.CardAction.ToCardAction(),
+                randomCard.Id
+            );
         }
         else if (characteristicType == typeof(Hobby))
         {
@@ -204,7 +209,12 @@ public class CharacteristicGenerator : ICharacteristicGenerator
             else if (characteristicType == typeof(Card))
             {
                 var cardDto = await _client.CardsGetAsync(id);
-                return new Card(cardDto.Id, cardDto.Description, cardDto.CardAction.ToCardAction());
+                return new Card(
+                    Guid.CreateVersion7(),
+                    cardDto.Description,
+                    cardDto.CardAction.ToCardAction(),
+                    cardDto.Id
+                );
             }
             else if (characteristicType == typeof(Hobby))
             {

@@ -24,12 +24,12 @@ public class RerollCharacteristicCardAction : CardAction
 
     public override CardActionRequirements GetCurrentCardActionRequirements()
     {
-        return new CardActionRequirements(ActivateCardTargetType.None, 0);
+        return new CardActionRequirements(ActivateCardTargetType.Character, TargetCharactersCount);
     }
 
     public override CardActionCommand CreateActionCommand(ActivateCardParams activateCardParams, Guid gameSessionId)
     {
-        if (!IsSelfTarget && activateCardParams.TargetCharacterIds.Count() != TargetCharactersCount)
+        if (activateCardParams.TargetCharacterIds.Count() != TargetCharactersCount)
         {
             throw new ArgumentException("Invalid character count");
         }

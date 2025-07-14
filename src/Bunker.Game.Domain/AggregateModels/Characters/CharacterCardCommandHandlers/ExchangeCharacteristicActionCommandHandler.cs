@@ -31,75 +31,105 @@ public class ExchangeCharacteristicActionCommandHandler : ICardActionCommandHand
             case Type t when t == typeof(AdditionalInformation):
                 var firstAdditionalInfo = firstCharacter.AdditionalInformation;
                 var secondAdditionalInfo = secondCharacter.AdditionalInformation;
-                firstCharacter.UpdateAdditionalInformation(secondAdditionalInfo);
-                secondCharacter.UpdateAdditionalInformation(firstAdditionalInfo);
+                firstCharacter.UpdateAdditionalInformation(new AdditionalInformation(secondAdditionalInfo.Description));
+                secondCharacter.UpdateAdditionalInformation(new AdditionalInformation(firstAdditionalInfo.Description));
                 break;
+
             case Type t when t == typeof(Health):
                 var firstHealth = firstCharacter.Health;
                 var secondHealth = secondCharacter.Health;
-                firstCharacter.UpdateHealth(secondHealth);
-                secondCharacter.UpdateHealth(firstHealth);
+                firstCharacter.UpdateHealth(new Health(secondHealth.Description));
+                secondCharacter.UpdateHealth(new Health(firstHealth.Description));
                 break;
+
             case Type t when t == typeof(Hobby):
                 var firstHobby = firstCharacter.Hobby;
                 var secondHobby = secondCharacter.Hobby;
-                firstCharacter.UpdateHobby(secondHobby);
-                secondCharacter.UpdateHobby(firstHobby);
+                firstCharacter.UpdateHobby(new Hobby(secondHobby.Description, secondHobby.Experience));
+                secondCharacter.UpdateHobby(new Hobby(firstHobby.Description, firstHobby.Experience));
                 break;
+
             case Type t when t == typeof(Phobia):
                 var firstPhobia = firstCharacter.Phobia;
                 var secondPhobia = secondCharacter.Phobia;
-                firstCharacter.UpdatePhobia(secondPhobia);
-                secondCharacter.UpdatePhobia(firstPhobia);
+                firstCharacter.UpdatePhobia(new Phobia(secondPhobia.Description));
+                secondCharacter.UpdatePhobia(new Phobia(firstPhobia.Description));
                 break;
+
             case Type t when t == typeof(Profession):
                 var firstProfession = firstCharacter.Profession;
                 var secondProfession = secondCharacter.Profession;
-                firstCharacter.UpdateProfession(secondProfession);
-                secondCharacter.UpdateProfession(firstProfession);
+                firstCharacter.UpdateProfession(
+                    new Profession(secondProfession.Description, secondProfession.ExperienceYears)
+                );
+                secondCharacter.UpdateProfession(
+                    new Profession(firstProfession.Description, firstProfession.ExperienceYears)
+                );
                 break;
+
             case Type t when t == typeof(Item):
                 var firstCharacterItems = firstCharacter.Items.ToArray();
                 var secondCharacterItems = secondCharacter.Items.ToArray();
-                firstCharacter.ReplaceItems(secondCharacterItems);
-                secondCharacter.ReplaceItems(firstCharacterItems);
+                firstCharacter.ReplaceItems(secondCharacterItems.Select(x => new Item(x.Description)));
+                secondCharacter.ReplaceItems(firstCharacterItems.Select(x => new Item(x.Description)));
                 break;
+
             case Type t when t == typeof(Trait):
                 var firstCharacterTraits = firstCharacter.Traits.ToArray();
                 var secondCharacterTraits = secondCharacter.Traits.ToArray();
-                firstCharacter.ReplaceTraits(secondCharacterTraits);
-                secondCharacter.ReplaceTraits(firstCharacterTraits);
+                firstCharacter.ReplaceTraits(secondCharacterTraits.Select(x => new Trait(x.Description)));
+                secondCharacter.ReplaceTraits(firstCharacterTraits.Select(x => new Trait(x.Description)));
                 break;
+
             case Type t when t == typeof(Card):
                 var firstCharacterCards = firstCharacter.Cards.ToArray();
                 var secondCharacterCards = secondCharacter.Cards.ToArray();
-                firstCharacter.ReplaceCards(secondCharacterCards);
-                secondCharacter.ReplaceCards(firstCharacterCards);
+                firstCharacter.ReplaceCards(
+                    secondCharacterCards.Select(x => new Card(
+                        Guid.CreateVersion7(),
+                        x.Description,
+                        x.CardAction,
+                        x.SourceCardId
+                    ))
+                );
+                secondCharacter.ReplaceCards(
+                    firstCharacterCards.Select(x => new Card(
+                        Guid.CreateVersion7(),
+                        x.Description,
+                        x.CardAction,
+                        x.SourceCardId
+                    ))
+                );
                 break;
+
             case Type t when t == typeof(Age):
                 var firstAge = firstCharacter.Age;
                 var secondAge = secondCharacter.Age;
-                firstCharacter.UpdateAge(secondAge);
-                secondCharacter.UpdateAge(firstAge);
+                firstCharacter.UpdateAge(new Age(secondAge.Years));
+                secondCharacter.UpdateAge(new Age(firstAge.Years));
                 break;
+
             case Type t when t == typeof(Size):
                 var firstSize = firstCharacter.Size;
                 var secondSize = secondCharacter.Size;
-                firstCharacter.UpdateSize(secondSize);
-                secondCharacter.UpdateSize(firstSize);
+                firstCharacter.UpdateSize(new Size(secondSize.Height, secondSize.Weight));
+                secondCharacter.UpdateSize(new Size(firstSize.Height, firstSize.Weight));
                 break;
+
             case Type t when t == typeof(Sex):
                 var firstSex = firstCharacter.Sex;
                 var secondSex = secondCharacter.Sex;
-                firstCharacter.UpdateSex(secondSex);
-                secondCharacter.UpdateSex(firstSex);
+                firstCharacter.UpdateSex(new Sex(secondSex.Description));
+                secondCharacter.UpdateSex(new Sex(firstSex.Description));
                 break;
+
             case Type t when t == typeof(Childbearing):
                 var firstChildbearing = firstCharacter.Childbearing;
                 var secondChildbearing = secondCharacter.Childbearing;
-                firstCharacter.UpdateChildbearing(secondChildbearing);
-                secondCharacter.UpdateChildbearing(firstChildbearing);
+                firstCharacter.UpdateChildbearing(new Childbearing(secondChildbearing.CanGiveBirth));
+                secondCharacter.UpdateChildbearing(new Childbearing(firstChildbearing.CanGiveBirth));
                 break;
+
             default:
                 throw new ArgumentException($"Unknown characteristic type: {characteristicType.Name}");
         }
