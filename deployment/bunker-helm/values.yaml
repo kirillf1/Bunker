@@ -132,7 +132,7 @@ gameApi:
   
   image:
     repository: kirillf1/bunker-game-api
-    tag: "1.0"
+    tag: "1.1"
     pullPolicy: IfNotPresent
   
   service:
@@ -215,7 +215,7 @@ gameComponentsApi:
   
   image:
     repository: kirillf1/bunkergamecomponets-api
-    tag: "1.0"
+    tag: "1.1"
     pullPolicy: IfNotPresent
   
   service:
@@ -267,7 +267,7 @@ gameComponentsApi:
 # Bunker ResultCreator API
 # Сервис для создания результатов игры с использованием AI
 resultCreatorApi:
-  enabled: false
+  enabled: true
   replicaCount: 1
 
   # Настройки секретов только для чувствительных данных
@@ -355,7 +355,7 @@ resultCreatorApi:
   
   image:
     repository: kirillf1/bunker-resultcreator-api
-    tag: "1.0"
+    tag: "1.1"
     pullPolicy: IfNotPresent
   
   service:
@@ -403,3 +403,73 @@ resultCreatorApi:
       periodSeconds: 30
       timeoutSeconds: 5
       failureThreshold: 2
+      
+ollama:
+  enabled: true           
+
+  # Порт HTTP-API Ollama в контейнере
+  port: 11434
+
+  # GPU-настройки
+  gpu:
+    enabled: true
+    type: 'nvidia'
+    number: 1
+    nvidiaResource: "nvidia.com/gpu"
+
+  # Какие модели сразу скачать при старте
+  models:
+    pull:
+      - owl/t-lite
+    run:
+      - owl/t-lite
+  # Дополнительные настройки Ollama-чарта
+  replicaCount: 1
+
+  image:
+    repository: "ollama/ollama"
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+  service:
+    type: LoadBalancer
+    port: 11434
+
+  resources:
+    
+    limits:
+      cpu: "2000m"
+      memory: "8Gi"
+
+  persistentVolume:
+    enabled: true
+    size: 10Gi
+
+kafka:
+  enabled: true
+  clusterName: bunker-cluster
+  replicas: 3
+
+  version: "3.9.0"
+  metadataVersion: "3.9-IV0"
+
+  # Настройки хранилища брокеров
+  storage:
+    type: jbod            
+    volumes:
+      - id: 0
+        size: 10Gi        
+        storageClass: ""  
+        deleteClaim: true
+
+  # Настройка метрик JMX Prometheus exporter
+  metrics:
+    enabled: true
+
+  # Расширенные настройки размещения
+  affinity: {}
+  tolerations: []
+  nodeSelector: {}
+
+  # Фактор репликации топиков по умолчанию
+  topicReplicationFactor: 3

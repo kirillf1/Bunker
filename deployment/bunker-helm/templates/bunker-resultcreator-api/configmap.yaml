@@ -26,7 +26,12 @@ data:
   {{- end }}
   
   # Kafka настройки (не чувствительные данные)
+  # Строка подключения к Kafka
+  {{- if .Values.kafka.enabled }}
+  Kafka__Servers: "{{ .Values.kafka.clusterName }}-kafka-bootstrap:9092"
+  {{- else }}
   Kafka__Servers: {{ .Values.resultCreatorApi.app.kafka.servers | quote }}
+  {{- end }}
   Kafka__CreateGameResultRequestsTopicName: {{ .Values.resultCreatorApi.app.kafka.createGameResultRequestsTopicName | quote }}
   Kafka__CreateGameResultResponsesTopicName: {{ .Values.resultCreatorApi.app.kafka.createGameResultResponsesTopicName | quote }}
   
@@ -39,7 +44,11 @@ data:
   AI__Chat__TopP: {{ .Values.resultCreatorApi.app.ai.chat.topP | quote }}
   
   # Ollama настройки
+  {{- if .Values.ollama.enabled }}
+  Ollama__BaseUrl: "http://{{ include "bunker-helm.fullname" . }}-ollama-service:{{ .Values.ollama.service.port }}"
+  {{- else }}
   Ollama__BaseUrl: {{ .Values.resultCreatorApi.app.ollama.baseUrl | quote }}
+  {{- end }}
   Ollama__Model: {{ .Values.resultCreatorApi.app.ollama.model | quote }}
   
   # PromptStorage настройки

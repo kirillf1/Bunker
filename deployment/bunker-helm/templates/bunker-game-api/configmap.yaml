@@ -30,7 +30,12 @@ data:
   {{- end }}
   
   # Kafka настройки (не чувствительные данные)
+  # Строка подключения к Kafka
+  {{- if .Values.kafka.enabled }}
+  Kafka__Servers: "{{ .Values.kafka.clusterName }}-kafka-bootstrap:9092"
+  {{- else }}
   Kafka__Servers: {{ .Values.gameApi.app.kafka.servers | quote }}
+  {{- end }}
   Kafka__CreateGameResultRequestsTopicName: {{ .Values.gameApi.app.kafka.createGameResultRequestsTopicName | quote }}
   Kafka__CreateGameResultResponsesTopicName: {{ .Values.gameApi.app.kafka.createGameResultResponsesTopicName | quote }}
 {{- end }} 
